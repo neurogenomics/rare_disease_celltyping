@@ -1,0 +1,26 @@
+HPO - Lower limb asymmetry
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+COL2A1
+PTEN
+SKI
+KCNAB2
+GABRD
+KRAS
+AGGF1
+MAPRE2
+MNX1
+PRDM16
+PORCN
+SETD5
+PIK3CA
+DACT1
+TRPV4
+USP9X
+AKT1
+ENPP1
+GNAQ
+RERE
+SALL1
+ACTB
+DMP1
+TUBB

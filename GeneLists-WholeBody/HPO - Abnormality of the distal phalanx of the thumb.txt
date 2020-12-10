@@ -1,0 +1,26 @@
+HPO - Abnormality of the distal phalanx of the thumb
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PTCH2
+SUFU
+MAP3K7
+CANT1
+HOXD13
+LMBR1
+GDF5
+CHSY1
+CREBBP
+SLC26A2
+FLNA
+FLNB
+GLI1
+SALL4
+CWF19L1
+EP300
+GLI3
+BMPR1B
+FGFR2
+GNAS
+KIF7
+IHH
+PAH
+PTCH1

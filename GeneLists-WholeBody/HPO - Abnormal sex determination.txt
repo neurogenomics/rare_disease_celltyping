@@ -1,0 +1,24 @@
+HPO - Abnormal sex determination
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+GATA4
+WT1
+SOX9
+POR
+RSPO1
+AKR1C2
+CYP11A1
+SRY
+CYP17A1
+NR5A1
+HSD3B2
+AKR1C4
+MAP3K1
+ZFPM2
+CYB5A
+WNT4
+DMRT3
+CBX2
+WWOX
+VAMP7
+NR0B1
+DHH

@@ -1,0 +1,29 @@
+HPO - Bulbar palsy
+Downloaded on 31stOct2017 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+DNAJB6
+TPM2
+SLC5A7
+TPM3
+DES
+LMOD3
+CHAT
+MYH7
+CHCHD10
+ABCD1
+COL13A1
+ARSA
+SLC52A2
+NEB
+ATXN1
+SELENON
+SQSTM1
+CHRNA1
+AR
+RYR1
+DOK7
+MATR3
+GSN
+TBK1
+CHRNE
+ACTA1
+SLC52A3

@@ -1,0 +1,30 @@
+HPO - Onion bulb formation
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PMP22
+SLC12A6
+MFN2
+MPZ
+NEFL
+SH3TC2
+GNB4
+GJB1
+DCAF8
+NDRG1
+LMNA
+SBF1
+ARHGEF10
+EGR2
+INF2
+FIG4
+FGD4
+LITAF
+PRX
+C12ORF65
+KIF1B
+SBF2
+COX6A1
+DNM2
+GDAP1
+FAM126A
+PMP2
+PRPS1

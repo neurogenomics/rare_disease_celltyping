@@ -1,0 +1,27 @@
+HPO - Pancreatic adenocarcinoma
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PMS1
+MLH1
+CDKN2A
+KRAS
+TGFBR2
+STK11
+MSH6
+RPS20
+BMPR1A
+PMS2
+MSH2
+MLH3
+CDC73
+SEMA4A
+BRCA1
+BRCA2
+EPCAM
+PIK3CA
+RNF43
+PALLD
+NTHL1
+PALB2
+TP53
+SMAD4
+FAN1

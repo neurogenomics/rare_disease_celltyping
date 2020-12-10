@@ -1,0 +1,24 @@
+HPO - Bladder carcinoma
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PTEN
+HRAS
+APC
+KRAS
+RB1
+AAGAB
+FLCN
+PIK3CA
+COL14A1
+RNF43
+AKT1
+EP300
+FGFR3
+TP53
+AXIN2
+ATP7A
+SRC
+CTNNB1
+DLC1
+BUB1B
+NRAS
+DCC

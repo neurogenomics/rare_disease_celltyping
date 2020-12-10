@@ -1,0 +1,28 @@
+HPO - Muscle fiber cytoplasmatic inclusion bodies
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TPM2
+STIM1
+TPM3
+DPAGT1
+KBTBD13
+NEFL
+LMOD3
+CASQ1
+ORAI1
+FLNC
+KLHL41
+MYOT
+MYO18B
+NEB
+TNNT1
+NDUFB3
+GMPPB
+PYROXD1
+CFL2
+GFPT1
+ALG14
+KLHL40
+ALG2
+RYR1
+MYPN
+ACTA1

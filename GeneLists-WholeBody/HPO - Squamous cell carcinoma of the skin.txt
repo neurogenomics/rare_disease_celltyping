@@ -1,0 +1,26 @@
+HPO - Squamous cell carcinoma of the skin
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+LMNA
+TYR
+TERC
+TINF2
+LAMA3
+TERT
+LAMB3
+RSPO1
+DDB2
+KRT5
+COL7A1
+LAMC2
+SLC45A2
+GJB2
+ERCC2
+GJB6
+OCA2
+XPC
+KRT14
+ERCC3
+ERCC4
+MMP1
+ERCC5
+MC1R

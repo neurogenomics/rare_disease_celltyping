@@ -1,0 +1,30 @@
+HPO - Wolff-Parkinson-White syndrome
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+IFNG
+BMP2
+TRNF
+LAMP2
+TSC1
+TSC2
+TRNH
+TRNK
+TRNL1
+TRNQ
+PRKAG2
+TRNS1
+TRNC
+TRNS2
+COX1
+COX2
+TRNV
+COX3
+TRNW
+CYTB
+TCAP
+GAA
+ND1
+ND4
+MRPS14
+ND5
+ND6
+MTFMT

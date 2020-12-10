@@ -1,0 +1,27 @@
+HPO - Increased circulating IgM level
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+IFNGR1
+IKBKG
+MST1
+MYD88
+IL12A
+IL12RB1
+POU2AF1
+XIAP
+CASP10
+TCF4
+UNG
+IRF5
+MMEL1
+SPIB
+FAS
+FASLG
+SH2D1A
+GPR35
+KLHDC8B
+PIK3CD
+TNFSF15
+TNPO3
+DNMT3B
+CD40
+CD40LG

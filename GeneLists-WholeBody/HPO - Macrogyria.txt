@@ -1,0 +1,24 @@
+HPO - Macrogyria
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+B4GAT1
+COL4A1
+POMT2
+POMK
+PEX2
+DAG1
+ACTG1
+POMGNT1
+FKTN
+FKRP
+CRPPA
+NFIX
+PSAT1
+PHGDH
+DHCR24
+B3GALNT2
+RXYLT1
+POMT1
+ACTB
+CASK
+POMGNT2
+LARGE1

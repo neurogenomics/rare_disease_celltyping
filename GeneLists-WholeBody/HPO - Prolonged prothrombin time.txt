@@ -1,0 +1,29 @@
+HPO - Prolonged prothrombin time
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CFH
+MST1
+TCF4
+EFL1
+HMGCL
+CD46
+NGLY1
+HADH
+ZMPSTE24
+LMNA
+CFI
+F2
+GNE
+F5
+F7
+GPR35
+SLC30A10
+HLA-DQA1
+F10
+HLA-DQB1
+PRF1
+ACAD9
+NR1H4
+GGCX
+HELLPAR
+PMM2
+AHCY

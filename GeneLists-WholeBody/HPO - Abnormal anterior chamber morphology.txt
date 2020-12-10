@@ -1,0 +1,32 @@
+HPO - Abnormal anterior chamber morphology
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TSPAN12
+ADAMTS10
+CYP1B1
+LRP5
+CHRDL1
+COLEC11
+MIR204
+ASXL1
+MASP1
+RAB18
+FGFR1
+LTBP2
+NDP
+B3GLCT
+FBN1
+COLEC10
+PAX6
+CHST14
+KLHL7
+ATOH7
+ELMO2
+MYOC
+PIK3R1
+LOXL1
+JAG1
+FOXC1
+PITX2
+FOXE3
+MITF
+OVOL2

@@ -1,0 +1,26 @@
+HPO - Retinal arteriolar tortuosity
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+COMT
+SEC24C
+GTF2IRD1
+FZD4
+COL4A1
+ARVCF
+CLIP2
+BAZ1B
+LRP5
+MLXIPL
+JMJD1C
+TBL2
+LIMK1
+TBX1
+NDP
+ELN
+NOTCH3
+GTF2I
+UFD1
+HIRA
+GP1BB
+ATP6
+RFC2
+RREB1

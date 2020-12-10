@@ -1,0 +1,26 @@
+HPO - Short phalanx of the thumb
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PTCH2
+SUFU
+MAP3K7
+SMC3
+CANT1
+FZD2
+GDF5
+HOXA13
+KMT2A
+SETD5
+NIPBL
+FLNA
+FANCI
+SALL4
+BMPR1B
+SMC1A
+SETBP1
+NOG
+ACVR1
+PCNT
+IHH
+RAD21
+HDAC8
+PTCH1

@@ -1,0 +1,26 @@
+HPO - Focal seizures, afebril
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TRIM8
+PIGQ
+CLCNKB
+SLC25A22
+CDKL5
+MTOR
+SIK1
+TUBB3
+FA2H
+PNKP
+PCDH19
+SRPX2
+SCN2A
+GNAO1
+GRIN2A
+POLR3A
+KCNA1
+NEUROD2
+PIGP
+ARX
+STXBP1
+CASK
+PRRT2
+SLC12A3

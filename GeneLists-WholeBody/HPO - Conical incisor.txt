@@ -1,0 +1,23 @@
+HPO - Conical incisor
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+ARHGAP29
+IKBKG
+CDH1
+MSX1
+WNT10A
+EVC
+DYNC2LI1
+DLG1
+BMP4
+NEK1
+CCBE1
+FGF10
+GLI1
+IRF6
+TP63
+DLX4
+FGFR3
+EVC2
+FGFR2
+B3GLCT
+NECTIN1

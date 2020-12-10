@@ -1,0 +1,37 @@
+HPO - Fatigable weakness of skeletal muscles
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TPM2
+POMT2
+STIM1
+TPM3
+LRP4
+LMOD3
+CASQ1
+ORAI1
+FLNC
+AK9
+LDB3
+KLHL41
+HINT1
+COL13A1
+POMT1
+RAPSN
+NEB
+LMNA
+ACADM
+GMPPB
+KCNK9
+FKRP
+AGRN
+CHRNA1
+CFL2
+MUSK
+TOE1
+CHRNB1
+DOK7
+CHRND
+MYPN
+CHRNE
+SCN4A
+ACTA1
+LARGE1

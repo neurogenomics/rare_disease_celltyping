@@ -1,0 +1,31 @@
+HPO - Hyperventilation
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CIZ1
+GABRB3
+HLCS
+GABRG2
+CDKL5
+TCF4
+CACNA1H
+TRNK
+TRNL1
+FBP1
+ATP6
+GABBR2
+TRNV
+SUCLG1
+NRXN1
+TRNW
+CPLANE1
+MECP2
+BTD
+SLC2A1
+JRK
+ND1
+ND2
+ND3
+GABRA1
+ND4
+ND5
+ND6
+CNTNAP2

@@ -1,0 +1,23 @@
+HPO - Morphological abnormality of the vestibule of the inner ear
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+RIT1
+BRAF
+RASA2
+KAT6B
+KRAS
+RAF1
+SOX10
+SLC26A4
+CHD7
+PTPN11
+KCNJ10
+FGFR2
+LZTR1
+A2ML1
+SEMA3E
+FOXI1
+NRAS
+ESRP1
+RRAS
+SOS1
+SOS2

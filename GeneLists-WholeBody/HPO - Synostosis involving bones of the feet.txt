@@ -1,0 +1,30 @@
+HPO - Synostosis involving bones of the feet
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TPM2
+MKKS
+POR
+LMBR1
+GDF5
+CHSY1
+FLNA
+FLNB
+MYH3
+FGF9
+FBLN1
+BMPR1B
+FGFR1
+FGFR3
+FGFR2
+TBX4
+NOG
+ATP7A
+SALL1
+SMOC1
+TNNI2
+OFD1
+NALCN
+TNNT3
+MAP3K7
+HOXD13
+BHLHA9
+GDF6

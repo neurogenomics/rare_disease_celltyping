@@ -1,0 +1,25 @@
+HPO - Supernumerary bones of the axial skeleton
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+SKI
+SOX2
+PTCH2
+GATA6
+ANKRD11
+SUFU
+IKBKG
+IFT57
+PUF60
+NIPBL
+RBM8A
+PAX3
+ZBTB16
+DHODH
+SON
+ACTB
+RUNX2
+ANK1
+SIX6
+GPC4
+GPC3
+PTCH1
+TBX6

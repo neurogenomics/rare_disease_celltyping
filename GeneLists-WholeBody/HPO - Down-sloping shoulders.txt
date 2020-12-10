@@ -1,0 +1,32 @@
+HPO - Down-sloping shoulders
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CUL4B
+PTCH2
+NAA10
+BAZ1B
+MLXIPL
+TRPV4
+LIMK1
+PAX1
+CHD7
+ELN
+PIEZO2
+IRX5
+GTF2I
+ATP7A
+EYA1
+EFNB1
+RUNX2
+SPRTN
+RFC2
+PTCH1
+LMNA
+BCOR
+GTF2IRD1
+SUFU
+CLIP2
+TBL2
+OTUD6B
+PPP1R15B
+SEMA3E
+TBX5

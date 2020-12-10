@@ -1,0 +1,28 @@
+HPO - Tracheal stenosis
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+COL2A1
+GRIP1
+RSPO2
+RMRP
+HYLS1
+FLNA
+FLNB
+FREM2
+FRAS1
+LTBP3
+MGP
+IDUA
+MAP3K7
+HOXD13
+SLC26A2
+WNT3
+SLC26A4
+DHCR7
+AFF4
+KCNJ10
+ADAMTSL2
+SMAD4
+EBP
+FOXI1
+KIF7
+PCNT

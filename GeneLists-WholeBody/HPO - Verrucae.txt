@@ -1,0 +1,26 @@
+HPO - Verrucae
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+BLNK
+TMC8
+FCN3
+IKBKG
+ECM1
+STK4
+DCLRE1C
+LRRC8A
+KRT1
+DOCK8
+PIK3CA
+CXCR4
+CD79A
+CD79B
+PIK3R1
+KRT9
+TCF3
+IGHM
+IL7
+CIB1
+IGLL1
+TMC6
+KRT16
+CARMIL2

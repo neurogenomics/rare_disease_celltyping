@@ -1,0 +1,27 @@
+HPO - Vertebral compression fractures
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+XYLT2
+GBA
+PYCR1
+FKBP10
+USP8
+CCND1
+SPARC
+TNFRSF11A
+AIP
+MMP2
+UROS
+DKK1
+SERPINH1
+P4HB
+PLS3
+P3H1
+WNT1
+CREB3L1
+TENT5A
+NOTCH2
+WNT3A
+SCARB2
+SERPINF1
+GORAB
+CRTAP

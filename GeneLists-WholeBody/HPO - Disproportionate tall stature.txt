@@ -1,0 +1,27 @@
+HPO - Disproportionate tall stature
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+COL2A1
+TGFBR1
+TGFBR2
+ATP6V1A
+AKT1
+ATP6V1E1
+ZNF469
+SMS
+UPF3B
+FBN1
+FBN2
+RET
+PTEN
+PLOD1
+ZDHHC9
+CBS
+NSD2
+NELFA
+LOX
+MED12
+HPGD
+ASXL3
+LETM1
+SMAD3
+FKBP14

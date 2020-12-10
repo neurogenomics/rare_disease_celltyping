@@ -1,0 +1,30 @@
+HPO - Varicose veins
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+VEGFC
+COL3A1
+EPHB4
+VHL
+FIBP
+GJC2
+SLC29A3
+FLT4
+KIF5A
+RREB1
+SLC12A3
+COMT
+SEC24C
+RASA1
+G6PC3
+CLCNKB
+ARVCF
+ENG
+PIK3CA
+JMJD1C
+TBX1
+PIEZO1
+NOTCH3
+SMAD3
+UFD1
+HIRA
+GP1BB
+FOXC2

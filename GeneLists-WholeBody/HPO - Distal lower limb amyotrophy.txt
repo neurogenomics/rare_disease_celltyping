@@ -1,0 +1,27 @@
+HPO - Distal lower limb amyotrophy
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CUL4B
+TPM3
+MAG
+BICD2
+KLC2
+MFN2
+TRNE
+FLNC
+GJB1
+HINT1
+KIF5A
+FLRT1
+LMNA
+DYSF
+TFG
+INF2
+FGD4
+TCAP
+CPT1C
+KDM5C
+HSPB1
+RYR1
+ATL1
+ATXN3
+ADSS1

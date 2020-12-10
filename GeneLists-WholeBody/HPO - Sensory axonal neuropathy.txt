@@ -1,0 +1,27 @@
+HPO - Sensory axonal neuropathy
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+ATL3
+KLC2
+MFN2
+NEFH
+GAN
+TWNK
+GJC2
+FGF14
+HINT1
+PIEZO2
+FXN
+PLD3
+CCT5
+CTSD
+PLEKHG4
+PRICKLE1
+ATP13A2
+HNRNPA1
+AIFM1
+TK2
+HNRNPA2B1
+DGUOK
+POLG
+CAPN1
+VCP

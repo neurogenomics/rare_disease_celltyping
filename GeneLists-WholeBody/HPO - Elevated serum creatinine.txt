@@ -1,0 +1,24 @@
+HPO - Elevated serum creatinine
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+WDR19
+CFI
+HBB
+CFH
+TMEM260
+ELP1
+CFHR1
+MUC1
+C3
+HNF1B
+THBD
+CCND1
+HPRT1
+CD46
+CFB
+DBH
+COQ7
+ADAMTS13
+INVS
+FAN1
+CFHR3
+PKD2

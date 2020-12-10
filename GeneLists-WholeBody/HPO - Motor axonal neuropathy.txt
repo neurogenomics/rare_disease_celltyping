@@ -1,0 +1,25 @@
+HPO - Motor axonal neuropathy
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+KLC2
+PLEKHG4
+GMPPA
+PEX10
+KCNK9
+HNRNPA1
+AIFM1
+GAN
+TRAPPC11
+HNRNPA2B1
+XK
+ALAD
+C19ORF12
+HINT1
+AAAS
+VCP
+TBCD
+COASY
+HARS1
+PNPLA6
+CTDP1
+WDR48
+SPG7

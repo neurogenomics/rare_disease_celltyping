@@ -1,0 +1,26 @@
+HPO - Vaginal fistula
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+WDR34
+MKKS
+WDR35
+CCNQ
+IL10RB
+TCOF1
+MNX1
+JAK3
+POR
+UBR1
+WDR60
+POLR1D
+DYNC2H1
+TCTN3
+DACT1
+SALL4
+LONP1
+FREM1
+IFT80
+RECQL4
+KIF7
+SALL1
+POLR1C
+SPINT2

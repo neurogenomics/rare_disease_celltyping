@@ -1,0 +1,25 @@
+HPO - Sudden death
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CALM1
+HRAS
+TNNT2
+CACNA1C
+TRDN
+TTN
+CASQ2
+MLXIPL
+TAB2
+AKAP10
+JUP
+MYH6
+MYH7
+SOST
+ELN
+EYA4
+HADHA
+RYR2
+MYLK2
+SMAD3
+TECRL
+CAV3
+SCN5A

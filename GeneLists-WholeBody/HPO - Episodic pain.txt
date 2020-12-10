@@ -1,0 +1,35 @@
+HPO - Episodic pain
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CDKN1A
+HEXB
+CDKN1B
+VHL
+CDKN2B
+CDKN2C
+FLI1
+DLST
+DAXX
+CDC73
+TXNRD2
+RET
+FH
+MDH2
+ATRX
+GNE
+SDHAF2
+TMEM127
+INHBA
+NNT
+F12
+STAR
+ESR1
+MAX
+SDHA
+SDHB
+MRAP
+LPL
+SDHC
+KIF1B
+SDHD
+MEN1
+MC2R

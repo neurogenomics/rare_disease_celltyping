@@ -1,0 +1,23 @@
+HPO - Neurofibrillary tangles
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+NPC1
+PSEN2
+MPO
+TREM2
+A2M
+ITM2B
+HFE
+MAPT
+ABCA7
+PLA2G6
+NOS3
+GRN
+PLAU
+VPS13C
+NPC2
+TOMM40
+PRNP
+APOE
+SORL1
+APP
+PSEN1

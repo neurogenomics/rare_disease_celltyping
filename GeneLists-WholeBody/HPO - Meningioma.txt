@@ -1,0 +1,28 @@
+HPO - Meningioma
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CHEK2
+SMARCB1
+SMARCE1
+AKT1
+CCM2
+KLLN
+GNAS
+NF1
+NRAS
+LMNA
+PTEN
+PDCD10
+NF2
+PDGFB
+SUFU
+MN1
+PIK3CA
+NTHL1
+SEC23B
+SDHB
+ARMC5
+SDHC
+SDHD
+KRIT1
+BAP1
+WRN

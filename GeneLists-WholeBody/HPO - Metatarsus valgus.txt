@@ -1,0 +1,24 @@
+HPO - Metatarsus valgus
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PTEN
+B4GAT1
+COL4A1
+POMT2
+POMK
+DAG1
+GDF5
+POMGNT1
+FKTN
+FKRP
+CRPPA
+HSPG2
+AKT1
+BMPR1B
+INPP5K
+SIL1
+B3GALNT2
+RXYLT1
+POMT1
+TGDS
+POMGNT2
+LARGE1

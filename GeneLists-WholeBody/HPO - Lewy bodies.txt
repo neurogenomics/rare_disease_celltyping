@@ -1,0 +1,24 @@
+HPO - Lewy bodies
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+FBXO7
+NR4A2
+GBA
+ATXN2
+MAPT
+GIGYF2
+ATXN8OS
+PLA2G6
+GRN
+VPS13C
+C19ORF12
+DNAJC13
+VPS35
+SNCAIP
+RAB39B
+GLUD2
+SNCB
+TBP
+EIF4G1
+LRRK2
+ADH1C
+SNCA

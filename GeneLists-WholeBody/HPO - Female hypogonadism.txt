@@ -1,0 +1,28 @@
+HPO - Female hypogonadism
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+PROK2
+AIRE
+CDH23
+BMP4
+FGF8
+ANOS1
+TAC3
+FGFR1
+CHD7
+TACR3
+ATM
+AIP
+KISS1R
+NSMF
+PROKR2
+WDR11
+KISS1
+GNRH1
+GNRHR
+HS6ST1
+PRLR
+FGF17
+DUSP6
+FSHB
+SPRY4
+MEN1

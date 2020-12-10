@@ -1,0 +1,23 @@
+HPO - Abnormality of hand joint mobility
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+BRAF
+HRAS
+FGD1
+COL5A1
+NFASC
+COL6A1
+COL6A2
+KCNH1
+COL6A3
+NLRP1
+IFITM5
+OTUD6B
+SMS
+RPS6KA3
+COL12A1
+VCP
+FBN1
+GORAB
+PLAA
+COL1A2
+PTDSS1

@@ -1,0 +1,25 @@
+HPO - Epileptic spasms
+Downloaded on 31stOct2017 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+KIF1A
+SMARCA2
+EHMT1
+PLCB1
+SLC25A22
+CDKL5
+KCNQ2
+SIK1
+ZNHIT3
+GUF1
+TSC1
+TSC2
+ARID1B
+SPTAN1
+SCN2A
+ST3GAL3
+GRIN2B
+RNU4ATAC
+ARX
+STXBP1
+PIGA
+ALG13
+SCN8A

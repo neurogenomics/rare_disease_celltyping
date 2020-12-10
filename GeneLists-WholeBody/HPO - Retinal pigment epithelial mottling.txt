@@ -1,0 +1,23 @@
+HPO - Retinal pigment epithelial mottling
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+RLBP1
+ELOVL4
+GUCA1A
+RDH5
+ERCC8
+PRPH2
+PROM1
+CNGA3
+ATF6
+CACNA2D4
+RPGR
+ABCA4
+GUCY2D
+SELENOI
+CTNS
+PDE6C
+CNGB3
+RHO
+GNAT2
+ATP6
+PDE6H

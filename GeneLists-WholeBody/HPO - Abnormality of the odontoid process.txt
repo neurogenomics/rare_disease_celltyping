@@ -1,0 +1,30 @@
+HPO - Abnormality of the odontoid process
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+COL2A1
+FGD1
+RMRP
+FLNA
+TRPV4
+FLNB
+LONP1
+MESP2
+DYM
+ARSB
+GALNS
+COMP
+FN1
+DKK1
+GLB1
+IDUA
+EIF2AK3
+GUSB
+COG4
+NFIX
+LFNG
+GNPTAB
+BGN
+DDR2
+HES7
+DLL3
+RAB33B
+TRAPPC2

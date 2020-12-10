@@ -1,0 +1,28 @@
+HPO - Stenosis of the external auditory canal
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+TBX15
+POR
+PORCN
+SIX5
+FGFRL1
+RPL26
+COL7A1
+CTBP1
+MAFB
+SALL4
+SOST
+GNAI3
+FGFR2
+B3GLCT
+EYA1
+COL25A1
+SIX1
+CHN1
+WHCR
+NSD2
+GMNN
+MED12
+EDN1
+LETM1
+EDNRA
+CPLX1

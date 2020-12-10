@@ -1,0 +1,26 @@
+HPO - Dyschromatopsia
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+GUCA1A
+OPN1SW
+OPN1LW
+TMEM126A
+PRPH2
+PROM1
+DNM1L
+TK2
+CNGA3
+OPA3
+ATF6
+BEST1
+OPA1
+ACO2
+NR2E3
+FGF14
+POLG
+RPGR
+GUCY2D
+PDE6C
+CNGB3
+OPN1MW
+GNAT2
+PDE6H

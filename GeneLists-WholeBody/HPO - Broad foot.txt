@@ -1,0 +1,33 @@
+HPO - Broad foot
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+XYLT1
+NSD1
+FGD1
+BBS1
+PHF6
+LMBR1
+PSAT1
+MASP1
+BMPR1B
+CAVIN1
+BSCL2
+FGFR1
+EED
+B3GLCT
+DYM
+SUZ12
+CAV1
+AIP
+PPARG
+GPR101
+GPC3
+EZH2
+CCDC28B
+TBL1XR1
+FOS
+PTH1R
+PHGDH
+NLRP3
+GDF6
+AGPAT2
+GPC4

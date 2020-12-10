@@ -1,0 +1,23 @@
+HPO - Hyperparathyroidism
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+CDKN1A
+CYP2R1
+CDKN1B
+CDKN2B
+CDKN2C
+ACTG2
+CASR
+GNA11
+SLC26A4
+KCNJ10
+AP2S1
+OCRL
+CDC73
+CYP27B1
+GNAS
+FOXI1
+RET
+MEN1
+SLC12A1
+VDR
+GCM2

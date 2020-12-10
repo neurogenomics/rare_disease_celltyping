@@ -1,0 +1,28 @@
+HPO - Esophageal atresia
+Downloaded on 30thSept2019 from goo.gl/1qvFo7 and processed in process_hpo_to_genelists.r
+SOX2
+SOX3
+WDR35
+MYCN
+ITGA6
+RMRP
+WDR60
+FANCB
+FANCL
+FGFR1
+CHD7
+FGFR2
+OTX2
+IFT80
+ERCC4
+PLEC
+WDR34
+PROKR2
+DYNC2H1
+ITGB4
+HESX1
+SEMA3E
+ARNT2
+PAH
+SIX6
+EFTUD2
