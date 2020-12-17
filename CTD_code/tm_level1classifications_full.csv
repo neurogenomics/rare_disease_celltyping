@@ -1,0 +1,36 @@
+﻿Level1Classification,L1Combinations
+Bladder cells,"bladder cell_Bladder, bladder urothelial cell_Bladder"
+Epithelial cells,"epithelial cell_Trachea, epithelial cell of lung_Lung, epithelial cell of proximal tubule_Kidney, epithelial cell of large intestine_Large_Intestine, kidney collecting duct epithelial cell_Kidney, ciliated columnar cell of tracheobronchial tree_Lung, luminal epithelial cell of mammary gland_Mammary_Gland"
+B cells,"B cell_Fat, B cell_Lung, B cell_Limb_Muscle, B cell_Marrow, B cell_Spleen, B cell_Liver, lymphocyte_Diaphragm, leukocyte_Thymus, leukocyte_Kidney, naive B cell_Marrow"
+T cells,"T cell_Fat, T cell_Lung, T cell_Limb_Muscle, T cell_Spleen, regulatory T cell_Marrow"
+Endothelial cells,"endothelial cell_Brain_Non-Myeloid, endothelial cell_Fat, endothelial cell_Trachea, endothelial cell_Kidney, endothelial cell_Pancreas, endothelial cell_Limb_Muscle, endothelial cell_Mammary_Gland, endothelial cell of hepatic sinusoid_Liver, endothelial cell_Heart, endothelial cell_Aorta, lung endothelial cell_Lung, endothelial cell_Diaphragm, endocardial cell_Heart"
+Pancreatic islet cells,"pancreatic A cell_Pancreas, type B pancreatic cell_Pancreas, pancreatic acinar cell_Pancreas, pancreatic PP cell_Pancreas, pancreatic D cell_Pancreas"
+Pancreatic non-islet cells,"pancreatic ductal cell_Pancreas, pancreatic stellate cell_Pancreas"
+Epidermal cells,"epidermal cell_Skin, basal cell of epidermis_Skin, stem cell of epidermis_Skin, keratinocyte stem cell_Skin, basal cell_Mammary_Gland, basal cell of epidermis_Tongue, keratinocyte_Tongue"
+Astrocytes,"Bergmann glial cell_Brain_Non-Myeloid, astrocyte_Brain_Non-Myeloid"
+Neurons,neuron_Brain_Non-Myeloid
+Microglia,microglial cell_Brain_Myeloid
+Immature B cells,"precursor B cell_Marrow, immature B cell_Marrow, late pro-B cell_Marrow"
+Natural killer cells,"natural killer cell_Fat, natural killer cell_Lung, mature natural killer cell_Marrow, natural killer cell_Liver"
+Erythrocytes,erythrocyte_Aorta
+Mesenchymal cells,"mesenchymal stem cell of adipose_Fat, mesenchymal cell_Trachea, mesenchymal stem cell_Limb_Muscle, mesenchymal stem cell_Diaphragm, fibroblast_Heart, fibroblast_Aorta, stromal cell_Lung, stromal cell_Mammary_Gland, myofibroblast cell_Heart"
+Unclassified myeloid cells,"myeloid cell_Fat, blood cell_Trachea, myeloid cell_Lung, leukocyte_Pancreas, granulocytopoietic cell_Marrow, professional antigen presenting cell_Aorta"
+Immature T cells,"immature T cell_Marrow, immature T cell_Thymus, DN1 thymic pro-T cell_Thymus"
+Unclassified leukocytes,"leukocyte_Skin, leukocyte_Lung, leukocyte_Heart"
+Immature natural killer T cells,immature NK T cell_Marrow
+Macrophages,"macrophage_Kidney, macrophage_Limb_Muscle, macrophage_Spleen, macrophage_Diaphragm, macrophage_Marrow, macrophage_Brain_Myeloid"
+Cardiac muscle cells,cardiac muscle cell_Heart
+Smooth muscle cells,smooth muscle cell_Heart
+Cells of the intestinal lining,"Brush cell of epithelium proper of large intestine_Large_Intestine, enterocyte of epithelium of large intestine_Large_Intestine, enteroendocrine cell_Large_Intestine"
+Kupffer cells,Kupffer cell_Liver
+Hepatocytes,hepatocyte_Liver
+Granulocytes,granulocyte_Marrow
+Basophils,basophil_Marrow
+Progenitor immune cells (Marrow),"Slamf1-positive multipotent progenitor cell_Marrow, megakaryocyte-erythroid progenitor cell_Marrow, Slamf1-negative multipotent progenitor cell_Marrow, common lymphoid progenitor_Marrow, granulocyte monocyte progenitor cell_Marrow, hematopoietic precursor cell_Marrow"
+Goblet cells,large intestine goblet cell_Large_Intestine
+Monocytes,"monocyte_Marrow, monocyte_Lung, classical monocyte_Lung"
+Unclassified Cells,"NA_Fat, NA_Heart, NA_Lung"
+Satellite cells,"skeletal muscle satellite cell_Limb_Muscle, skeletal muscle satellite stem cell_Diaphragm"
+Pericytes,brain pericyte_Brain_Non-Myeloid
+Immature natural killer cells,"immature natural killer cell_Marrow, pre-natural killer cell_Marrow"
+Oligodendrocyte and related cells,"oligodendrocyte precursor cell_Brain_Non-Myeloid, oligodendrocyte_Brain_Non-Myeloid"
