@@ -1,23 +1,17 @@
----
-title: "R Notebook"
-output: html_notebook
----
+#Full code to generate ctd file containing level 1 and 2 cell annotations for the Tabula Muris dataset.
+#Adapted from initial code written by Zijing Liu.
 
-```{r}
 library(stringr)
 library(xlsx)
 library(readxl)
-```
 
-Full code to generate level 1 and level 2 ctd lists
-```{r}
-annot <- read.csv("annotations_facs.csv")
-f_names <- dir(path = "FACS")
+annot <- read.csv("annotations_facs.csv") #Found on the original upload for the Tabula Muris data
+f_names <- dir(path = "FACS") #Requires filepath "FACS" containing all tm FACS data
 
 levels(annot$cell_ontology_class) <- c(levels(annot$cell_ontology_class), "NA")
-annot$cell_ontology_class[which(annot$cell_ontology_class == "")] <- "NA"
+annot$cell_ontology_class[which(annot$cell_ontology_class == "")] <- "NA" #Unlabeled cells -> NA
 
-#Generating level 2 data - remains unchanged from original code essentially
+###Generating level 2 data - remains unchanged from original code (written by Zijing Liu) aside from some label changes.
 
 alpha = 0.05
 
@@ -78,10 +72,11 @@ ctd[[2]]$annot <- annot$cell_ontology_class
 
 
 
-#Generating level 1 data - done by pulling mean row values from the level 2 data according to groupings of cells found in "tm_level1classifications_full" excel.
+###Generating level 1 data - done by pulling mean row values from the level 2 data according to groupings of cells found in "tm_level1classifications_full" excel.
 
 Level1Data <- read_excel("tm_level1classifications_full.xlsx")
 
+#Generating annotation labels by making a new annot column representing each individual cell's level 1 class.
 annot$cell_ontology_class_with_tissue <- annot$cell_ontology_class
 for(i in 1:length(annot$cell_ontology_class_with_tissue)){
   annot$cell_ontology_class_with_tissue[i] <- paste(annot$cell_ontology_class_with_tissue[i], annot$tissue[i], sep = "_")
@@ -94,11 +89,11 @@ for(i in 1:length(Level1Data$Level1Classification)){
   annot$cell_ontology_class_l1[which(annot$cell_ontology_class_l1 %in% currentCells)] <- Level1Data$Level1Classification[i]
 }
 
-totall1 <- unique(annot$cell_ontology_class_l1)
+totall1 <- unique(annot$cell_ontology_class_l1) #Full list of level 1 classifications
 
-#Dataframe of level 2 cell:gene data formed from a matrix with columns = level 1 groups and rows = gene names
+#Dataframe of level 2 data formed on a matrix with columns = level 1 groups (totall1) and rows = gene names (rownames(x))
 
-a <- matrix(0, ncol = length(totall1), nrow = nrow(x))
+a <- matrix(0, ncol = length(totall1), nrow = nrow(x)) #(a, b) is essentially a level 1 version of (x, y) (above)
 b <- data.frame(a)
 names(b) <- totall1
 rownames(b) <- rownames(x)
@@ -107,7 +102,7 @@ b_log_nz <- b
 b_cpm_nz <- b
 
 for(k in 1:length(Level1Data$Level1Classification)){
-  currentCells <- unlist(strsplit(Level1Data$L1Combinations[k], ", "))
+  currentCells <- unlist(strsplit(Level1Data$L1Combinations[k], ", ")) #Pulling level 1 groupings into lists of cells
   cid <- which(names(x) %in% currentCells)
   if(length(currentCells) < 2){
     b[, k] <- x[, cid]
@@ -131,11 +126,11 @@ for(k in 1:length(Level1Data$Level1Classification)){
   }
 }
 
-#Same as level 2 assignment, becomes ctd[[1]] and then full ctd is saved
 
 normalised_meanExp_l1 = t(t(b) * (1/colSums(b)))
 specificityl1 = normalised_meanExp_l1 / (apply(normalised_meanExp_l1, 1, sum) + 0.000000000001)
 
+#Level 1 data becomes ctd[[1]]
 ctd[[1]]$mean_exp <- b
 #ctd[[1]]$mean_exp_nz <- b_cpm_nz
 #ctd[[1]]$log_mean_exp <- b_log
@@ -143,5 +138,4 @@ ctd[[1]]$mean_exp <- b
 ctd[[1]]$specificity <- specificityl1
 ctd[[1]]$annot <- annot$cell_ontology_class_l1
 
-save(ctd, file = "ctd_tm_l1l2.rda")
-```
+save(ctd, file = "ctd_tm_l1l2.rda") #Full ctd containing levels 1 + 2 saved.
