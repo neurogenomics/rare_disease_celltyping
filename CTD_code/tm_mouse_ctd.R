@@ -103,27 +103,19 @@ b_log_nz <- b
 b_cpm_nz <- b
 
 for(k in 1:ncol(b)){
-  currentCells <- unlist(strsplit(Level1Data$L1Combinations[which(Level1Data$Level1Classifcation == colnames(b)[k])], ", "))
+  currentCells <- unlist(strsplit(Level1Data$L1Combinations[which(Level1Data$Level1Classification == colnames(b)[k])], ", "))
   cid <- which(colnames(x) %in% currentCells)
   if(length(currentCells) < 2){
     b[, k] <- x[, cid]
-    #b_log[, k] <- y_log[, cid]
-    #b_log_nz[, k] <- b_log[, k]
-    #b_cpm_nz[, k] <- b[, k]
-    #nz_rate_b <- (b_log[, cid] > 0)
-    #d_nz <- which(nz_rate_b > alpha)
-    #b_log_nz[d_nz, k] <- b_log_nz[d_nz, k] / nz_rate_b[d_nz]
-    #b_cpm_nz[d_nz, k] <- b_cpm_nz[d_nz, k] / nz_rate_b[d_nz]
+    b_log[, k] <- y_log[, cid]
+    b_log_nz[, k] <- y_nz[, cid]
+    b_cpm_nz[, k] <- y_cpm_nz[, cid]
   }
   else{
     b[, k] <- rowMeans(x[, cid])
-    #b_log[, k] <- rowMeans(y_log[, cid])
-    #b_log_nz[, k] <- b_log[, k]
-    #b_cpm_nz[, k] <- b[, k]
-    #nz_rate_b <- (b_log[, cid] > 0)
-    #d_nz <- which(nz_rate_b > alpha)
-    #b_log_nz[d_nz, k] <- b_log_nz[d_nz, k] / nz_rate_b[d_nz]
-    #b_cpm_nz[d_nz, k] <- b_cpm_nz[d_nz, k] / nz_rate_b[d_nz]
+    b_log[, k] <- rowMeans(y_log[, cid])
+    b_log_nz[, k] <- rowMeans(y_nz[, cid])
+    b_cpm_nz[, k] <- rowMeans(y_cpm_nz[, cid])
   }
 }
 
@@ -132,10 +124,10 @@ specificityl1 = normalised_meanExp_l1 / (apply(normalised_meanExp_l1, 1, sum) + 
 
 #Level 1 data becomes ctd[[1]]
 ctd[[1]]$mean_exp <- b
-#ctd[[1]]$mean_exp_nz <- b_cpm_nz
-#ctd[[1]]$log_mean_exp <- b_log
-#ctd[[1]]$log_mean_exp_nz <- b_log_nz
+ctd[[1]]$mean_exp_nz <- b_cpm_nz
+ctd[[1]]$log_mean_exp <- b_log
+ctd[[1]]$log_mean_exp_nz <- b_log_nz
 ctd[[1]]$specificity <- specificityl1
 ctd[[1]]$annot <- annot$cell_ontology_class_l1
 
-save(ctd, file = "ctd_tm_l1l2.rda") #Full ctd containing levels 1 + 2 saved.
+save(ctd, file = "ctd_tm_l1l2_with_nz.rda") #Full ctd containing levels 1 + 2 saved.
