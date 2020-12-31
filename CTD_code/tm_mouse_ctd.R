@@ -81,6 +81,7 @@ annot$cell_ontology_class_with_tissue <- annot$cell_ontology_class
 for(i in 1:length(annot$cell_ontology_class_with_tissue)){
   annot$cell_ontology_class_with_tissue[i] <- paste(annot$cell_ontology_class_with_tissue[i], annot$tissue[i], sep = "_")
 }
+
 annot$cell_ontology_class_l1 <- annot$cell_ontology_class_with_tissue
 
 for(i in 1:length(Level1Data$Level1Classification)){
@@ -89,21 +90,21 @@ for(i in 1:length(Level1Data$Level1Classification)){
   annot$cell_ontology_class_l1[which(annot$cell_ontology_class_l1 %in% currentCells)] <- Level1Data$Level1Classification[i]
 }
 
-totall1 <- unique(annot$cell_ontology_class_l1) #Full list of level 1 classifications
+totall1 <- unique(Level1Data$Level1Classification) #Full list of level 1 classifications
 
 #Dataframe of level 2 data formed on a matrix with columns = level 1 groups (totall1) and rows = gene names (rownames(x))
 
 a <- matrix(0, ncol = length(totall1), nrow = nrow(x)) #(a, b) is essentially a level 1 version of (x, y) (above)
 b <- data.frame(a)
-names(b) <- totall1
+colnames(b) <- totall1
 rownames(b) <- rownames(x)
 b_log <- b
 b_log_nz <- b
 b_cpm_nz <- b
 
-for(k in 1:length(Level1Data$Level1Classification)){
-  currentCells <- unlist(strsplit(Level1Data$L1Combinations[k], ", ")) #Pulling level 1 groupings into lists of cells
-  cid <- which(names(x) %in% currentCells)
+for(k in 1:ncol(b)){
+  currentCells <- unlist(strsplit(Level1Data$L1Combinations[which(Level1Data$Level1Classifcation == colnames(b)[k])], ", "))
+  cid <- which(colnames(x) %in% currentCells)
   if(length(currentCells) < 2){
     b[, k] <- x[, cid]
     #b_log[, k] <- y_log[, cid]
@@ -125,7 +126,6 @@ for(k in 1:length(Level1Data$Level1Classification)){
     #b_cpm_nz[d_nz, k] <- b_cpm_nz[d_nz, k] / nz_rate_b[d_nz]
   }
 }
-
 
 normalised_meanExp_l1 = t(t(b) * (1/colSums(b)))
 specificityl1 = normalised_meanExp_l1 / (apply(normalised_meanExp_l1, 1, sum) + 0.000000000001)
