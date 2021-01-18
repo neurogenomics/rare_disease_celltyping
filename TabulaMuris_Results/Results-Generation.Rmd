@@ -1,0 +1,78 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(EWCE)
+library(limma)
+library(rvest)
+library(rlist)
+library(stringr)
+
+load(file= "ctd_tm_l1l2_v3.rda") #Load CTD
+
+#Some gene symbols need correcting, this is achieved in EWCE with the following:
+if(!file.exists("MRK_List2.rpt")){
+  download.file("http://www.informatics.jax.org/downloads/reports/MRK_List2.rpt", destfile="MRK_List2.rpt")
+}
+ctd[[1]]$specificity <- fix.bad.mgi.symbols(ctd[[1]]$specificity, mrk_file_path="MRK_List2.rpt")
+ctd[[1]]$mean_exp <- fix.bad.mgi.symbols(ctd[[1]]$mean_exp, mrk_file_path="MRK_List2.rpt")
+
+genedata = read.delim("phenotype_to_genes.txt") #HPO annotation
+colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
+
+desiredPhenotypes <- as.list(unique(genedata$Phenotype)) #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
+
+data("mouse_to_human_homologs") #Part of EWCE
+m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol", "MGI.symbol")])
+
+PullGenes = function(phenotype, genedata){
+  geneListLoad = subset(genedata, Phenotype == phenotype)$Gene
+  return(geneListLoad)
+}
+
+RunEWCE = function(phenotype){
+  ctd = ctd
+  reps = 10000
+  level = 1
+  geneList = PullGenes(phenotype = phenotype, genedata = genedata)
+  y=1
+  mouse.hits = c("")
+  for(i in geneList){
+    if(i %in% m2h$HGNC.symbol){
+      mouse.hits[y] = i
+      y = y + 1
+    }
+  }
+  mouse.bg = unique(m2h$MGI.symbol)
+  mouse.hits = unique(m2h[m2h$HGNC.symbol %in% mouse.hits, "MGI.symbol"])
+  
+  #EWCE only works using lists of 3 or more genes.
+  if(length(mouse.hits) > 3){
+    full_results = bootstrap.enrichment.test(sct_data = ctd, hits = mouse.hits, bg = mouse.bg, reps = reps, annotLevel = level)
+    full_results$results = cbind(full_results$results, list = phenotype)
+    return(full_results$results)
+  }
+}
+
+all_results = lapply(desiredPhenotypes, RunEWCE)
+
+#Because EWCE only allows gene lists of 3 or more, some phenotypes will be skipped over in the final results list. This loop simply pulls out all the results for phenotypes that did work and stores them in a new list before saving.
+#"list" is the format for results that came out fine.
+all_results_two = c("")
+j = 1
+for(i in 1:9507){
+  if(((typeof(all_results[[i]]) == "list")) == TRUE){
+    all_results_two[j] = all_results[i]
+    j = j + 1
+  }
+}
+
+all_results_merged = data.table::rbindlist(all_results_two)
+
+all_results_merged$q = p.adjust(all_results_merged$p, method = "BH") #Went with BH for now
+
+save(all_results_merged, file = "all_results_merged.rda")
+```
+
