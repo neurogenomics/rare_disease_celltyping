@@ -21,6 +21,6 @@ list - Phenotype
 q - Adjusted p value, BH correction
 
 See "Results-Guide.rmd" for a template to analyse results. (Download "phenotype_to_genes.txt" from the HPO website to allow searching for key terms.)
-See "Results-Generation.rmd" for the code used to generate these results. (to be uploaded)
+See "Results-Generation.rmd" for the code used to generate these results.
 
 Level 1 annotations can be found under the CTD_code folder ("tm_level1classifications_full.xlsx").
