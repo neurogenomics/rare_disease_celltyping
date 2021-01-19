@@ -58,7 +58,7 @@ RunEWCE = function(phenotype){
 
 all_results = lapply(desiredPhenotypes, RunEWCE)
 
-#Because EWCE only allows gene lists of 3 or more, some phenotypes will be skipped over in the final results list. This loop simply pulls out all the results for phenotypes that did work and stores them in a new list before saving.
+#Because EWCE only allows gene lists of 3 or more, some phenotypes were skipped over in the final results list and instead saved as just "1". This loop simply pulls out all the results for phenotypes that did work and stores them in a new list before saving, to get around this error.
 #"list" is the format for results that came out fine.
 all_results_two = c("")
 j = 1
