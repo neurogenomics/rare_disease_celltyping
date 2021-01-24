@@ -19,7 +19,7 @@ if(!file.exists("MRK_List2.rpt")){
 #ctd[[1]]$mean_exp <- fix.bad.mgi.symbols(ctd[[1]]$mean_exp, mrk_file_path="MRK_List2.rpt")
 genedata = read.delim("phenotype_to_genes.txt") #HPO annotation
 colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
-desiredPhenotypes <- as.list(unique(genedata$Phenotype))[1234:1236] #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
+desiredPhenotypes <- as.list(unique(genedata$Phenotype)) #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
 data("mouse_to_human_homologs") #Part of EWCE
 m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol", "MGI.symbol")])
 PullGenes = function(phenotype, genedata){
