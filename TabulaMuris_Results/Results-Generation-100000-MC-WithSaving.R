@@ -1,9 +1,3 @@
----
-title: "R Notebook"
-output: html_notebook
----
-
-```{r}
 library(EWCE)
 library(limma)
 library(rvest)
@@ -51,22 +45,30 @@ RunEWCE = function(phenotype){
 }
 
 EWCEWrapper = function(phenotype){
-  phenotype_nospace = gsub(" ", "-", phenotype, fixed = TRUE)
+  #Replaced all forward slashes in phenotype names with "-SLASH-"
+  phenotype_nospace = gsub("/", "-SLASH-", phenotype, fixed = TRUE)
+  phenotype_nospace = gsub(" ", "-", phenotype_nospace, fixed = TRUE)
   filename = paste(phenotype_nospace, ".rda", sep = "")
   full_extension = paste("Output/", filename, sep = "")
+  checkNum = checkNum + 1
   if(!file.exists(full_extension)){
     result = RunEWCE(phenotype)
     assign(paste(phenotype_nospace, "tm_ewce", sep = "_"), result)
     resultname <- paste(phenotype_nospace, "tm_ewce", sep = "_")
     save(list = resultname, file = full_extension)
+    newDone = newDone + 1
     return(result)
   }
   else{
     result = load(file = full_extension)
+    existedDone = existedDone + 1
     return(result)
   }
 }
 
+checkNum = 0
+existedDone = 0
+newDone = 0
 all_results = mclapply(desiredPhenotypes, FUN = EWCEWrapper, mc.cores = 24)
 save(all_results, file = "all_results_NOTMERGED_240121.rda")
 #Because EWCE only allows gene lists of 3 or more, some phenotypes were skipped over in the final results list and instead saved as just "1". This loop simply pulls out all the results for phenotypes that did work and stores them in a new list before saving, to get around this error.
@@ -82,5 +84,3 @@ for(i in 1:length(all_results)){
 all_results_merged = data.table::rbindlist(all_results_two)
 all_results_merged$q = p.adjust(all_results_merged$p, method = "BH") #Went with BH for now
 save(all_results_merged, file = "all_results_merged_240121.rda")
-```
-
