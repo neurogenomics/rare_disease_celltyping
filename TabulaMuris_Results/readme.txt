@@ -24,6 +24,6 @@ q - Adjusted p value, BH correction
 
 See "Results-Guide.rmd" for a template to analyse results. (Download "phenotype_to_genes.txt" from the HPO website to allow searching for key terms.)
 See "Results-Generation.rmd" for the code used to generate results with 10,000 reps.
-See "Results-Generation-MC-WithSaves.rmd" for the code used to generate results with 100,000 reps, whilst saving individual results to a separate output folder.
+See "Results-Generation-100000-MC-WithSaving.rmd" for the code used to generate results with 100,000 reps, whilst saving individual results to a separate output folder.
 
 Level 1 annotations can be found under the CTD_code folder ("tm_level1classifications_full.xlsx").
