@@ -4,7 +4,7 @@ library(rvest)
 library(rlist)
 library(stringr)
 library(parallel)
-load(file= "ctd_tm_l1l2_GOOD.rda") #Load CTD
+load(file= "ctd_tm_l1l2_v3.rda") #Load CTD
 #Some gene symbols need correcting, this is achieved in EWCE with the following:
 if(!file.exists("MRK_List2.rpt")){
   download.file("http://www.informatics.jax.org/downloads/reports/MRK_List2.rpt", destfile="MRK_List2.rpt")
