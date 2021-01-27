@@ -4,7 +4,7 @@ library(rvest)
 library(rlist)
 library(stringr)
 library(parallel)
-load(file= "ctd_tm_l1l2_v3.rda") #Load CTD
+load(file= "ctd_tm_l1l2_GOOD.rda") #Load CTD
 #Some gene symbols need correcting, this is achieved in EWCE with the following:
 if(!file.exists("MRK_List2.rpt")){
   download.file("http://www.informatics.jax.org/downloads/reports/MRK_List2.rpt", destfile="MRK_List2.rpt")
@@ -49,7 +49,7 @@ EWCEWrapper = function(phenotype){
   phenotype_nospace = gsub("/", "-SLASH-", phenotype, fixed = TRUE)
   phenotype_nospace = gsub(" ", "-", phenotype_nospace, fixed = TRUE)
   filename = paste(phenotype_nospace, ".rda", sep = "")
-  full_extension = paste("Output/", filename, sep = "")
+  full_extension = paste("OutputNEW/", filename, sep = "")
   if(!file.exists(full_extension)){
     result = RunEWCE(phenotype)
     assign(paste(phenotype_nospace, "tm_ewce", sep = "_"), result)
@@ -64,7 +64,7 @@ EWCEWrapper = function(phenotype){
 }
 
 all_results = mclapply(desiredPhenotypes, FUN = EWCEWrapper, mc.cores = 24)
-save(all_results, file = "all_results_NOTMERGED_240121.rda")
+save(all_results, file = "all_results_NOTMERGED_260121.rda")
 #Because EWCE only allows gene lists of 3 or more, some phenotypes were skipped over in the final results list and instead saved as just "1". This loop simply pulls out all the results for phenotypes that did work and stores them in a new list before saving, to get around this error.
 #"list" is the format for results that came out fine.
 all_results_two = c("")
@@ -77,4 +77,5 @@ for(i in 1:length(all_results)){
 }
 all_results_merged = data.table::rbindlist(all_results_two)
 all_results_merged$q = p.adjust(all_results_merged$p, method = "BH") #Went with BH for now
-save(all_results_merged, file = "all_results_merged_240121.rda")
+save(all_results_merged, file = "all_results_merged_100000rep.rda")
+
