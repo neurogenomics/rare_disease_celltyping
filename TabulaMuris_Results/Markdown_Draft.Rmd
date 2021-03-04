@@ -139,13 +139,13 @@ For example, if we pull out any terms containing the word "heart", any containin
 Below, some basic terms associated with heart, circulation and glucose are used to pull phenotypes from the HPO. Then, the number of enrichments for each list of terms is graphed for each cell type in the dataset.
 
 ```{r, message = FALSE}
-HeartTerms <- c("(?i)heart", "(?i)atria", "(?i)aorta")
-CircTerms <- c("(?i)circulating", "circulate", "circulation")
-GlucTerms <- c("(?i)gluc", "(?i)glucose")
+HeartTerms <- c("(?i)heart|(?i)atria|(?i)aorta")
+CircTerms<- c("(?i)circulating|(?i)circulate|(?i)circulation")
+GlucTerms <- c("(?i)gluc|(?i)glucose")
 
-HeartPhenos <- unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = HeartTerms)])
-CircPhenos <- unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = CircTerms)])
-GlucPhenos <- unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = GlucTerms)])
+HeartPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = HeartTerms)]))
+CircPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = CircTerms)]))
+GlucPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = GlucTerms)]))
 
 HeartSums <- table(all_results_merged[all_results_merged$list %in% HeartPhenos & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1 & all_results_merged$sd_from_mean > 0, ]$CellType)
 CircSums <- table(all_results_merged[all_results_merged$list %in% CircPhenos & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1 & all_results_merged$sd_from_mean > 0, ]$CellType)
@@ -181,6 +181,8 @@ ggplot(combinedSumsPropMelt, aes(x = ct, y = value, fill = Group)) + geom_bar(st
   scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_y_continuous(breaks = pretty_breaks(), expand = expansion(mult = c(0, .1))) +
   theme(legend.position = c(0.25, 0.8))
+
+sum(combinedSumsMelt$value)
 ```
 In the above graph, it can be seen that for the 'heart' variable, the highest proportion of significantly enriched phenotypes is associated with 'cardiac muscle cells', the sole cell population taken from heart tissue in Tabula Muris.
 
@@ -387,7 +389,7 @@ Following on from where pancreatic phenotypes were linked with pancreatic cells 
 
 Consider the following as an example:
 
-1. Pull all HPO child terms falling under a set of similar branches (e.g. branches about the heart).
+1. Pull all HPO child terms falling under 'Abnormality of the cardiovascular system'.
 2. Subset results down to significant results for a specific cell type that could be reasonably associated with those phenotypes (e.g. cardiac muscle cells for heart phenotypes).
 3. Determine how many of the phenotype terms that were pulled do indeed have significant enrichment for this cell type.
 4. Determine whether these enrichments make sense, and whether those enriched terms that were not child terms of the chosen branches are expected or possibly areas of interest.
@@ -395,7 +397,11 @@ Consider the following as an example:
 ```{r, message = FALSE}
 #First, we need to pull the list of phenotypes falling under a set of broad, but related terms
 
-HeartTerms <- c("Abnormal heart morphology", "Abnormal cardiomyocyte morphology", "Abnormality of the cardiovascular system", "Neoplasm of the heart", "Abnormality of the vasculature") # These are some terms manually located in the HPO that are clearly related to the heart
+#HeartTerms <- c("Abnormal heart morphology", "Abnormal cardiomyocyte morphology", "Abnormality of the cardiovascular system", "Neoplasm of the heart", "Abnormality of the vasculature") # These are some terms manually located in the HPO that are clearly related to the heart
+
+#HeartTerms <- unique(c(HeartTerms, unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = "(i?)heart")])))
+
+HeartTerms <- "Abnormality of the cardiovascular system"
 
 PULLCHILDTERMS <- function(TERM){
   INITIALID <- genedata$ID[which(genedata$Phenotype == TERM)]
@@ -422,6 +428,11 @@ all_cardiac_signif <- subset(all_results_merged, CellType == "Cardiac muscle cel
 
 #We can show how many of these are contained within the list of heart phenotypes we pulled, and how many are not.
 ```
+```{r}
+HeartTerms
+```
+
+
 
 * The total number of significant phenotype-cell associations for cardiac muscle cells is `r nrow(all_cardiac_signif)`.
 
@@ -439,9 +450,41 @@ TrueHeart <- TrueHeart[order(TrueHeart$fold_change, decreasing = TRUE), ]
 OtherHeart <- all_cardiac_signif[!which(all_cardiac_signif$list %in% df$Term), ]
 OtherHeart <- OtherHeart[order(OtherHeart$fold_change, decreasing = TRUE), ]
 
-TrueHeart[1:10,]
-OtherHeart[1:10,]
+TrueHeart
+patterns <- c("(?i)muscle|(?i)exercise|(?i)weakness|(?i)fatigue")
+patternList <- as.character(OtherHeart$list[str_detect(OtherHeart$list, pattern = patterns)])
+OtherHeart[which(OtherHeart$list %in% patternList)] #Which other heart terms contain the word muscle
+OtherHeart[!which(OtherHeart$list %in% patternList)] #and which don't
 ```
+
+We can plot the results as a pie chart to show the proportions of different types of terms associated with 'Cardiac muscle cells':
+
+```{r}
+HeartDF <- data.frame(matrix(ncol = 3, nrow = 1))
+colnames(HeartDF) <- c("Cardiovascular terms", "Muscle and exercise terms", "Other terms")
+rownames(HeartDF) <- c("value")
+
+HeartDF$`Cardiovascular terms` <- nrow(TrueHeart)
+HeartDF$`Muscle and exercise terms` <- nrow(OtherHeart[which(OtherHeart$list %in% patternList)])
+HeartDF$`Other terms` <- nrow(OtherHeart[!which(OtherHeart$list %in% patternList)])
+
+HeartMelt <- melt(HeartDF)
+
+HeartBar <- ggplot(HeartMelt, aes(x = "", y = value, fill = variable)) +
+  geom_bar(width = 1, stat = "identity") +
+  labs(x = "Cardiac muscle cell enrichments", y = "Number of enrichments")
+
+HeartPie <- HeartBar +
+  coord_polar("y", start = 0) +
+  labs(title = "Categories of HPO terms enriched in 'Cardiac muscle cells' (%)", fill = "Term type") +
+  geom_text(aes(label = paste(round(value/sum(value) * 100, 1), "%")), position = position_stack(vjust = 0.5)) +
+  theme_cowplot() +
+  theme(plot.title = element_text(size = 12), axis.title.y = element_blank(), axis.title.x = element_blank(), axis.line = element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) +
+  labs(caption = paste("Total enrichments for 'Cardiac muscle cells': ", sum(HeartMelt$value)))
+
+HeartPie
+```
+
 
 
 The list of terms that originate from branches of the heart terms can be designiated 'true heart terms', whereas those making up the other table are 'alternative heart terms'.
