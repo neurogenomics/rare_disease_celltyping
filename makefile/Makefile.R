@@ -6,7 +6,7 @@ source("Makefile/source/Writeup_Gen.R")
 
 # User Inputs
 output_ctd_file_name = "Makefile/ctd_tm_l1l2_nz.rda"
-merged_results_rda_filename = "resultsTest_merged.rda"
+merged_results_rda_filename = "resultsTest_merged.rda" # <- "all_results_merged_fixednames.rda" (use these results to test the final knit)
 unmerged_results_rda_filename = "resultsTest_unmerged.rda"
 phenotype_to_genes_txt_file = "phenotype_to_genes.txt" # don't include Makefile/ before filename
 r_markdown_file = "Makefile/Writeup.Rmd"

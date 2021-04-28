@@ -13,5 +13,5 @@ render_writeup = function (markdown_file, writeup_name,
     date = date,
     results_data = results,
     phenotype_to_genes_txt_file = phenotype2genes),
-  output_file = paste0(writeup_name, ".pdf"))
+  output_file = paste0(writeup_name ))#, ".pdf"))
 }
