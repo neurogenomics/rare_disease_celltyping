@@ -8,6 +8,13 @@ source("source/Writeup_Gen.R")
 title = "Rare Disease EWCE Tabula Muris"
 date = "06/05/2021"
 author = "author"
+# Choose search terms for section: "Searching for enrichments in phenotypes.."
+keyword_1 = "heart"
+keyword_1_search_terms = c("heart","atria","aorta")
+keyword_2 = "circulating"
+keyword_2_search_terms = c("circulating","circulate","circulation")
+keyword_3 = "glucose"
+keyword_3_search_terms = c("gluc","glucose")
 generate_ctd = FALSE
 generate_results = FALSE
 
@@ -38,11 +45,17 @@ if(generate_results) {
 }
 
 # Render Writeup
-render_writeup(r_markdown_file,
-               writeup_name = paste0(str_replace_all(title, " ","_"),"_",str_replace_all(date, "/","")),
+render_writeup(markdown_file = r_markdown_file,
+               writeup_name =  paste0(str_replace_all(title, " ","_"),"_",str_replace_all(date, "/","")),
                title = title, author = author, date = date,
                results = merged_results_rda_filename,
                phenotype2genes = phenotype_to_genes_txt_file,
+               keyword_1 = keyword_1,
+               keyword_1_search_terms = keyword_1_search_terms,
+               keyword_2 = keyword_2,
+               keyword_2_search_terms = keyword_2_search_terms,
+               keyword_3 = keyword_3,
+               keyword_3_search_terms = keyword_3_search_terms,
                working_directory = working_directory)
 
 
@@ -50,22 +63,8 @@ render_writeup(r_markdown_file,
 
 
 
-
 ## testing
-load("results/all_results_merged_fixednames.rda")
+#load("results/all_results_merged_fixednames.rda")
+#genedata = read.delim(phenotype_to_genes_txt_file, skip =1) #HPO annotation
+#colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
 
-ResultsSignif <- subset(all_results_merged, q < 0.05 & fold_change > 1 & sd_from_mean > 0) #All results found to be significant at p=0.05, showing an increase in gene expression for a given cell type.
-ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE), ][1:10,]
-
-test = ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE), ][1,]
-
-
-
-EnrichedTable <- table(all_results_merged[which(all_results_merged$q < 0.05 & all_results_merged$fold_change > 1 & all_results_merged$sd_from_mean > 0), ]$CellType)
-EnrichedDataFrame <- data.frame(CellType = names(EnrichedTable), ThisValue = as.numeric(EnrichedTable))
-
-top2_cells = EnrichedDataFrame[order(EnrichedDataFrame$ThisValue, decreasing = TRUE),][1:2,]
-
-"(?i)circulating|(?i)circulate|(?i)circulation"
-test = c("circulating", "circulate", "circulation")
-test = paste(paste0("(?i)", test), collapse = "|")

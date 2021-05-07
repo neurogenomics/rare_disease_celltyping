@@ -7,11 +7,11 @@ params:
   results_data: "Results_merged.rda"
   phenotype_to_genes_txt_file: "phenotype_to_genes.txt"
   keyword_1: "heart"
-  similar_keyword_1: c("heart","atria","aorta")
+  keyword_1_search_terms: c("heart","atria","aorta")
   keyword_2: "circulating"
-  similar_keyword_2: c("circulating","circulate","circulation")
+  keyword_2_search_terms: c("circulating","circulate","circulation")
   keyword_3: "glucose"
-  similar_keyword_3: c("gluc","glucose")
+  keyword_3_search_terms: c("gluc","glucose")
 ---
 
 ```{r setup, include=FALSE}
@@ -83,6 +83,9 @@ Below is a summary the ten 'strongest' results, represented as those association
 ```{r, message = FALSE}
 ResultsSignif <- subset(all_results_merged, q < 0.05 & fold_change > 1 & sd_from_mean > 0) #All results found to be significant at p=0.05, showing an increase in gene expression for a given cell type.
 ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE), ][1:10,]
+```
+
+```{r, include = FALSE}
 most_sig = ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE),][1,]
 ```
 
@@ -146,14 +149,19 @@ The above table shows that the highest number of significant enrichments is seen
 
 It is possible to pull phenotypes from the HPO that contain specific words, phrases or terms. Following this, different sets of phenotypes can be compared against one-another to show where they fall in relation to cell populations, where enrichments are present.
 
-For example, if we pull out any terms containing the word "heart", any containing the word "circulating", and any containing the word "glucose", we can search for any enrichments associated with these phenotypes and graph them according to cell types for comparison.
+For example, if we pull out any terms containing the word "`r params$keyword_1`", any containing the word "`r params$keyword_2`", and any containing the word "`r params$keyword_3`", we can search for any enrichments associated with these phenotypes and graph them according to cell types for comparison.
 
-Below, some basic terms associated with heart, circulation and glucose are used to pull phenotypes from the HPO. Then, the number of enrichments for each list of terms is graphed for each cell type in the dataset.
+Below, some basic terms associated with "`r params$keyword_1`", "`r params$keyword_2`" and "`r params$keyword_3`" are used to pull phenotypes from the HPO. Then, the number of enrichments for each list of terms is graphed for each cell type in the dataset.  
+
+
+* **`r params$keyword_1` associated terms:** `r paste(params$keyword_1_search_terms, collapse = ", ")`  
+* **`r params$keyword_2` associated terms:** `r paste(params$keyword_2_search_terms, collapse = ", ")`  
+* **`r params$keyword_3` associated terms:** `r paste(params$keyword_3_search_terms, collapse = ", ")`  
 
 ```{r, message = FALSE}
-HeartTerms <- paste(paste0("(?i)", params$similar_keyword_1), collapse = "|")
-CircTerms<- paste(paste0("(?i)", params$similar_keyword_2), collapse = "|")
-GlucTerms <- paste(paste0("(?i)", params$similar_keyword_3), collapse = "|")
+HeartTerms <- paste(paste0("(?i)", params$keyword_1_search_terms), collapse = "|")
+CircTerms<- paste(paste0("(?i)", params$keyword_2_search_terms), collapse = "|")
+GlucTerms <- paste(paste0("(?i)", params$keyword_3_search_terms), collapse = "|")
 
 HeartPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = HeartTerms)]))
 CircPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = CircTerms)]))
@@ -181,8 +189,9 @@ ggplot(combinedSumsMelt, aes(x = ct, y = value, fill = Group)) + geom_bar(stat =
   labs(x = "Cell type", y = "Proportion of enrichments") +
   scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_y_continuous(breaks = pretty_breaks(), expand = expansion(mult = c(0, .1))) +
-  theme(legend.position = c(0.3, 0.8))
-```
+  theme(legend.position = "top") #<- c(0.3, 0.8) jais original legend.position
+```  
+
 For easier visualisation, we can present the data as proportions rather than absolute values:
 
 ```{r, message = FALSE}
@@ -192,13 +201,13 @@ ggplot(combinedSumsPropMelt, aes(x = ct, y = value, fill = Group)) + geom_bar(st
   labs(x = "Cell type", y = "Proportion of enrichments") +
   scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_y_continuous(breaks = pretty_breaks(), expand = expansion(mult = c(0, .1))) +
-  theme(legend.position = c(0.25, 0.8))
+  theme(legend.position = "top") #<- c(0.25, 0.8) 
 
 sum(combinedSumsMelt$value)
 ```
-In the above graph, it can be seen that for the 'heart' variable, the highest proportion of significantly enriched phenotypes is associated with 'cardiac muscle cells', the sole cell population taken from heart tissue in Tabula Muris.
+In the above graph, it can be seen that for the "`r params$keyword_1`" variable, the highest proportion of significantly enriched phenotypes is associated with "`r names(HeartSums2[order(as.numeric(HeartSums2), decreasing = TRUE)][1])`", the sole cell population taken from heart tissue in Tabula Muris.
 
-Furthermore, 'circulating' has the highest proportion of phenotypes in hepatocytes, and 'glucose' and associated terms has by far the highest proportion of phenotypes associated with the islet cells of the pancreas, as may be reasonably expected.
+Furthermore, "`r params$keyword_2`"  has the highest proportion of phenotypes in `r names(CircSums2[order(as.numeric(CircSums2), decreasing = TRUE)][1])`, and "`r params$keyword_3`" and associated terms has by far the highest proportion of phenotypes associated with the `r names(GlucSums2[order(as.numeric(GlucSums2), decreasing = TRUE)][1])`, as may be reasonably expected.
 
 This method can be utilised for any number of combinations of terms, and as such is a simple method of determining where enrichments are located for 'types' of phenotypes.
 
