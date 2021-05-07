@@ -6,6 +6,12 @@ params:
   date: "03/03/2021"
   results_data: "Results_merged.rda"
   phenotype_to_genes_txt_file: "phenotype_to_genes.txt"
+  keyword_1: "heart"
+  similar_keyword_1: c("heart","atria","aorta")
+  keyword_2: "circulating"
+  similar_keyword_2: c("circulating","circulate","circulation")
+  keyword_3: "glucose"
+  similar_keyword_3: c("gluc","glucose")
 ---
 
 ```{r setup, include=FALSE}
@@ -55,7 +61,7 @@ library(ontologyIndex)
 library(reshape2)
 library(ontologyPlot)
 library(scales)
-genedata = read.delim(phenotype_to_genes_txt_file, skip =1) #HPO annotation
+genedata = read.delim(params$phenotype_to_genes_txt_file, skip =1) #HPO annotation
 colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
 hpo <- get_OBO("data/hp.obo", propagate_relationships = "is_a", extract_tags = "minimal") #Loading hpo data within ontologyIndex
 children <- hpo$children
@@ -77,9 +83,10 @@ Below is a summary the ten 'strongest' results, represented as those association
 ```{r, message = FALSE}
 ResultsSignif <- subset(all_results_merged, q < 0.05 & fold_change > 1 & sd_from_mean > 0) #All results found to be significant at p=0.05, showing an increase in gene expression for a given cell type.
 ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE), ][1:10,]
+most_sig = ResultsSignif[order(ResultsSignif$fold_change, decreasing = TRUE),][1,]
 ```
 
-The strongest enrichment is seen with 'Respiratory alkalosis' in hepatocytes, with a z-score of 35.52. In line with this, the associated adjusted p value is 0. Similarly strong results are represented through the rest of the table.
+The strongest enrichment is seen with `r most_sig$list[1]` in `r most_sig$CellType[1]`, with a z-score of `r round(most_sig$fold_change[1], digits = 2)`. In line with this, the associated adjusted p value is `r most_sig$p[1]`. Similarly strong results are represented through the rest of the table.
 
 A useful representation of the scope of these results would be to visualise the total number of phenotypes found to be significantly enriched for each individual cell group. This can be achieved by sorting the number of assocations with q < 0.05 into a table according to cell types, then visualising this using the 'ggplot' package.
 
@@ -129,9 +136,11 @@ MakeDiffPhenosFigure <- function(){
 }
 ```
 
+```{r include = FALSE}
+top2_cells = EnrichedDataFrame[order(EnrichedDataFrame$ThisValue, decreasing = TRUE),][1:2,]
+```
 
-
-The above table shows that the highest number of significant enrichments is seen in 'Pancreatic stellate cells', closely followed by 'Mesenchymal cells'.
+The above table shows that the highest number of significant enrichments is seen in `r top2_cells$CellType[1]`, closely followed by `r top2_cells$CellType[2]`.
 
 ### Searching for enrichments in phenotypes containing a specific word or phrase
 
@@ -142,9 +151,9 @@ For example, if we pull out any terms containing the word "heart", any containin
 Below, some basic terms associated with heart, circulation and glucose are used to pull phenotypes from the HPO. Then, the number of enrichments for each list of terms is graphed for each cell type in the dataset.
 
 ```{r, message = FALSE}
-HeartTerms <- c("(?i)heart|(?i)atria|(?i)aorta")
-CircTerms<- c("(?i)circulating|(?i)circulate|(?i)circulation")
-GlucTerms <- c("(?i)gluc|(?i)glucose")
+HeartTerms <- paste(paste0("(?i)", params$similar_keyword_1), collapse = "|")
+CircTerms<- paste(paste0("(?i)", params$similar_keyword_2), collapse = "|")
+GlucTerms <- paste(paste0("(?i)", params$similar_keyword_3), collapse = "|")
 
 HeartPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = HeartTerms)]))
 CircPhenos <- as.character(unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = CircTerms)]))

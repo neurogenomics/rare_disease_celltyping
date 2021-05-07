@@ -1,4 +1,3 @@
-
 gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
                        phenotype_to_genes_txt_file = "data/phenotype_to_genes.txt",
                        output_path = "results/EWCE_output_all_phenotypes",
@@ -7,14 +6,15 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
                        mc.cores = 24,
                        p_adj_method = "BH",
                        output_merged_rda_filename = "results/Results_merged.rda",
-                       output_unmerged_rda_filename = "results/Results_unmerged.rda") {
+                       output_unmerged_rda_filename = "results/Results_unmerged.rda")
+                        {
   library(EWCE)
   library(limma)
   library(rvest)
   library(rlist)
   library(stringr)
   library(parallel)
-  load(file= CTD_file) #Load CTD
+  load(file= CTD_file)
   if (!file.exists("results")) {dir.create("results")}
   if (!file.exists(output_path)) {dir.create(output_path)}
   if (!file.exists(phenotype_to_genes_txt_file)) {
@@ -25,21 +25,28 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
   if(!file.exists("data/MRK_List2.rpt")){
     download.file("http://www.informatics.jax.org/downloads/reports/MRK_List2.rpt", destfile="data/MRK_List2.rpt")
   }
-  ctd[[1]]$specificity <- fix.bad.mgi.symbols(ctd[[1]]$specificity, mrk_file_path="data/MRK_List2.rpt")
-  ctd[[1]]$mean_exp <- fix.bad.mgi.symbols(ctd[[1]]$mean_exp, mrk_file_path="data/MRK_List2.rpt")
-  genedata = read.delim(phenotype_to_genes_txt_file, skip = 1) #skip=1 ? #HPO annotation
+
+
+  ctd[[1]]$specificity <- fix.bad.mgi.symbols(data.frame(ctd[[1]]$specificity), mrk_file_path="data/MRK_List2.rpt")
+  ctd[[1]]$mean_exp <- fix.bad.mgi.symbols(data.frame(ctd[[1]]$mean_exp), mrk_file_path="data/MRK_List2.rpt")
+
+  genedata = read.delim(phenotype_to_genes_txt_file, skip = 1, header = FALSE)  #HPO annotation
 
   # CHANGE: shortening gene data for speeding up test runs
   genedata = genedata[1:12000,]
 
   colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
   desiredPhenotypes <- as.list(unique(genedata$Phenotype)) #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
+
   data("mouse_to_human_homologs") #Part of EWCE
   m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol", "MGI.symbol")])
+
+
   PullGenes = function(phenotype, genedata){
     geneListLoad = subset(genedata, Phenotype == phenotype)$Gene
     return(geneListLoad)
   }
+
   RunEWCE = function(phenotype){
     ctd = ctd
     reps = reps
@@ -62,7 +69,11 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
       full_results$results = cbind(full_results$results, list = phenotype)
       return(full_results$results)
     }
+
   }
+
+
+
 
   EWCEWrapper = function(phenotype){
     #Replaced all forward slashes in phenotype names with "-SLASH-"
