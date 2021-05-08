@@ -6,12 +6,25 @@ params:
   date: "03/03/2021"
   results_data: "Results_merged.rda"
   phenotype_to_genes_txt_file: "phenotype_to_genes.txt"
+  # searching for enrichments in phenotypes related to key words
   keyword_1: "heart"
   keyword_1_search_terms: c("heart","atria","aorta")
   keyword_2: "circulating"
   keyword_2_search_terms: c("circulating","circulate","circulation")
   keyword_3: "glucose"
   keyword_3_search_terms: c("gluc","glucose")
+  # searching for enrichments in phenotypes under parent term
+  parent_term_example: "Abnormality of the pancreas"
+  parent_term_example2: "Recurrent infections"
+  # determine what cells are enriched in a group of phenotypes (rather, ID surprising phenotypes for a given cell type)
+  expected_terms: "Abnormality of the cardiovascular system"
+  cell_of_interest: "Cardiac muscle cells"
+  related_patterns: c("muscle","exercise","weakness","fatigue")
+  # Phenotypes enriched in one cell but not in another
+  enriched_cell: "T cells"
+  enriched_cell_related_cells: c("Regulatory T cells", "Immature natural killer T cells", "Immature T cells", "T cells")
+  not_enriched_cell: "B cells"
+  not_enriched_cell_related_cells: c("B cells", "Immature B cells")
 ---
 
 ```{r setup, include=FALSE}
@@ -189,7 +202,7 @@ ggplot(combinedSumsMelt, aes(x = ct, y = value, fill = Group)) + geom_bar(stat =
   labs(x = "Cell type", y = "Proportion of enrichments") +
   scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_y_continuous(breaks = pretty_breaks(), expand = expansion(mult = c(0, .1))) +
-  theme(legend.position = "top") #<- c(0.3, 0.8) jais original legend.position
+    theme(legend.position = "top", legend.key.size = unit(0.25, "cm"), legend.text = element_text(size = 10), legend.title = element_blank()) 
 ```  
 
 For easier visualisation, we can present the data as proportions rather than absolute values:
@@ -201,7 +214,7 @@ ggplot(combinedSumsPropMelt, aes(x = ct, y = value, fill = Group)) + geom_bar(st
   labs(x = "Cell type", y = "Proportion of enrichments") +
   scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_y_continuous(breaks = pretty_breaks(), expand = expansion(mult = c(0, .1))) +
-  theme(legend.position = "top") #<- c(0.25, 0.8) 
+  theme(legend.position = "top", legend.key.size = unit(0.25, "cm"), legend.text = element_text(size = 10), legend.title = element_blank()) 
 
 sum(combinedSumsMelt$value)
 ```
@@ -217,12 +230,12 @@ The Human Phenotype Ontology is structured as a directed acrylic graph. As such,
 
 Multiple R packages have been devised that allow exploration of ontologies such as the HPO. One such example is ontologyIndex, which is used in the following examples.
 
-Using ontologyIndex, it is possible to build on the ideas above whereby specific phenotypes can be searched for in the results dataframe, by pulling all child terms underlying any given term ID. A function can be written that loops through ontologyIndex, pulling child terms and their child terms alike, until all terms that branch out from a given ID are found. Following this, the number of significant enrichements for these terms can be calculated using the results dataframe, and the number that are associated with a particular cell type can be found.
+Using ontologyIndex, it is possible to build on the ideas above whereby specific phenotypes can be searched for in the results dataframe, by pulling all child terms underlying any given term ID. A function can be written that loops through ontologyIndex, pulling child terms and their child terms alike, until all terms that branch out from a given ID are found. Following this, the number of significant enrichements for these terms can be calculated (retrieved?) using the results dataframe, and the number that are associated with a particular cell type can be found.
 
 As an example, consider the following process:
-1. Pull all terms that branch out from 'Abnormality of the pancreas'.
+1. Pull all terms that branch out from "`r params$parent_term_example`".
 2. Pull all significant phenotype-cell associations from the results dataframe.
-3. How many of the terms under abnormality of the pancreas are significantly enriched for any cell type, and what cell types are they?
+3. How many of the terms under "`r params$parent_term_example`" are significantly enriched for any cell type, and what cell types are they?
 
 ```{r, include = FALSE}
 #Loop function that finds all child terms of a given ID location within the ontologyIndex for the HPO, then finds all child terms of those for a given number of 'Levels'.
@@ -275,7 +288,7 @@ GetChildTerms <- function(INITIALIDPLACE, LevelsDown, Cumulative){
 }
 ```
 
-Below, we will pull all terms that fall under 'Abnormality of the pancreas', then use ggplot to visualise how many of these phenotypes have enrichments within the results dataframe, and what cells they are associated with.
+Below, we will pull all terms that fall under "`r params$parent_term_example`", then use ggplot to visualise how many of these phenotypes have enrichments within the results dataframe, and what cells they are associated with.
 
 ```{r, message = FALSE}
 #The function to display a table
@@ -325,20 +338,20 @@ PlotDescendants <- function(TERM, PROPORTION){
 ```
 
 ```{r}
-PlotDescendants(TERM = "Abnormality of the pancreas", PROPORTION = FALSE)
+PlotDescendants(TERM = params$parent_term_example, PROPORTION = FALSE)
 ```
 
 
-The above graph shows that all terms falling under 'Abnormality of the pancreas', where enriched, are enriched solely in three types of pancreatic cells. Oddly, there are no enrichments associated with 'Pancreatic stellate cells', despite this cell type having the most enrichments in the entire set of results (see above).
+The above graph shows that all terms falling under "`r params$parent_term_example`", where enriched, are enriched solely in three types of pancreatic cells. Oddly, there are no enrichments associated with 'Pancreatic stellate cells', despite this cell type having the most enrichments in the entire set of results (see above). **(Write more general paragraph here?)**
 
-#### Cell type enrichments associated with descendants of the 'Recurrent infections' phenotype
+#### Cell type enrichments associated with descendants of the "`r params$parent_term_example2`" phenotype
 
-The same process as above can be replicated for any phenotype in the HPO. Below is the relevant plot for the 'Recurrent infections' phenotype.
+The same process as above can be replicated for any phenotype in the HPO. Below is the relevant plot for the "`r params$parent_term_example2`" phenotype.
 
 ```{r}
-PlotDescendants(TERM = "Recurrent infections", PROPORTION = FALSE)
+PlotDescendants(TERM = params$parent_term_example2, PROPORTION = FALSE)
 ```
-As can be seen from the table, the vast majority of phenotypes under 'Recurrent infections', where enriched, are enriched in various immune cells. Note that there are three associated with hepatocytes, explored below.
+As can be seen from the table, the vast majority of phenotypes under "`r params$parent_term_example2`", where enriched, are enriched in various immune cells. Note that there are three associated with hepatocytes, explored below. **(Not generalisable?)**
 
 The function 'GiveTable' returns a table containing every child term of the term input. This can then be used to subset all signifcant results down to those containing terms within this table.
 
@@ -364,12 +377,12 @@ signif <- subset(all_results_merged, q < 0.05 & sd_from_mean > 0 & fold_change >
 
 signif <- signif[order(signif$fold_change, decreasing = TRUE), ]
 
-mydf <- GiveTable(TERM = "Recurrent infections")
+mydf <- GiveTable(TERM = params$parent_term_example2)
 
 signif[which(signif$list %in% mydf$Term), ][1:10,]
 ```
 
-Interestingly, in the top ten results of this list (out of 59), all three occurences of hepatocytes show up, the first two of which are extremely strong results with a fold change of almost 22 - 'Recurrent Neisserial infections' and 'Recurrent meningococcal disease'.
+Interestingly, in the top ten results of this list (out of 59), all three occurences of hepatocytes show up, the first two of which are extremely strong results with a fold change of almost 22 - 'Recurrent Neisserial infections' and 'Recurrent meningococcal disease'. **(again, not generalisable)**
 
 ### Leaf terms of the Human Phenotype Ontology
 
@@ -406,14 +419,14 @@ It would therefore be sensible to hypothesise that phenotypes associated with mo
 
 ### Determining what cell types a group of phenotypes is associated with
 
-Following on from where pancreatic phenotypes were linked with pancreatic cells above, a similar method can be used to determine whether certain branches of terms in the HPO are linked with cells than can be reasonably expected by logic or whether they are enriched for unexpected cells.
+Following on from where "`r params$parent_term_example`" related phenotypes were linked with expected cells types, a similar method can be used to determine whether certain branches of terms in the HPO are linked with expected or unexpected cell types.
 
 Consider the following as an example:
 
-1. Pull all HPO child terms falling under 'Abnormality of the cardiovascular system'.
-2. Subset results down to significant results for a specific cell type that could be reasonably associated with those phenotypes (e.g. cardiac muscle cells for heart phenotypes).
+1. Pull all HPO child terms falling under "`r params$expected_terms`".
+2. Subset results down to significant results for a specific cell type that could be reasonably associated with those phenotypes (e.g. `r params$cell_of_interest` for "`r params$expected_terms`" related phenotypes).
 3. Determine how many of the phenotype terms that were pulled do indeed have significant enrichment for this cell type.
-4. Determine whether these enrichments make sense, and whether those enriched terms that were not child terms of the chosen branches are expected or possibly areas of interest.
+4. Determine whether these enrichments make sense, and whether those enriched terms that were not child terms of the chosen branches are expected or possibly areas of interest. 
 
 ```{r, message = FALSE}
 #First, we need to pull the list of phenotypes falling under a set of broad, but related terms
@@ -422,7 +435,7 @@ Consider the following as an example:
 
 #HeartTerms <- unique(c(HeartTerms, unique(genedata$Phenotype[str_detect(genedata$Phenotype, pattern = "(i?)heart")])))
 
-HeartTerms <- "Abnormality of the cardiovascular system"
+HeartTerms <- params$expected_terms
 
 PULLCHILDTERMS <- function(TERM){
   INITIALID <- genedata$ID[which(genedata$Phenotype == TERM)]
@@ -445,7 +458,7 @@ df <- df[-(which(is.na(df$Term))),] #Remove IDs with no associated term
 
 #Next, we want to find all significant enrichments for 'cardiac muscle cells'
 
-all_cardiac_signif <- subset(all_results_merged, CellType == "Cardiac muscle cells" & q < 0.05 & fold_change > 1 & sd_from_mean > 0)
+all_cardiac_signif <- subset(all_results_merged, CellType == params$cell_of_interest & q < 0.05 & fold_change > 1 & sd_from_mean > 0)
 
 #We can show how many of these are contained within the list of heart phenotypes we pulled, and how many are not.
 ```
@@ -455,15 +468,15 @@ HeartTerms
 
 
 
-* The total number of significant phenotype-cell associations for cardiac muscle cells is `r nrow(all_cardiac_signif)`.
+* The total number of significant phenotype-cell associations for "`r params$cell_of_interest`" is `r nrow(all_cardiac_signif)`.
 
-* The total number of significant phenotypes that are descendants of these terms, associated with cardiac muscle cells, is `r sum(unique(all_cardiac_signif$list) %in% df$Term)`.
+* The total number of significant phenotypes that are descendants of these terms, associated with "`r params$cell_of_interest`", is `r sum(unique(all_cardiac_signif$list) %in% df$Term)`.
 
 * The total that are not is `r sum(!unique(all_cardiac_signif)$list %in% df$Term)`
 
-As shown, roughly one third of sigificant enrichments associated with cardiac muscle cells fall under the branches of heart terms we pulled from the HPO.
+As shown, roughly one third of sigificant enrichments associated with "`r params$cell_of_interest`" fall under the branches of heart terms we pulled from the HPO. **(Generalise?)**
 
-Printing the first ten rows from each results set will give some idea of the types of phenotypes associated with cardiac muscle cells:
+Printing the first ten rows from each results set will give some idea of the types of phenotypes associated with "`r params$cell_of_interest`":
 
 ```{r}
 TrueHeart <- all_cardiac_signif[which(all_cardiac_signif$list %in% df$Term), ]
@@ -472,36 +485,36 @@ OtherHeart <- all_cardiac_signif[!which(all_cardiac_signif$list %in% df$Term), ]
 OtherHeart <- OtherHeart[order(OtherHeart$fold_change, decreasing = TRUE), ]
 
 TrueHeart
-patterns <- c("(?i)muscle|(?i)exercise|(?i)weakness|(?i)fatigue")
+patterns <- paste(paste0("(?i)", params$related_patterns), collapse = "|")
 patternList <- as.character(OtherHeart$list[str_detect(OtherHeart$list, pattern = patterns)])
 OtherHeart[which(OtherHeart$list %in% patternList)] #Which other heart terms contain the word muscle
 OtherHeart[!which(OtherHeart$list %in% patternList)] #and which don't
 ```
 
-We can plot the results as a pie chart to show the proportions of different types of terms associated with 'Cardiac muscle cells':
+We can plot the results as a pie chart to show the proportions of different types of terms associated with "`r params$cell_of_interest`":
 
 ```{r}
 HeartDF <- data.frame(matrix(ncol = 3, nrow = 1))
-colnames(HeartDF) <- c("Cardiovascular terms", "Muscle and exercise terms", "Other terms")
+colnames(HeartDF) <- c(paste(params$expected_terms, "related terms"), paste("Related to:", paste(params$related_patterns, collapse=", ")), "Other terms")
 rownames(HeartDF) <- c("value")
 
-HeartDF$`Cardiovascular terms` <- nrow(TrueHeart)
-HeartDF$`Muscle and exercise terms` <- nrow(OtherHeart[which(OtherHeart$list %in% patternList)])
+HeartDF[,paste(params$expected_terms, "related terms")] <- nrow(TrueHeart)
+HeartDF[,paste("Related to:", paste(params$related_patterns, collapse=", "))] <- nrow(OtherHeart[which(OtherHeart$list %in% patternList)])
 HeartDF$`Other terms` <- nrow(OtherHeart[!which(OtherHeart$list %in% patternList)])
 
 HeartMelt <- melt(HeartDF)
 
 HeartBar <- ggplot(HeartMelt, aes(x = "", y = value, fill = variable)) +
   geom_bar(width = 1, stat = "identity") +
-  labs(x = "Cardiac muscle cell enrichments", y = "Number of enrichments")
+  labs(x = paste(params$cell_of_interest, "enrichments"), y = "Number of enrichments")
 
 HeartPie <- HeartBar +
   coord_polar("y", start = 0) +
-  labs(title = "Categories of HPO terms enriched in 'Cardiac muscle cells' (%)", fill = "Term type") +
+  labs(title = paste("Categories of HPO terms enriched in",params$cell_of_interest,"(%)"), fill = "Term type") +
   geom_text(aes(label = paste(round(value/sum(value) * 100, 1), "%")), position = position_stack(vjust = 0.5)) +
   theme_cowplot() +
   theme(plot.title = element_text(size = 12), axis.title.y = element_blank(), axis.title.x = element_blank(), axis.line = element_blank(), axis.text = element_blank(), axis.ticks = element_blank()) +
-  labs(caption = paste("Total enrichments for 'Cardiac muscle cells': ", sum(HeartMelt$value)))
+  labs(caption = paste("Total enrichments for",params$cell_of_interest,": ", sum(HeartMelt$value)))
 
 HeartPie
 ```
@@ -527,7 +540,7 @@ To further analyse the difference between these true and alternate heart terms, 
 
 One main feature of the Tabula Muris compendium is the inclusion of distinct populations of immune cells, including multiple types of B cells and T cells. It is therefore possible to summarise gene lists that are enriched in a particular cell, but insignificant in another.
 
-Here, we can generate such a plot representing phenotypes strongly associated with T cells, but not at all significant in B cells, even when using uncorrected p values in the latter.
+Here, we can generate such a plot representing phenotypes strongly associated with `r params$enriched_cell`, but not at all significant in `r params$not_enriched_cell`, even when using uncorrected p values in the latter.
 
 ```{r}
 OneSignifNotAnother <- function(Yes, No){
@@ -551,8 +564,8 @@ BothSignif <- function(First, Second){
   invisible(return(Both[order(Both$fold_change, decreasing = TRUE), ]))
 }
 
-BCells <- c("B cells", "Immature B cells")
-TCells <- c("Regulatory T cells", "Immature natural killer T cells", "Immature T cells", "T cells")
+BCells <- params$not_enriched_cell_related_cells
+TCells <- params$enriched_cell_related_cells
 OneSignifNotAnother(Yes = TCells, No = BCells)[1:10, ]
 #OneSignifNotAnother(Yes = BCells, No = TCells)
 
@@ -562,21 +575,21 @@ OneSignifNotAnother(Yes = TCells, No = BCells)[1:10, ]
 
 There are `r nrow(OneSignifNotAnother(Yes = TCells, No = BCells))` sets of cell-phenotype associations strongly linked with T cells, but specifically not with B cells.
 
-Furthermore, we can graph the total number of phenotype enrichments associated with T cells, in terms of those that are also associated with B cells, alongside those that are not.
+Furthermore, we can graph the total number of phenotype enrichments associated with `r params$enriched_cell`, in terms of those that are also associated with `r params$not_enriched_cell`, alongside those that are not.
 
 ```{r}
-TCells <- c("Regulatory T cells", "Immature natural killer T cells", "Immature T cells", "T cells")
-BCells <- c("B cells", "Immature B cells")
+TCells <- params$enriched_cell_related_cells
+BCells <- params$not_enriched_cell_related_cells
 
 AllTCellEnrich <- subset(all_results_merged, q < 0.05 & sd_from_mean > 0 & fold_change > 1 & CellType %in% TCells)
 
 TCellDF <- data.frame(matrix(ncol = 2, nrow = 1))
-colnames(TCellDF) <- c("TandB", "TnotB")
+colnames(TCellDF) <- c(paste(params$enriched_cell,"and",params$not_enriched_cell), paste(params$enriched_cell, "not", params$not_enriched_cell))
 rownames(TCellDF) <- c("Value")
 
 #TCellDF$Total[1] <- nrow(AllTCellEnrich)
-TCellDF$TnotB[1] <- nrow(OneSignifNotAnother(Yes = TCells, No = BCells))
-TCellDF$TandB[1] <- nrow(BothSignif(First = TCells, Second = BCells))
+TCellDF[,paste(params$enriched_cell, "not", params$not_enriched_cell)][1] <- nrow(OneSignifNotAnother(Yes = TCells, No = BCells))
+TCellDF[,paste(params$enriched_cell,"and",params$not_enriched_cell)][1] <- nrow(BothSignif(First = TCells, Second = BCells))
 
 TCellMelt <- melt(TCellDF)
 TCellMelt

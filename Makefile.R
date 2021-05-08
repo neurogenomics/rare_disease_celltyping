@@ -3,21 +3,34 @@
 source("source/CTD_Gen.R")
 source("source/Results_Gen.R")
 source("source/Writeup_Gen.R")
+library(stringr)
 
-# Inputs
+# USER INPUT
+generate_ctd = FALSE
+generate_results = FALSE
+# R markdown parameters
 title = "Rare Disease EWCE Tabula Muris"
 date = "06/05/2021"
 author = "author"
-# Choose search terms for section: "Searching for enrichments in phenotypes.."
+# Searching for enrichments related to key words
 keyword_1 = "heart"
 keyword_1_search_terms = c("heart","atria","aorta")
 keyword_2 = "circulating"
 keyword_2_search_terms = c("circulating","circulate","circulation")
 keyword_3 = "glucose"
 keyword_3_search_terms = c("gluc","glucose")
-generate_ctd = FALSE
-generate_results = FALSE
-
+# Search for enrichments in phenotypes under a parent term
+parent_term_example = "Abnormality of the pancreas"
+parent_term_example2 = "Recurrent infections"
+# Identify surprising and expected phenotype enrichmetns for a given cell
+expected_terms = "Abnormality of the cardiovascular system"
+cell_of_interest = "Cardiac muscle cells"
+related_patterns = c("weakness", "fatigue")#c("muscle","exercise","weakness","fatigue")
+# Phenotypes enriched in one cell but not in another
+enriched_cell = "T cells"
+enriched_cell_related_cells = c("Regulatory T cells", "Immature natural killer T cells", "Immature T cells", "T cells")
+not_enriched_cell = "B cells"
+not_enriched_cell_related_cells = c("B cells", "Immature B cells")
 
 # File locations
 ctd_file_name = "data/CTD_tm_l1l2_nz.rda" # <- will be created if generate_ctd = TRUE
@@ -56,6 +69,15 @@ render_writeup(markdown_file = r_markdown_file,
                keyword_2_search_terms = keyword_2_search_terms,
                keyword_3 = keyword_3,
                keyword_3_search_terms = keyword_3_search_terms,
+               parent_term_example = parent_term_example,
+               parent_term_example2 = parent_term_example2,
+               expected_terms = expected_terms,
+               cell_of_interest = cell_of_interest,
+               related_patterns = related_patterns,
+               enriched_cell = enriched_cell,
+               enriched_cell_related_cells = enriched_cell_related_cells,
+               not_enriched_cell = not_enriched_cell,
+               not_enriched_cell_related_cells = not_enriched_cell_related_cells,
                working_directory = working_directory)
 
 
