@@ -4,10 +4,11 @@ source("source/CTD_Gen.R")
 source("source/Results_Gen.R")
 source("source/Writeup_Gen.R")
 library(stringr)
+library(EWCE)
 
 # USER INPUT
 generate_ctd = FALSE
-generate_results = FALSE
+generate_results = TRUE
 # R markdown parameters
 title = "Rare Disease EWCE Tabula Muris"
 date = "06/05/2021"
@@ -33,9 +34,9 @@ not_enriched_cell = "B cells"
 not_enriched_cell_related_cells = c("B cells", "Immature B cells")
 
 # File locations
-ctd_file_name = "data/CTD_tm_l1l2_nz.rda" # <- will be created if generate_ctd = TRUE
-ewce_output_all_phenotypes = "results/EWCE_output_all_phenotypes"
-merged_results_rda_filename = "results/all_results_merged_fixednames.rda" # <- "all_results_merged_fixednames.rda" (use these results to test the final knit)
+ctd_file_name = "data/CTD_DescartesHuman.rda" # <- will be created if generate_ctd = TRUE
+ewce_output_all_phenotypes = "results/EWCE_output_all_phenotypes_TEST"
+merged_results_rda_filename = "results/all_results_merged_fixednames.rda"
 unmerged_results_rda_filename = "results/resultsTest_unmerged.rda"
 phenotype_to_genes_txt_file = "data/phenotype_to_genes.txt" # don't include Makefile/ before filename
 r_markdown_file = "Writeup.Rmd"

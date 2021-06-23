@@ -27,8 +27,14 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
   }
 
 
-  ctd[[1]]$specificity <- fix.bad.mgi.symbols(data.frame(ctd[[1]]$specificity), mrk_file_path="data/MRK_List2.rpt")
-  ctd[[1]]$mean_exp <- fix.bad.mgi.symbols(data.frame(ctd[[1]]$mean_exp), mrk_file_path="data/MRK_List2.rpt")
+print("debug1")
+
+
+  ctd[[1]]$specificity <- fix_bad_mgi_symbols(data.frame(ctd[[1]]$specificity), mrk_file_path="data/MRK_List2.rpt")
+
+print("debug2")
+
+  ctd[[1]]$mean_exp <- fix_bad_mgi_symbols(data.frame(ctd[[1]]$mean_exp), mrk_file_path="data/MRK_List2.rpt")
 
   genedata = read.delim(phenotype_to_genes_txt_file, skip = 1, header = FALSE)  #HPO annotation
 
@@ -38,8 +44,9 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
   colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
   desiredPhenotypes <- as.list(unique(genedata$Phenotype)) #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
 
-  data("mouse_to_human_homologs") #Part of EWCE
-  m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol", "MGI.symbol")])
+  # REMOVING MOUSE STUFF
+  #data("mouse_to_human_homologs") #Part of EWCE
+  #m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol", "MGI.symbol")])
 
 
   PullGenes = function(phenotype, genedata){
@@ -52,20 +59,23 @@ gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
     reps = reps
     level = level
     geneList = PullGenes(phenotype = phenotype, genedata = genedata)
-    y=1
-    mouse.hits = c("")
-    for(i in geneList){
-      if(i %in% m2h$HGNC.symbol){
-        mouse.hits[y] = i
-        y = y + 1
-      }
-    }
-    mouse.bg = unique(m2h$MGI.symbol)
-    mouse.hits = unique(m2h[m2h$HGNC.symbol %in% mouse.hits, "MGI.symbol"])
+
+    # Remove mouse stuff
+    # y=1
+    # mouse.hits = c("")
+    # for(i in geneList){
+    #   if(i %in% m2h$HGNC.symbol){
+    #     mouse.hits[y] = i
+    #     y = y + 1
+    #   }
+    # }
+
+    human.bg = unique(genedata$Gene)
+    humna.hits = unique(geneList)
 
     #EWCE only works using lists of 3 or more genes.
-    if(length(mouse.hits) > 3){
-      full_results = bootstrap.enrichment.test(sct_data = ctd, hits = mouse.hits, bg = mouse.bg, reps = reps, annotLevel = level)
+    if(length(human.hits) > 3){
+      full_results = bootstrap.enrichment.test(sct_data = ctd, hits = human.hits, bg = human.bg, reps = reps, annotLevel = level,sctSpecies="human",genelistSpecies="human")
       full_results$results = cbind(full_results$results, list = phenotype)
       return(full_results$results)
     }

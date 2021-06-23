@@ -4,6 +4,7 @@ params:
   title: "Expression Weighted Cell-Type Enrichment with Tabula Muris"
   author: "Jai Chapman"
   date: "03/03/2021"
+  #results_data: "CTD_DescartesHuman.rda"
   results_data: "Results_merged.rda"
   phenotype_to_genes_txt_file: "phenotype_to_genes.txt"
   # searching for enrichments in phenotypes related to key words
@@ -25,6 +26,7 @@ params:
   enriched_cell_related_cells: c("Regulatory T cells", "Immature natural killer T cells", "Immature T cells", "T cells")
   not_enriched_cell: "B cells"
   not_enriched_cell_related_cells: c("B cells", "Immature B cells")
+  # Add section - Significantly enriched phenotypes for given cell
 ---
 
 ```{r setup, include=FALSE}
