@@ -5,7 +5,11 @@
 # I have only tried it on the data in the tutorial so hopefully it works generally
 
 
-
+#' Modification to ewce.plot function to automatically align the dendrogram
+#'
+#' @param total_res Results to be plotted ?
+#' @param mtc_method Multiple comparison adjustment method
+#' @ctd The CTD
 ewce.plot <-function (total_res, mtc_method = "bonferroni", ctd = NULL)
 {
   if (!mtc_method %in% c("holm", "hochberg", "hommel",

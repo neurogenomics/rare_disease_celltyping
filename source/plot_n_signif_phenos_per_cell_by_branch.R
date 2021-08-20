@@ -1,5 +1,6 @@
 # PLOT N SIGNIF PHENOS PER CELL BY HPO BRANCH
 
+
 # Dependencies
 library(ggplot2)
 library(cowplot)
@@ -13,7 +14,23 @@ colnames(phenotype_to_genes) = c("ID", "Phenotype", "EntrezID", "Gene",
 load("data/Descartes_All_Results.rda")
 
 
-
+#' Plot number of significant enrichments per cell within specific HPO branch
+#'
+#' This plots how many significant enrichments there were per cell from within
+#' specific branches of the HPO. It also runs hypergeometric tests to see if the
+#' number of significant enrichments for a particular cell, within a particular branch
+#' is higher than expected by chance. This can tell you if a branch as a whole is
+#' commonly associated with a particular cell type.
+#'
+#' This function could be split up into more smaller functions and possibly include
+#' options for including the hypergeometric test.
+#'
+#' @param all_results_merged The RD EWCE results data frame
+#' @plot_branches A character vector of the HPO branches to be plotted (using name not Id, maybe change this)
+#' @q_threshold The maximum q value accepted as a significant result.
+#' @returns A plot of n enrichments per cell type, faceted by branch. Astrics are
+#' used to represent significance in the hypergeometric test.
+#' @export
 
 plot_n_signif_phenos_per_cell_by_branch <- function(all_results_merged,
                                                     plot_branches = c("Abnormality of the nervous system",

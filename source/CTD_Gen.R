@@ -1,7 +1,15 @@
 #Full code to generate ctd file containing level 1 and 2 cell annotations for the Tabula Muris dataset.
 #Adapted from initial code written by Zijing Liu.
 
-
+#' Generate CTD file
+#'
+#' Creates the CTD file for RD EWCE analysis
+#' @param output_ctd_file_name Desired filename of output CTD file
+#' @param L1_classificatios_xlsx_path The path to a excel (xlsx) file of classifications of cells in the scRNA data
+#' @param FACS_URL A URL link to download the FACS file
+#' @param annot_URL A URL link to download the annotations file
+#' @return CTD file for RD EWCE analysis
+#' @export
 gen_ctd = function (output_ctd_file_name = "data/ctd_l1l2_nz.rda",
                     alpha = 0.05 ,
                     FACS_URL = "https://ndownloader.figshare.com/files/10700143" ,

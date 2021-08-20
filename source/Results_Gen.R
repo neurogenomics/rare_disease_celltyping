@@ -1,3 +1,29 @@
+
+#' Generate rare disease EWCE results
+#'
+#' This function is called by the makefile to generate the RD EWCE results. Note,
+#' in practice I didnt end up using the makefile and I used this function directly.
+#' I made a shell script to load environment and run this script, as well as to
+#' remove already completed phenotypes from the input (when having to restart the
+#' analysis after the interactive HPC session was terminated).
+#' I also ended up merging the individual results at the end using a separate
+#' script, rather than this.
+#'
+#' @param CTD_file The CTD file
+#' @param phenotype_to_genes_txt_file The HPO terms with gene list annotations downloaded
+#' from the HPO website. Called phenotype_to_genes
+#' @param output_path The directory in which results for each individual
+#' phenotype will be saved
+#' @param reps The number of bootstrap reps to perform with EWCE
+#' @param level The level of cell type clustering to use in the CTD
+#' @param mc.cores The number of CPU cores to use for paralell processing
+#' @param p_adj_method The method to use for repeated measures in the EWCE analysis
+#' @param output_merged_rda_filename The desired file name of the large data frame created from
+#' all results in the output_path directory.
+#' @param output_unmerged_rda_filename The desired file name of unmerged version of all results
+#' @returns NULL (But saves results to desired output paths)
+#' @export
+
 gen_results = function (CTD_file = "ctd_l1l2_nz.rda",
                        phenotype_to_genes_txt_file = "data/phenotype_to_genes.txt",
                        output_path = "results/EWCE_output_all_phenotypes",
@@ -39,7 +65,7 @@ print("debug2")
   genedata = read.delim(phenotype_to_genes_txt_file, skip = 1, header = FALSE)  #HPO annotation
 
   # CHANGE: shortening gene data for speeding up test runs
-  genedata = genedata[1:12000,]
+  #genedata = genedata[1:12000,]
 
   colnames(genedata) = c("ID", "Phenotype", "EntrezID", "Gene", "Additional", "Source", "LinkID")
   desiredPhenotypes <- as.list(unique(genedata$Phenotype)) #Just the whole list of unique phenotypes in the "phenotype_to_genes.txt" file.
