@@ -185,6 +185,8 @@ facet_branch_plt <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_bran
 print(facet_branch_plt)
 
 
+# Test the function version of this plot here: 
+
 ```
 
 
@@ -526,3 +528,80 @@ print(pheno_fold_plt)
 
 
 ```
+
+
+## Show that cell type enrichments become purer as you move towards leaf nodes (GitHub #27)
+
+These are the figures to show the number of phenotypes at each ontology level and 
+the number of significantly associated cells per phenotype as you progress towards 
+the leaf nodes. Currently I have used q<0.05 and fold >1 as significant. 
+
+```{r warning = FALSE, message= FALSE} 
+# make dataframe for figures
+get_ont_level = function(hpo,term_id) {
+  children = unique(setdiff(unlist(hpo$children[term_id]), term_id))
+  if (length(children) == 0) {
+    return(0)
+  } else {
+    return(1 + get_ont_level(hpo,children)) #<- recursion..
+  }
+}
+
+ont_levels <- data.frame("phenotype"=unique(phenotype_to_genes$Phenotype),
+             "hpo_id"=hpo$id[match(unique(phenotype_to_genes$Phenotype),hpo$name)])
+ont_levels <- ont_levels[complete.cases(ont_levels),]
+lvls <- c()
+for (id in ont_levels$hpo_id) {
+  lvls = append(lvls, get_ont_level(hpo,id))
+}
+ont_levels$ont_lev <- lvls
+rm(lvls)
+
+```
+
+
+```{r warning = FALSE, message = FALSE , fig.dim=c(6,6)}
+
+# number of phenos per ontology level plot
+pheno_per_lv_df <- data.frame("level"=unique(ont_levels$ont_lev))
+n_phenos <- c()
+for (lvl in pheno_per_lv_df$level) {
+  n_phenos<- append(n_phenos,length(ont_levels$phenotype[ont_levels$ont_lev == lvl]))
+}
+pheno_per_lv_df$n_phenos <- n_phenos
+rm(n_phenos)
+
+pal <- wesanderson::wes_palette("Darjeeling1", n=2)
+plot <- ggplot(pheno_per_lv_df, mapping = aes(x=level,y=n_phenos))+
+  geom_point(color = pal[1], size = 3)+
+  geom_line(color = pal[2], size=1) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="phenotypes (n)",title = "Number of phenotypes per ontology level")
+plot
+
+
+```
+
+```{r warning = FALSE, message = FALSE, fig.dim=c(15,7)} 
+
+# number of associated cells per phenotype by ontology level 
+n_associated_cells <- c()
+for (p in ont_levels$phenotype) {
+  n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1]))
+}
+ont_levels$n_associated_cells <- n_associated_cells
+rm(n_associated_cells)
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+plot3 <- ggplot(ont_levels, mapping=aes(x= factor(ont_lev), y=n_associated_cells)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ont_lev)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Associated cells/phenotype (n)",title = "n associated cells/phenotype by ontology level")
+plot3
+
+
+
+```
+
