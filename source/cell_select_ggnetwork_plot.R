@@ -145,7 +145,7 @@ newlines_to_definition <- function(definition, line_length = 10) {
 #' to just use absolute ontology level, so that "Phenotypic abnormality" would always
 #' be the largest datapoint etc.
 #'
-#' @param phenotype HPO term Id (string)
+#' @param phenotype HPO term Id <string>
 #' @param phenoAdj A adjacency matrix (produced by the adjacency_matrix function)
 #' @param hpo The HPO ontology data object
 #'

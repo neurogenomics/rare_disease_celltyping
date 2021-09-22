@@ -605,3 +605,11 @@ plot3
 
 ```
 
+# Basic ontology plot ##########################################################
+
+```{r warning = FALSE, message = FALSE}
+library(ontologyPlot)
+library(ontologyIndex)
+social_int_desc <- get_descendants(hpo,hpo$id[match("Impaired social interactions",hpo$name)])
+onto_plot(hpo, social_int_desc)
+```
