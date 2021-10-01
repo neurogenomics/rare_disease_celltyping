@@ -30,19 +30,22 @@ abstract: \singlespace Despite the name, rare diseases (RD) contribute to a sign
 
 ```{r echo = FALSE, message = FALSE}
 # Dependencies 
-source("source/phenotype_keyword_search.R")
-source("source/signif_enrichments_for_cell.R")
-source("source/phenotype_gene_search.R")
-source("source/cell_select_ggnetwork_plot.R")
+
+if (!require(RareDiseaseEWCE)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
+  devtools::install_github("ovrhuman/RareDiseaseEWCE")
+  library(RareDiseaseEWCE)
+}
+
+library(ontologyIndex)
+library(ontologyPlot)
+library(ggplot2)
+data(hpo)
 load(params$results_data)
 ctd = readRDS("data/CTD_Descartes_withplot.rds")
 phenotype_to_genes = phenotype_to_genes = read.delim("data/phenotype_to_genes.txt", skip = 1, header=FALSE)
 colnames(phenotype_to_genes) = c("ID", "Phenotype", "EntrezID", "Gene",
                        "Additional", "Source", "LinkID")
-figure_count = 0; figures = c()
-table_count = 0; tables = c()
-
-
 ```
 
 
@@ -116,7 +119,7 @@ The Human Phenotype Ontology (HPO) is an initiative founded in 2008 that consist
 
 ```{r ADHD_ancestors,fig.cap = "\\label{fig:ADHD_ancestors}\\textbf{ADHD ancestor terms.} The ancestor terms of ADHD (HPO Id: HP:0007018) in the HPO. It is 5 generations down from the root node, \"Phenotypic abnormality\". The arrows represent \"is-a\" relationships, meaning that a child term is a sub-class of the term above it. This was plotted using R version 4.05 and the ontolgyX package [@RLanguage; @ontologyXpackage2017].", message=FALSE, echo=FALSE}
 
-figure_count = figure_count + 1; figures$ADHD_ancestors = figure_count;
+
 namer = function(term){
   return (hpo$name[term])
 }
@@ -282,97 +285,7 @@ The Descartes human scRNA data clustered into `r length(unique(all_results_merge
 
 ```{r pheno_per_cell, fig.height = 10,fig.width = 10,fig.cap = "\\label{fig:pheno_per_cell}\\textbf{Number of significant enrichments per cell.} This figure shows how many significant phenotype enrichments were found for each cell type, where q<0.05 and fold change > 1.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 
-## FUNCTION
 
-#cell_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
-#cell_mappings$level1 = gsub("_"," ",cell_mappings$level1)
-
-
-plot_phenos_per_cell1 = function (all_results_merged, cell_mappings, fold = 1, q_val = 0.005, dataset = "Descartes") {
-  phenos_per_cell = data.frame()
-
-  # count n phenotypes per cell
-  for (c in unique(all_results_merged$CellType)){
-    cur_cell = c
-    n_phenos = length(all_results_merged[all_results_merged$CellType==c & all_results_merged$q < q_val & all_results_merged$fold_change > fold, "list"])
-    phenos_per_cell = rbind(phenos_per_cell, data.frame("Cell"=cur_cell,"n_phenos"=n_phenos))
-  }
-  n_pheno_text = phenos_per_cell
-  phenos_per_cell$Tissue = rep(NA, length(phenos_per_cell$Cell))
-
-  if (dataset == "Descartes") {
-    phenos_per_cell_tissue = data.frame()
-    for (i in seq(1:length(phenos_per_cell$Cell))) {
-      cur = cell_mappings[cell_mappings$level1 == paste(phenos_per_cell$Cell[i]), ]$tissue
-      for (t in unique(cur)) {
-        if (! is.na(t)){
-          phenos_per_cell$Tissue[i] = t
-          phenos_per_cell_tissue = rbind(phenos_per_cell_tissue, phenos_per_cell[i,])
-        }
-      }
-    }
-
-    phenos_per_cell = phenos_per_cell_tissue
-  }
-  phenos_per_cell$Cell = reorder(phenos_per_cell$Cell, phenos_per_cell$n_phenos)
-
-  if (dataset == "Descartes") {
-    for (i in seq(1,length(phenos_per_cell$Cell))) {
-      cur = phenos_per_cell[phenos_per_cell$Cell == phenos_per_cell$Cell[i],]
-      phenos_per_cell$n_phenos[i] = phenos_per_cell$n_phenos[i] / length(unique(cur$Tissue))
-    }
-  }
-
-  #explan_plt <- ggplot(phenos_per_cell, aes(n_phenos ,  as.factor(Cell))) +
-  explan_plt <- ggplot(phenos_per_cell, aes(n_phenos ,Cell)) +
-    #geom_point(size = 12, color = "black") +
-
-    scale_x_continuous("",expand = c(0,0),  limits = c(0, max(n_pheno_text$n_phenos)+20))+#, position = "top") + #
-    theme_classic()+
-    scale_y_discrete(phenos_per_cell$Cell)
-
-  if (dataset == "Descartes") {
-    explan_plt = explan_plt + geom_col(aes(fill = Tissue),size = 2,position = "stack")
-  } else {
-    explan_plt = explan_plt + geom_segment(aes(xend = 0, yend = Cell), size = 2)
-  }
-
-  explan_plt= explan_plt + geom_text(data=n_pheno_text,aes(label = n_phenos, x = n_phenos+ 6, y = Cell), size = 4, color = "black")   + 
-    theme(axis.title.y = element_blank()) +
-    labs(title = paste0("Significantly enriched phenotypes per cell (q < ", q_val, ", fold change > ", fold,")" )) 
-
-  return (explan_plt)
-}
-
-
-####
-
-
-
-################################################################################
-
-# get the phenos per cell dataframe
-dataframe_phenos_per_cell = function (all_results_merged, cell_mappings, fold = 1, q_val = 0.005, dataset = "Descartes") {
-  phenos_per_cell = data.frame()
-
-  # count n phenotypes per cell
-  for (c in unique(all_results_merged$CellType)){
-    cur_cell = c
-    n_phenos = length(all_results_merged[all_results_merged$CellType==c & all_results_merged$q < q_val & all_results_merged$fold_change > fold, "list"])
-    phenos_per_cell = rbind(phenos_per_cell, data.frame("Cell"=cur_cell,"n_phenos"=n_phenos))
-  }
-  n_pheno_text = phenos_per_cell
-  phenos_per_cell$Tissue = rep(NA, length(phenos_per_cell$Cell))
-
-  phenos_per_cell$Cell = reorder(phenos_per_cell$Cell, phenos_per_cell$n_phenos)
-
- return(phenos_per_cell)
-}
-
-
-###########
-
-#source("source/phenotypes_per_cell_plot.R")
 descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
 descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1)
 
@@ -391,36 +304,7 @@ The root HPO term, phenotypic abnormality (HP:0000118), has `r length(hpo$childr
 
 ```{r HPO_main_branches,fig.height=5,fig.width = 5,fig.cap = '\\label{fig:HPO_main_branches}\\textbf{Main branches of the HPO.} This shows all the child phenotypes under "Phenotypic abnormality" (ID: HP:0000118) in the HPO. These can be considered as the main classes of phenotypic abnormality, or the main branches of the HPO.', message=FALSE, echo=FALSE}
 
-
-
-library(wesanderson)
-color_pal = wes_palette("Cavalcanti1", 2)
-plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
-plot_branches_ids = hpo$id[match(plot_branches, hpo$name)]
-hpo_branches = hpo$children["HP:0000118"]
-phenos_per_branch = data.frame()
-for (b in hpo_branches[[1]]) {
-  n = length(get_descendants(hpo,b))
-  if (b %in% plot_branches_ids) {
-    target_branch = "target"
-  } else {
-    target_branch = "Other"
-  }
-  phenos_per_branch = rbind(phenos_per_branch, data.frame("branch"=hpo$name[b],"n_phenos"=n, "target"=target_branch))
-}
-phenos_per_branch$branch = reorder(phenos_per_branch$branch, phenos_per_branch$n_phenos)
-phenos_per_branch_plt <- ggplot(phenos_per_branch, aes(x=n_phenos, y=branch, color= target, fill=target))+
-  geom_segment(mapping= aes(xend = 0, yend = branch),  size = 3)+
-  xlab("n sub-phenotypes") +
-  ylab(element_blank())+ 
-  scale_color_manual(values=color_pal) +
-  theme(axis.line.x=element_blank(),panel.background=element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor=element_blank(),axis.line.y=element_line(color = "black"),
-        axis.ticks.x = element_blank(), axis.text.x = element_blank(),legend.position = "none") 
-
-
-print(phenos_per_branch_plt)
-
+plot_n_phenotypes_per_branch_hpo()
 
 ```
 
@@ -431,107 +315,11 @@ Additionally, there are many novel results that may provoke new lines of researc
 
 ``` {r expected_cell_branch, fig.height = 10,fig.width = 10,fig.cap = "\\label{fig:expected_cell_branch}\\textbf{The number of significant enrichments per cell in three main branches of the HPO.} It can be seen that the greatest number of significant enrichments are seen in the cell types that we would expect for that branch. An additional hypergeometric test was done to show where the number of significant enrichments in a branch is significantly elevated, significant cases are highlighted with asterics ****, *** **, and *   which indicate that \\textit{q}<0.00001, 0.0001, 0.001, and 0.05, respectively. The cells are ordered by their dendrogram grouping", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 
-library(ontologyIndex)
-data(hpo)
-hpo_branches = hpo$children["HP:0000118"]
 
-hpo_branches_names = c()
-for (b in hpo_branches){
-  hpo_branches_names = c(hpo_branches_names, hpo$name[b])
-}
-main_branch_df = data.frame("hpo_id"=hpo_branches,"phenotype"=hpo_branches_names)
+plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
 
-descendants = list ()
-for (b in hpo_branches[[1]] ) {
-  print(b)
-  print(hpo$name[b])
-  descendants[[hpo$name[b]]] = get_descendants(hpo,b)
-}
+facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd)
 
-
-# Label all results based on branch
-
-if (! "branch" %in% colnames(all_results_merged)) {
-
-  phenotypes = unique(phenotype_to_genes$Phenotype)
-  all_results_merged$branch = NA
-  pheno_branches = c()
-  for (p in phenotypes){
-    print(p)
-    index = match(p,hpo$name)
-    if (!is.na(index)){
-    id = hpo$id[[index]]
-    for (i in seq(1,length(descendants))) {
-      if (id %in% descendants[[i]]) {
-        pheno_branches[p] = names(descendants[i])
-      }
-    }
-  }
-    }
-
-  all_results_merged$branch = NA
-  remaining = length(unique(all_results_merged$list))
-  cat("Asigning branch to phenotypes\nN remaining:\n")
-  for (p in unique(all_results_merged$list)) {
-    cat("\r",remaining,"      ")
-    remaining = remaining - 1
-    all_results_merged$branch[all_results_merged$list == p] = pheno_branches[p]
-  }
-
-}
-# plot it
-library(ggplot2)
-plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
-
-
-signif_results = all_results_merged[all_results_merged$q <= 0.05 & !is.na(all_results_merged$branch) , ]
-
-n_signif_per_cell_by_branch = data.frame()
-#for (b in unique(signif_results$branch)) {
-for (b in unique(plot_branches)) {
-  for (c in unique(all_results_merged$CellType)){
-    n = length(signif_results[signif_results$CellType == c & signif_results$branch == b,]$list)
-    n_signif_per_cell_by_branch = rbind(n_signif_per_cell_by_branch,
-                                        data.frame("branch" = b,"CellType"=c,"n_signif" = n))
-  }
-}
-
-plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
-
-# Run hypergeometric tests
-# To show which cell types within a branch have more enriched phenotypes than expected
-n_signif_per_cell_by_branch$hypergeo_p = NA
-total_signif = length(signif_results$q)
-
-for (i in seq(1, length(n_signif_per_cell_by_branch$CellType))) {
-  cell = n_signif_per_cell_by_branch$CellType[i]
-  branch = n_signif_per_cell_by_branch$branch[i]
-  group1 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$CellType == cell])
-  group2 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$branch == branch])
-  overlap = n_signif_per_cell_by_branch$n_signif[i]
- n_signif_per_cell_by_branch$hypergeo_p[i] = phyper(overlap - 1, group2, total_signif - group2, group1, lower.tail=FALSE)
-}
-n_signif_per_cell_by_branch$hypergeo_q = p.adjust(n_signif_per_cell_by_branch$hypergeo_p,method = "BH")
-
-n_signif_per_cell_by_branch$signif_asterics = ""
-n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q<0.05] = "*"
-n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q<0.001] = "**"
-n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q<0.0001] = "***"
-n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q<0.00001] = "****"
-
-# Ordering cell types by dendrogram grouping
-cell_order = factor(gsub("_"," ",ctd[[1]]$plotting$cell_ordering))
-n_signif_per_cell_by_branch$cell_order = match(n_signif_per_cell_by_branch$CellType, cell_order)
-n_signif_per_cell_by_branch$CellType = reorder(n_signif_per_cell_by_branch$CellType, n_signif_per_cell_by_branch$cell_order)
-library(cowplot)
-facet_branch_plt <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_branch$branch %in% plot_branches,] , aes(x=CellType,y=n_signif,fill=branch)) +
-  geom_col() +
-  geom_text(mapping= aes(label = signif_asterics, y = n_signif + 5))+
-  theme_cowplot()+
-  ylab("Number of significantly enriched phenotypes") +
-  theme(axis.text.x = element_text(angle = 90, hjust=1,vjust=0.2),legend.position="none") +
-  #scale_x_discrete(breaks =cell_order)+
-  facet_wrap(~branch,ncol=1)
 
 print(facet_branch_plt)
 
@@ -543,74 +331,26 @@ To further demonstrate that the analysis finds expected phenotype-cell relations
 ```{r signif_expected_cell,fig.height = 4, fig.width = 10,fig.cap = "\\label{fig:signif_expected_cell}\\textbf{The relationship between significance threshold and the proportion of enrichments found in the expected HPO branch.} As more stringent significance thresholds for enrichment in a particular cell type are used, the proportion of enrichments from an expected HPO branch increases. This validates the method as it shows that many of the strong phenotype-cell associations are in agreement with our current understanding. \\textbf{A} shows the proportion of enrichments for abnormality of the nervous system descendants in excitatory neurons as significance threshold is increased, \\textbf{B} looks at the cardiovascular system branch and cardiomyocytes, and \\textbf{C} looks at the immune system branch and antigen presenting cells.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 
 
-library(wesanderson)
-color_pal = wes_palette("Darjeeling1",4)
 plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
 expected_cells = c("Excitatory neurons", "Cardiomyocytes","Antigen presenting cells")
-
-all_results_merged$minus_log_p = round(-log10(all_results_merged$p+0.000001),digits=0)
-#round(-log10(all_results_merged$p+0.000001),digits=1)
-correlation_results2 = data.frame()
-correlation_results = list()
+correlation_results = data.frame()  
 proportion_plots = list()
-for (i in seq(1,length(plot_branches))) {
-  target_cell = expected_cells[i]
-  cur_branch = plot_branches[i]
-  cur_id = hpo$id[match(cur_branch, hpo$name)]
-  cur_descendants = get_descendants(hpo, cur_id)
-  cur_descendants_names = c()
-  for(d in cur_descendants) {
-    cur_descendants_names = append(cur_descendants_names, paste(hpo$name[d]))
-  }
-
-  all_results_merged$cur_branch = "Other"
-  all_results_merged[all_results_merged$list %in% cur_descendants_names,]$cur_branch = cur_branch
-  all_results_merged$cur_branch = factor(all_results_merged$cur_branch)
-
-  proportional_results = data.frame()
-  for (logp in unique(all_results_merged$minus_log_p)) {
-    cur = all_results_merged[all_results_merged$minus_log_p == logp, ]
-    prop_branch = 100 * (length(cur$cur_branch[cur$cur_branch==cur_branch & cur$CellType == target_cell])/length(cur$cur_branch[cur$CellType==target_cell]))
-    prop_other = 100 * (length(cur$cur_branch[cur$cur_branch == "Other" & cur$CellType == target_cell])/length(cur$cur_branch[cur$CellType==target_cell]))
-    proportional_results = rbind(proportional_results,
-                                 data.frame("cur_branch" = cur_branch,
-                                            "prop" = prop_branch,
-                                            "minus_log_p" = logp))
-    proportional_results = rbind(proportional_results,
-                                 data.frame("cur_branch" = "Other",
-                                            "prop" = prop_other,
-                                            "minus_log_p" = logp))
-  }
-
-
-# pearsons = list(cor.test(proportional_results$minus_log_p[proportional_results$cur_branch != "Other"],proportional_results$prop[proportional_results$cur_branch != "Other"],method="pearson"))
-# pearsons[[1]]$branch =cur_branch
-# #correlation_results = append(correlation_results, pearsons)
-# correlation_results[cur_branch] = pearsons
-
-correlation_results2 = rbind(correlation_results2,proportional_results)
-
-  prop_plot <- ggplot(proportional_results, aes(x= minus_log_p, y = prop, color = cur_branch)) +
-    geom_point(size = 3) +
-    geom_line(mapping = aes(linetype= cur_branch),size=0.6) +
-    labs(color="", linetype="") +
-    ylab(paste0('% Enrichments in "', target_cell,'"')) +
-    xlab("-log10(p)") +
-    scale_y_continuous(limits = c(0,100)) +
-    theme_cowplot() +
-    scale_color_manual(values = c(color_pal[i],color_pal[4]))  +
-    theme(legend.position = "bottom", legend.text = element_text(size = 6.5), title = element_text(size = 9))
-
-  proportion_plots[[i]] = prop_plot
-
-  }
+for (i in seq(length(plot_branches))) {
+  cur_plot <- proportion_of_expected_enrichments_plot(all_results_merged,
+   target_cells=c(expected_cells[i]),
+   cell_type_description = expected_cells[i],
+   HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
+   phenotype_description = plot_branches[i],
+   wes_color_palette="Darjeeling1",
+   n_colors = 4,
+   color_expected_phenotypes = i,
+   color_other_phenotypes = 4)
+  proportion_plots[[i]] = cur_plot[[1]]
+  correlation_results = rbind(correlation_results,cur_plot[[2]])
+}
 
 print(cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C")))
-
-pearsons_expected = cor.test(correlation_results2$minus_log_p[correlation_results2$cur_branch != "Other"],correlation_results2$prop[correlation_results2$cur_branch != "Other"],method="pearson")
-
-# Reporting the results in text like this:
-# (Nervous system *r*$_`r correlation_results[[1]]$parameter`$=`r correlation_results[[1]]$estimate`, *p*=`r correlation_results[[1]]$p.value`; Cardiovascular system *r*$_`r correlation_results[[2]]$parameter`$=`r correlation_results[[2]]$estimate`, *p*=`r correlation_results[[2]]$p.value`; Immune system *r*$_`r correlation_results[[3]]$parameter`$=`r correlation_results[[3]]$estimate`, *p*=`r correlation_results[[3]]$p.value`) **Remove correlation results?**, or give results for all in one 
+pearsons_expected = cor.test(correlation_results$minus_log_p[correlation_results$cur_branch != "Other"],correlation_results$prop[correlation_results$cur_branch != "Other"],method="pearson")
 
 
 ```
@@ -625,69 +365,9 @@ The relationship between ontology level and fold change shows that the phenotype
 ```{r HPO_level_fold,fig.height=4,fig.width =8,fig.cap = '\\label{fig:HPO_level_fold}\\textbf{Relationship between ontology level and expression specificity. A:}  More narrowly defined phenotypes, at lower HPO levels, show more specific expression of their gene lists in significantly associated cells than phenotypes at higher HPO levels. Ontology level represents how many generations of sub-phenotypes a term has in the HPO. As we progress out towards these leaf-nodes (ontology level 0), the specific expression of the gene list tends to be higher in significantly enriched cell types. The level of specific expression is represented as fold change here. \\textbf{B:} At higher ontology levels, the phenotypes encompass a larger number of traits and are associated with larger lists of genes. The lower ontology level phenotypes are more narrowly defined and are often associated with only a few genes, possibly making them good targets for therapy and research.', message=FALSE, echo=FALSE}
 
 
-
-get_ont_level = function(hpo,term_ids) {
-  children = unique(setdiff(unlist(hpo$children[term_ids]), term_ids))
-  if (length(children) == 0) {
-    return(0)
-  } else {
-    return(1 + get_ont_level(hpo,children)) #<- recursion..
-  }
-}
-
-
-ont_level_df = data.frame()
-#n_remaining = length(unique(all_results_merged$list))
-for (p in unique(all_results_merged$list)) {
-  #cat("\rn phenos remaining:",n_remaining,"       ")
-  #n_remaining = n_remaining - 1
-  hpo_id = paste(hpo$id[match(p,hpo$name)])
-  if (hpo_id != "NA") {
-    mean_fold = mean(all_results_merged[all_results_merged$list == p & all_results_merged$q < 0.05, ]$fold_change, na.rm=TRUE)
-    n_genes = length(unique(phenotype_to_genes$Gene[phenotype_to_genes$Phenotype==p]))
-    hpo_id = paste(hpo$id[match(p,hpo$name)])
-    ont_level = get_ont_level(hpo, hpo_id)
-    ont_level_df = rbind(ont_level_df,
-                         data.frame("phenotype"=p,
-                                    "hpo_id"=hpo_id,
-                                    "ont_level"=ont_level,
-                                    "n_genes"=n_genes,
-                                    "mean_fold"=mean_fold))
-  }
-}
-
-# plot it
-library(dplyr)
-library(cowplot)
-library(ggplot2)
-ont_level_df2 = ont_level_df[ont_level_df$mean_fold != "NaN",]
-ont_level_df2 = ont_level_df2 %>%
-  group_by(ont_level) %>%
-  summarize(mean_fold_change = mean(mean_fold, na.rm=TRUE))
-
-lvlplt1 = ggplot(ont_level_df2,aes(x=ont_level,y=mean_fold_change)) +
-  geom_point() +
-  geom_line() +
-  theme_cowplot() +
-  labs(y = "Mean fold change", x = "Ontology level")
-
-ont_level_df2 = ont_level_df[ont_level_df$mean_fold != "NaN",]
-ont_level_df2 = ont_level_df2 %>%
-  group_by(ont_level) %>%
-  summarize(mean_n_genes = mean(n_genes, na.rm=TRUE))
-
-lvlplt2 = ggplot(ont_level_df2,aes(x=ont_level,y=mean_n_genes)) +
-  geom_point() +
-  geom_line() +
-  theme_cowplot() +
-  scale_x_continuous() +
-  labs(y = "Mean number of genes", x = "Ontology level")
-
-
-print(cowplot::plot_grid(plotlist=list(lvlplt1,lvlplt2),align = "hv",nrow = 1,labels = c("A","B")))
+print(ontlevel_to_foldchange_and_ngenes_plot(all_results_merged,hpo,phenotype_to_genes))
 
 # some data for discussion below
-library(ontologyIndex)
 n_desc_rec_inf = length(get_descendants(hpo, "HP:0002719"))
 ```
 
@@ -707,7 +387,7 @@ branch_id = paste(hpo$id[match(branch,hpo$name)])
 branch_descendants = paste(get_descendants(hpo,branch_id))
 branch_descendants_names = paste(hpo$name[branch_descendants])
 all_results_merged$list = paste(all_results_merged$list)
-all_results_merged$cur_branch = paste(all_results_merged$cur_branch)
+#all_results_merged$cur_branch = paste(all_results_merged$cur_branch)
 
 all_results_merged$cur_branch = paste("Other")
 all_results_merged$cur_branch[all_results_merged$list %in% branch_descendants_names] = branch
@@ -757,6 +437,8 @@ A selection of the sub-phenotypes of "Recurrent infections" were then isolated, 
 
 ```{r recurrent_bacterial_inf,fig.width=10,fig.height=10, fig.cap = '\\label{fig:recurrent_bacterial_inf}\\textbf{Cell-phenotype associations for child terms of Recurrent bacterial infections.} Here we can see all cell-phenotype relationships for child phenotypes of the HPO term "Recurrent bacterial infections". Significance is indicated with asterics where *, **, ***, and **** represent textit{q} less than 0.05, 0.001, 0.0001, and 0.00001. respectively.', message=FALSE, echo=FALSE}
 
+# Note: could probably just use ewce_plot function faceted with all the child terms of Recurrent bacterial infections.
+
 branch = "Recurrent bacterial infections"
 exclude_root = TRUE
 
@@ -798,6 +480,7 @@ Figure \ref{fig:recurrent_gramneg_inf} provides a closer look at the child pheno
 
 
 ```{r recurrent_gramneg_inf,fig.width=10,fig.height=10, fig.cap = '\\label{fig:recurrent_gramneg_inf}\\textbf{Enrichments for child phenotypes of "Recurrent gram-negative bacterial infections.} Here we can see all cell-phenotype relationships for child phenotypes of the HPO term "Recurrant gram-negative bacterial infections".', message=FALSE, echo=FALSE}
+#Note: Again, I realized these plots are similar to ewce_plot so may be better to just use that.
 
 branch = "Recurrent gram-negative bacterial infections"
 exclude_root = TRUE
