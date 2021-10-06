@@ -21,21 +21,35 @@ linkcolor: blue
 spacing: double
 toc: yes
 params:
-  results_data: "data/Descartes_All_Results_extras.rda"
-
+#  results_data: "data/Descartes_All_Results_extras.rda"
+  results_data: "data/descartes_all_results_061021.rda"
 abstract: \singlespace Despite the name, rare diseases (RD) contribute to a significant burden of disease globally. The increasing accessibility of genomic and biomedical datasets, and high throughput analytical techniques, has made it possible to uncover new insights into the genetic susceptibility and cell types involved. With the low prevalence of individual RDs, they have often not had the resource allocation they need. Here we attempt to overcome this by tackling the problem as a whole. The Human Phenotype Ontology (HPO) contains disease phenotypes annotated with associated risk genes. Here, these disease-associated gene lists, combined with human single-cell RNA sequence data, were used to identify the primary cell types involved in the HPO disease phenotypes. Expression weighted cell type enrichment (EWCE) was used for the analysis with 100,000 bootstrap reps. Over 8000 significant cell-phenotype associations were found (where *q*<0.05). The results were shown to be overrepresented by expected enrichments. For example, immune cells were more frequently enriched for phenotypes from the \"Abnormalities of the immune system\" ontology branch than all other cell types combined (*p*<0.05). The analysis was able to reproduce many previously known cell-phenotype relationships documented in the literature. There were also many novel and unexpected results, on examination, many of these were shown to have have a plausible mechanistic explanation. We can be confident that within these results are many previously unknown insights that could provide targets to future research. As too many results were produced to present in a single paper, the Rare Disease EWCE web app was developed to make the analysis available to clinicians and researchers, without the need for specialist knowledge and computational resources (https://ovrhuman.github.io/ewce_website/). \newpage
 
 
 ---
 
-```{r echo = FALSE, message = FALSE}
+```{r echo = FALSE, message = FALSE, warning=FALSE}
 # Dependencies 
 
-if (!require(RareDiseaseEWCE)) {
+
+if (!require(HPOEWCE)) {
   #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
-  devtools::install_github("ovrhuman/RareDiseaseEWCE")
-  library(RareDiseaseEWCE)
+  devtools::install_github("ovrhuman/HPOEWCE")
+  library(HPOEWCE)
 }
+if (!require(MultiEWCE)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
+  devtools::install_github("ovrhuman/MultiEWCE")
+  library(MultiEWCE)
+}
+if (!require(HPOExplorer)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
+  devtools::install_github("ovrhuman/HPOExplorer")
+  library(HPOExplorer)
+}
+
+
+
 
 library(ontologyIndex)
 library(ontologyPlot)
@@ -304,7 +318,8 @@ The root HPO term, phenotypic abnormality (HP:0000118), has `r length(hpo$childr
 
 ```{r HPO_main_branches,fig.height=5,fig.width = 5,fig.cap = '\\label{fig:HPO_main_branches}\\textbf{Main branches of the HPO.} This shows all the child phenotypes under "Phenotypic abnormality" (ID: HP:0000118) in the HPO. These can be considered as the main classes of phenotypic abnormality, or the main branches of the HPO.', message=FALSE, echo=FALSE}
 
-plot_n_phenotypes_per_branch_hpo()
+
+plot_n_phenotypes_per_branch_hpo(phenotype_to_genes=phenotype_to_genes,hpo=hpo)
 
 ```
 
@@ -337,6 +352,7 @@ correlation_results = data.frame()
 proportion_plots = list()
 for (i in seq(length(plot_branches))) {
   cur_plot <- proportion_of_expected_enrichments_plot(all_results_merged,
+   hpo,
    target_cells=c(expected_cells[i]),
    cell_type_description = expected_cells[i],
    HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
