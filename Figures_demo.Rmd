@@ -44,7 +44,18 @@ source("source/ewce_plot_function.R")
 The code for this figure is in `source/cell_select_ggnetwork_plot.R`. Its the basis for the interactive plot on the cell-select app. To map the size of nodes to relative position in the HPO hierarchy I made some confusing recursive graph algorithms. Having looked back over the code for that I think I could make it a lot cleaner and the adjacency matrix isn't necessary.  
 
 ```{r}
-plt = ggnetwork_plot_full(phenotype_to_genes, all_results_merged, hpo, disease_descriptions,cell_type = "Acinar cells", q_threshold =0.005, fold_threshold = 1)
+library(HPOExplorer)
+phenos <- all_results_merged[all_results_merged$CellType == "Acinar cells" & all_results_merged$q < 0.05 & complete.cases(all_results_merged), ]
+adjacency <- HPOExplorer::adjacency_matrix(unique(phenos$HPO_id), hpo)
+
+# Maybe need these column names to be options in make_network_object
+phenos$HPO_Id <- phenos$HPO_id
+phenos$Phenotype <- phenos$list
+phenos$hover <- phenos$Phenotype
+
+
+AcinarCells_net <-HPOExplorer::make_network_object(phenos, adjacency, hpo, colour_column = "fold_change")
+plt = HPOExplorer::ggnetwork_plot(AcinarCells_net)
 plot(plt)
 
 ```
@@ -612,4 +623,75 @@ library(ontologyPlot)
 library(ontologyIndex)
 social_int_desc <- get_descendants(hpo,hpo$id[match("Impaired social interactions",hpo$name)])
 onto_plot(hpo, social_int_desc)
+```
+
+
+# Ontology level facet plot ####################################################
+
+```{r fig.dim = c(15,5)}
+
+ont_levels <- data.frame("phenotype"=unique(phenotype_to_genes$Phenotype),
+                         "hpo_id"=hpo$id[match(unique(phenotype_to_genes$Phenotype),hpo$name)])
+ont_levels <- ont_levels[complete.cases(ont_levels),]
+lvls <- c()
+for (id in ont_levels$hpo_id) {
+  lvls = append(lvls, get_ont_level(hpo,id))
+}
+ont_levels$ont_lev <- lvls
+rm(lvls)
+
+n_associated_cells <- c()
+for (p in ont_levels$phenotype) {
+  #n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05]))
+  n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1]))
+}
+ont_levels$n_associated_cells <- n_associated_cells
+rm(n_associated_cells)
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ncells_plt <- ggplot(ont_levels, mapping=aes(x= factor(ont_lev), y=n_associated_cells)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ont_lev)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Associated cells/phenotype (n)",title = "n associated cells/phenotype by ontology level")
+ontlvl_ncells_plt
+
+
+
+# ont level facet
+
+signif_res <- all_results_merged[all_results_merged$q < 0.05,]
+ontlevz <- c()
+for (p in unique(signif_res$HPO_id)) {
+  ontlevz[p] <- get_ont_level(hpo,p)
+}
+signif_res$ontlvl <- ontlevz[signif_res$HPO_id]
+signif_res <- signif_res[complete.cases(signif_res),]
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_fold_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = fold_change)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Fold change",title = "Fold change in specific expression by ontology level")
+
+# ngenes plt (stat smooth takes too long/doesnt work with all results so just use signif ?)
+ngenes<-c()
+for(p in unique(signif_res$list)) {
+  ngenes[p] <- length(get_gene_list(p,phenotype_to_genes))
+}
+signif_res$ngenes <- ngenes[signif_res$list]
+signif_res <- signif_res[complete.cases(signif_res),]
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ngenes_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = ngenes)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Genes (n)",title = "Number of genes by ontology level")
+
+print(cowplot::plot_grid(plotlist=list(ontlvl_ncells_plt,ontlvl_fold_plt,ontlvl_ngenes_plt),align = "hv",nrow = 1))
+
 ```
