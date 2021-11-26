@@ -4,3 +4,9 @@
 .Ruserdata
 data/FACS
 feature_dev/
+data/Abnormal_lip_morphology_similar_phenos.rds
+data/CTD_Descartes_withplot.rds
+data/descartes_all_results_061021.rda
+data/phenotype_to_genes.txt
+rare_disease_ewce.Rproj
+report_BobbyGordonSmith_masters_RD_project_writeup.pdf

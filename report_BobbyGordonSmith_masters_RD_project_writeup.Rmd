@@ -39,12 +39,12 @@ if (!require(HPOEWCE)) {
 }
 if (!require(MultiEWCE)) {
   #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
-  devtools::install_github("ovrhuman/MultiEWCE")
+  devtools::install_github("neurogenomics/MultiEWCE")
   library(MultiEWCE)
 }
 if (!require(HPOExplorer)) {
   #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
-  devtools::install_github("ovrhuman/HPOExplorer")
+  devtools::install_github("neurogenomics/HPOExplorer")
   library(HPOExplorer)
 }
 
@@ -57,9 +57,10 @@ library(ggplot2)
 data(hpo)
 load(params$results_data)
 ctd = readRDS("data/CTD_Descartes_withplot.rds")
-phenotype_to_genes = phenotype_to_genes = read.delim("data/phenotype_to_genes.txt", skip = 1, header=FALSE)
-colnames(phenotype_to_genes) = c("ID", "Phenotype", "EntrezID", "Gene",
-                       "Additional", "Source", "LinkID")
+phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_genes.txt")
+# phenotype_to_genes = phenotype_to_genes = read.delim("data/phenotype_to_genes.txt", skip = 1, header=FALSE)
+# colnames(phenotype_to_genes) = c("ID", "Phenotype", "EntrezID", "Gene",
+#                        "Additional", "Source", "LinkID")
 ```
 
 
