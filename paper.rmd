@@ -30,27 +30,18 @@ abstract: \singlespace Despite the name, rare diseases (RD) contribute to a sign
 
 ```{r echo = FALSE, message = FALSE, warning=FALSE}
 # Dependencies 
-
-
 if (!require(HPOEWCE)) {
-  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("ovrhuman/HPOEWCE")
   library(HPOEWCE)
 }
 if (!require(MultiEWCE)) {
-  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("neurogenomics/MultiEWCE")
   library(MultiEWCE)
 }
 if (!require(HPOExplorer)) {
-  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("neurogenomics/HPOExplorer")
   library(HPOExplorer)
 }
-
-
-
-
 library(ontologyIndex)
 library(ontologyPlot)
 library(ggplot2)
@@ -58,9 +49,6 @@ data(hpo)
 load(params$results_data)
 ctd = readRDS("data/CTD_Descartes_withplot.rds")
 phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_genes.txt")
-# phenotype_to_genes = phenotype_to_genes = read.delim("data/phenotype_to_genes.txt", skip = 1, header=FALSE)
-# colnames(phenotype_to_genes) = c("ID", "Phenotype", "EntrezID", "Gene",
-#                        "Additional", "Source", "LinkID")
 ```
 
 
@@ -80,8 +68,6 @@ phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_gen
 # 
 # **laytex commands**
 # use both laytex commands and markdown syntax to edit stuff. only laytex commands work in the Yaml header?
-
-
 ```
 
 
@@ -99,8 +85,6 @@ Here we utilise human single cell transcriptomic data from the Descartes human c
 The Human Phenotype Ontology (HPO) is an initiative founded in 2008 that consists of an ontology of $13\,000$ annotated clinically relevant phenotypes. They are connected in a directed acyclic graph with edges representing transitive "is-a" connections [@HumanPhenotypeOntology2020]. Each phenotype is a subclass of its parent phenotypes, all the way up to the root node of all phenotypes, which is "Phenotypic abnormality". This allows for computationally efficient and human interpretable representation of the complex relationships between phenotypes. For example, Figure \ref{fig:ADHD_ancestors} shows all ancestor terms for Attention Deficit Hyperactivity Disorder (ADHD), which is a subclass of both hyperactivity and short attention span, which themselves are subclasses of two nervous system disorders, movement and behavioural abnormalities, respectively.
 
 ```{r ADHD_ancestors,fig.cap = "\\label{fig:ADHD_ancestors}\\textbf{ADHD ancestor terms.} The ancestor terms of ADHD (HPO Id: HP:0007018) in the HPO. It is 5 generations down from the root node, \"Phenotypic abnormality\". The arrows represent \"is-a\" relationships, meaning that a child term is a sub-class of the term above it. This was plotted using R version 4.05 and the ontolgyX package [@RLanguage; @ontologyXpackage2017].", message=FALSE, echo=FALSE}
-
-
 namer = function(term){
   return (hpo$name[term])
 }
@@ -108,7 +92,6 @@ terms = get_term_property(hpo,property="ancestors" ,term ="HP:0007018",
                           as_names=FALSE)
 print(onto_plot(hpo, terms= terms[2:length(terms)],label = namer,
           shape="circle",fontsize = 80, edge_attributes = list(color="grey")))
-
 ```
 
 As well as conveying the relationship between nodes (phenotypes), the description logic of bio-ontologies can also describe properties of the node, including synonyms, descriptions, and associated genes and diseases. This data integration allows for implicit knowledge hidden in the data to become explicit and retrievable [@ClassificationOntologyPrecisionMed2018]. Currently, much of the HPO focuses on rare Mendelian diseases, many of which have extensive annotations taken from electronic health records and genotype data. The aggregation of data from heterogeneous sources makes the HPO an indispensable tool in phenotype-driven genomic research, precision medicine, and diagnostics. 
@@ -185,7 +168,6 @@ A web-based application was made so that the study can have its maximum impact. 
 library(imager)
 ewceHome = load.image("figures/EWCE_home.png")
 print(plot(ewceHome, axes = FALSE))
-
 ```
 
 A demonstration of the interactive plot feature from the cell-select app can be seen in Figure \ref{fig:Interactive_plot_acinar_demo} below. The ggnetowrk R package was used to give x and y coordinates to each phenotype in the network and the plotting was done using the ggplot2 R package [@ggnetwork_package; @ggplot2_package]. Mapping of the ontology level of the phenotypes to the size of the node was done so that phenotypes higher up the HPO hierarchy appear larger than those below (within a connected component of the graph). This is done by checking if a phenotypes parent node is present in the component to be plotted. If the parent is not present, the function returns zero, if a parent node is present, the function returns $1 + f(parent)$. In other words, the function then calls its self recursively to check if the parent phenotype also has a parent phenotype present. This happens repeatedly until the last parent is found and the result can be returned (see Supplementary - Code example 2).
