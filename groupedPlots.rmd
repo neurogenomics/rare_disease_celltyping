@@ -184,14 +184,16 @@ phenosPerBranch <- function (phenotype_to_genes, hpo, highlighted_branches = c("
   
   phenos_per_branch_plt <- ggplot(phenos_per_branch, aes(x = n_phenos, 
                                                          y = branch, color = target, fill = target)) + 
-    geom_segment(mapping = aes(xend = 0,  yend = branch), size = 3, colour = phenos_per_branch$color) + xlab("Descendants (n)") + 
+    geom_segment(mapping = aes(xend = 0,  yend = branch), size = 5, colour = phenos_per_branch$color) + xlab("Descendants (n)") + 
     ylab(element_blank()) + 
     scale_color_manual(values = color_pal) + 
     theme(axis.line.x = element_blank(), panel.background = element_blank(), 
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
           axis.line.y = element_line(color = "black"), 
           axis.ticks.x = element_blank(), axis.text.x = element_blank(), 
-          legend.position = "none")
+          axis.text.y = element_text(size = 20),
+          legend.position = "none") +
+    scale_x_continuous(position = "top")
   return(phenos_per_branch_plt)
 }
 main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo)
@@ -204,19 +206,45 @@ main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo)
 plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
 facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd)
 
+
+# Cell x axis label colours 
+cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours = append(cell_colours, ns_colour)
+  } else if (c %in% immune_cell_types) (
+    cell_colours = append(cell_colours, immune_colour)
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours = append(cell_colours, card_colour)
+  } else {
+    cell_colours = append(cell_colours, "black")
+  }
+}
+
+
 ```
 
 Here is Fig \ref{fig:overviewResults}
 ```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
 
 layout <- "
-#AA#
-#AA#
-BCCC
-BCCC
+#BAA
+#BAA
+#BAA
+CCCC
+CCCC
 "
 
-print(plot_npc + main_branch_plt + facet_branch_plt + plot_layout(design = layout))
+print( (plot_npc + theme(legend.position = c(0.8,0.4)))  +
+        main_branch_plt +  
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10)),
+                                   axis.text.x = element_text(colour = cell_colours, angle = 45)) ) + 
+        plot_layout(design = layout) )
 
 ```
 
