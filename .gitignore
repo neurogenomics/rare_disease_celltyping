@@ -11,3 +11,6 @@ data/phenotype_to_genes.txt
 rare_disease_ewce.Rproj
 report_BobbyGordonSmith_masters_RD_project_writeup.pdf
 Figures_demo.html
+groupedPlots.html
+groupedPlots.log
+savedPlot.png

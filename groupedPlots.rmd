@@ -199,6 +199,8 @@ main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo)
 
 
 # Phenos per cell by branch
+
+
 plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
 facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd)
 
@@ -207,7 +209,14 @@ facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, p
 Here is Fig \ref{fig:overviewResults}
 ```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
 
-print(plot_npc / ( main_branch_plt | facet_branch_plt ))
+layout <- "
+#AA#
+#AA#
+BCCC
+BCCC
+"
+
+print(plot_npc + main_branch_plt + facet_branch_plt + plot_layout(design = layout))
 
 ```
 

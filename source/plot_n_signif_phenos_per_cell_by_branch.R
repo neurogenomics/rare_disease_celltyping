@@ -118,13 +118,15 @@ plot_n_signif_phenos_per_cell_by_branch <- function(all_results_merged,
   n_signif_per_cell_by_branch$cell_order = match(n_signif_per_cell_by_branch$CellType, cell_order)
   n_signif_per_cell_by_branch$CellType = reorder(n_signif_per_cell_by_branch$CellType, n_signif_per_cell_by_branch$cell_order)
 
+  n_signif_per_cell_by_branch$branch_f <- factor(n_signif_per_cell_by_branch$branch, levels = plot_branches)
+
   facet_branch_plt <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_branch$branch %in% plot_branches,] , aes(x=CellType,y=n_signif,fill=branch)) +
     geom_col() +
     geom_text(mapping= aes(label = signif_asterics, y = n_signif + 5))+
     theme_cowplot()+
     theme(axis.text.x = element_text(angle = 90, hjust=1),legend.position="none") +
     #scale_x_discrete(breaks =cell_order)+
-    facet_wrap(~branch,ncol=1)
+    facet_wrap(~branch_f,ncol=1)
 
   return(facet_branch_plt)
 }
