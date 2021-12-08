@@ -10,15 +10,14 @@ theme: Springer
 title: \singlespace Grouped plots
 ---
 # Group plots
-```{r}
-library(patchwork)
-```
 The plots for the paper need to be grouped into larger figures. The roughly planned 
 grouping so far can be seen in the file `figure_group_planning.md`.
 
 
 # Load dependencies
 ```{r dependencies, message = FALSE, warning= FALSE}
+library(patchwork)
+
 library(ggplot2)
 library(ontologyIndex)
 library(ontologyPlot)
@@ -129,6 +128,8 @@ printable_networkPlot <- one_cell_ontology_plot_heatmap(all_results_merged,cell=
 
 Here is an example of Figure \ref{fig:explanatoryPlots}
 
+
+
 ```{r explanatoryPlots,fig.height=20,fig.width=20,fig.cap = "\\label{fig:explanatoryPlots}\\textbf{Explanatory and Introductory plots.} These plots were mostly used in the introduction of my report.", message=FALSE, warning =FALSE, results = FALSE}
 
 
@@ -143,12 +144,264 @@ printable_networkPlot <- ggplotify(printable_networkPlot)
 # Figure 2 - Overview results 
 These figrues are meant to give a general idea of how many results there are, and show that they make sense. 
 
+```{r pheno_by_branch_withd_dend, echo = FALSE}
+palette_branch <- wesanderson::wes_palette("Darjeeling1")
+
+
+plot_n_signif_phenos_per_cell_by_branch_den <- function (all_results_merged, plot_branches = c("Abnormality of the nervous system", 
+                                                "Abnormality of the cardiovascular system", "Abnormality of the immune system"), 
+          q_threshold = 0.05, hpo = hpo, phenotype_to_genes = phenotype_to_genes, 
+          ctd = ctd, make_dendro = TRUE, palette_branch = c("#FF0000", "#00A08A", "#F2AD00")) 
+{
+  hpo_branches = hpo$children["HP:0000118"]
+  hpo_branches_names = c()
+  for (b in hpo_branches) {
+    hpo_branches_names = c(hpo_branches_names, hpo$name[b])
+  }
+  main_branch_df = data.frame(hpo_id = hpo_branches, phenotype = hpo_branches_names)
+  descendants = list()
+  for (b in hpo_branches[[1]]) {
+    print(b)
+    print(hpo$name[b])
+    descendants[[hpo$name[b]]] = ontologyIndex::get_descendants(hpo, 
+                                                                b)
+  }
+  if (!"branch" %in% colnames(all_results_merged)) {
+    phenotypes = unique(phenotype_to_genes$Phenotype)
+    all_results_merged$branch = NA
+    pheno_branches = c()
+    for (p in phenotypes) {
+      print(p)
+      index = match(p, hpo$name)
+      if (!is.na(index)) {
+        id = hpo$id[[index]]
+        for (i in seq(1, length(descendants))) {
+          if (id %in% descendants[[i]]) {
+            pheno_branches[p] = names(descendants[i])
+          }
+        }
+      }
+    }
+    all_results_merged$branch = NA
+    remaining = length(unique(all_results_merged$list))
+    cat("Asigning branch to phenotypes\nN remaining:\n")
+    for (p in unique(all_results_merged$list)) {
+      cat("\r", remaining, "      ")
+      remaining = remaining - 1
+      all_results_merged$branch[all_results_merged$list == 
+                                  p] = pheno_branches[p]
+    }
+  }
+  signif_results = all_results_merged[all_results_merged$q <= 
+                                        q_threshold & !is.na(all_results_merged$branch), ]
+  n_signif_per_cell_by_branch = data.frame()
+  for (b in unique(plot_branches)) {
+    for (c in unique(all_results_merged$CellType)) {
+      n = length(signif_results[signif_results$CellType == 
+                                  c & signif_results$branch == b, ]$list)
+      n_signif_per_cell_by_branch = rbind(n_signif_per_cell_by_branch, 
+                                          data.frame(branch = b, CellType = c, n_signif = n))
+    }
+  }
+  n_signif_per_cell_by_branch$hypergeo_p = NA
+  total_signif = length(signif_results$q)
+  for (i in seq(1, length(n_signif_per_cell_by_branch$CellType))) {
+    cell = n_signif_per_cell_by_branch$CellType[i]
+    branch = n_signif_per_cell_by_branch$branch[i]
+    group1 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$CellType == 
+                                                        cell])
+    group2 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$branch == 
+                                                        branch])
+    overlap = n_signif_per_cell_by_branch$n_signif[i]
+    n_signif_per_cell_by_branch$hypergeo_p[i] = stats::phyper(overlap - 
+                                                                1, group2, total_signif - group2, group1, lower.tail = FALSE)
+  }
+  n_signif_per_cell_by_branch$hypergeo_q = stats::p.adjust(n_signif_per_cell_by_branch$hypergeo_p, 
+                                                           method = "BH")
+  n_signif_per_cell_by_branch$signif_asterics = ""
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.05] = "*"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.005] = "**"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-04] = "***"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-05] = "****"
+  cell_order = factor(gsub("_", " ", ctd[[1]]$plotting$cell_ordering))
+  n_signif_per_cell_by_branch$cell_order = match(n_signif_per_cell_by_branch$CellType, 
+                                                 cell_order)
+  n_signif_per_cell_by_branch$CellType = stats::reorder(n_signif_per_cell_by_branch$CellType, 
+                                                        n_signif_per_cell_by_branch$cell_order)
+  n_signif_per_cell_by_branch$branch_f <- factor(n_signif_per_cell_by_branch$branch, 
+                                                 levels = plot_branches)
+
+  
+  # maybe wont work
+  cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+#ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours = append(cell_colours, ns_colour)
+  } else if (c %in% immune_cell_types) (
+    cell_colours = append(cell_colours, immune_colour)
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours = append(cell_colours, card_colour)
+  } else {
+    cell_colours = append(cell_colours,"black")
+  }
+}
+
+named_colours = c()
+for (i in seq(1, length(plot_branches))) {
+  named_colours[plot_branches[i]] = palette_branch[i]
+}
+  
+
+  facet_branch_plt <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_branch$branch %in% 
+                                                           plot_branches, ], aes(x = CellType, y = n_signif, fill = branch)) + 
+    geom_col() + scale_colour_manual(values =  named_colours,aesthetics = "fill") +
+    geom_text(mapping = aes(label = signif_asterics, 
+                                         y = n_signif + 5)) + cowplot::theme_cowplot() + ylab("Enrichments (n)") + 
+    xlab("Cell type") + theme(axis.text.x = element_text(angle = 90, 
+                                                         hjust = 1), legend.position = "none") + facet_wrap(~branch_f, 
+                                                                                                            ncol = 1)
+
+
+  facet_branch_plt = facet_branch_plt + theme(axis.text.x = element_text(colour = cell_colours, angle = 45))
+  
+  if (make_dendro) {
+    the_dendrogram = ctd[[1]]$plotting$ggdendro_horizontal +
+      theme(plot.margin = unit(c(0, 0, 0, 0), units = "cm")) +
+      #  scale_x_discrete(breaks = total_res$CellType)
+      scale_x_discrete(breaks = ctd[[1]]$plotting$cell_ordering)
+    # CHANGE ^: added scale_x_discrete to set the mapping of the dendro to the x axis scale
+    
+    facet_branch_plt = cowplot::plot_grid(the_dendrogram, facet_branch_plt,axis = "lr",
+                                          align = "v", ncol = 1,
+                                          rel_heights = c(0.5, 3))
+    # CHANGE ^: align argument to "v" and rel_heights to c(0.3,1) to make dend and barchart closer
+    
+    #output$withDendro = combined_plot
+  }
+  
+  
+  
+    return(facet_branch_plt)
+}
+
+
+
+
+
+```
+
+```{r phenos_per_cell_3, echo = FALSE}
+
+# Create hashmap for cell names to assocaited colour
+cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+#ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours[c] = ns_colour
+  } else if (c %in% immune_cell_types) (
+    cell_colours[c] = immune_colour
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours[c] = card_colour
+  } else {
+    cell_colours[c] = "black"
+  }
+}
+
+  
+
+
+
+
+
+phenos_per_cell_colourText <- function (all_results_merged, cell_mappings, fold = 1, q_val = 0.005, 
+    dataset = "Descartes", cell_colours_hashmap = cell_colours) 
+{
+    phenos_per_cell = data.frame()
+    for (c in unique(all_results_merged$CellType)) {
+        cur_cell = c
+        n_phenos = length(all_results_merged[all_results_merged$CellType == 
+            c & all_results_merged$q < q_val & all_results_merged$fold_change > 
+            fold, "list"])
+        phenos_per_cell = rbind(phenos_per_cell, data.frame(Cell = cur_cell, 
+            n_phenos = n_phenos))
+    }
+    n_pheno_text = phenos_per_cell
+    phenos_per_cell$Tissue = rep(NA, length(phenos_per_cell$Cell))
+    if (dataset == "Descartes") {
+        phenos_per_cell_tissue = data.frame()
+        for (i in seq(1:length(phenos_per_cell$Cell))) {
+            cur = cell_mappings[cell_mappings$level1 == paste(phenos_per_cell$Cell[i]), 
+                ]$tissue
+            for (t in unique(cur)) {
+                if (!is.na(t)) {
+                  phenos_per_cell$Tissue[i] = t
+                  phenos_per_cell_tissue = rbind(phenos_per_cell_tissue, 
+                    phenos_per_cell[i, ])
+                }
+            }
+        }
+        phenos_per_cell = phenos_per_cell_tissue
+    }
+    phenos_per_cell$Cell = stats::reorder(phenos_per_cell$Cell, 
+        phenos_per_cell$n_phenos)
+    if (dataset == "Descartes") {
+        for (i in seq(1, length(phenos_per_cell$Cell))) {
+            cur = phenos_per_cell[phenos_per_cell$Cell == phenos_per_cell$Cell[i], 
+                ]
+            phenos_per_cell$n_phenos[i] = phenos_per_cell$n_phenos[i]/length(unique(cur$Tissue))
+        }
+    }
+    
+    
+   ## Need to sort this out as an option and add arguments for it 
+    phenos_per_cell$Cell_colour <- cell_colours_hashmap[phenos_per_cell$Cell]
+
+    
+    explan_plt <- ggplot(phenos_per_cell, aes(n_phenos, as.factor(Cell))) + 
+        scale_x_continuous("", expand = c(0, 0), limits = c(0, 
+            max(n_pheno_text$n_phenos) + 55)) + theme_classic() + 
+        scale_y_discrete(phenos_per_cell$Cell) + labs(title = paste0("Significantly enriched phenotypes per cell (q < ", 
+        q_val, ", fold change > ", fold, ")")) + 
+        ylab("Cell Type")
+    if (dataset == "Descartes") {
+        explan_plt = explan_plt + geom_col(aes(fill = Tissue), 
+            size = 2, position = "stack")
+    }
+    else {
+        explan_plt = explan_plt + geom_segment(aes(xend = 0, 
+            yend = Cell), size = 2)
+    }
+    explan_plt = explan_plt + geom_text(data = n_pheno_text, 
+        aes(label = n_phenos, x = n_phenos + 26, y = Cell), size = 4, 
+        color = "black") + ylab("Cell Type") + theme(axis.title.y = element_blank(), axis.text.y = element_text(colour = phenos_per_cell$Cell_colour))
+    return(explan_plt)
+}
+```
+
+
+
 ```{r overviewResults_code, warning=FALSE, message=FALSE, results=FALSE}
 
 # Phenos per cell plot
 descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
 descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1)
-plot_npc = plot_phenos_per_cell1(all_results_merged,descartes_mappings, fold=1,q_val=0.05)
+plot_npc = phenos_per_cell_colourText(all_results_merged,descartes_mappings, fold=1,q_val=0.05, cell_colours_hashmap = cell_colours)
 
 # Main branches of hpo
 #main_branch_plt <- plot_n_phenotypes_per_branch_hpo(phenotype_to_genes=phenotype_to_genes,hpo=hpo)
@@ -191,12 +444,12 @@ phenosPerBranch <- function (phenotype_to_genes, hpo, highlighted_branches = c("
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
           axis.line.y = element_line(color = "black"), 
           axis.ticks.x = element_blank(), axis.text.x = element_blank(), 
-          axis.text.y = element_text(size = 20),
+          axis.text.y = element_text(size = 11),
           legend.position = "none") +
     scale_x_continuous(position = "top")
   return(phenos_per_branch_plt)
 }
-main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo)
+main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo, set_colors = palette_branch[1:3])
 
 
 
@@ -204,53 +457,172 @@ main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo)
 
 
 plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
-facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd)
+facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch_den(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd, make_dendro =TRUE)
 
-
-# Cell x axis label colours 
-cell_order <- ctd[[1]]$plotting$cell_ordering
-neuronal_cell_types = cell_order[seq(14,32)]
-immune_cell_types = cell_order[c(5,6,7,75,76,77)]
-cardiac_cell_types = cell_order[c(42,4)]
-ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
-cell_colours = c()
-for (c in cell_order) {
-  if (c %in% neuronal_cell_types) {
-    cell_colours = append(cell_colours, ns_colour)
-  } else if (c %in% immune_cell_types) (
-    cell_colours = append(cell_colours, immune_colour)
-  ) else if (c %in% cardiac_cell_types) {
-    cell_colours = append(cell_colours, card_colour)
-  } else {
-    cell_colours = append(cell_colours, "black")
-  }
-}
 
 
 ```
 
 Here is Fig \ref{fig:overviewResults}
+
 ```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
 
+
 layout <- "
-#BAA
-#BAA
-#BAA
-CCCC
-CCCC
+AA####BBBB##
+AA####BBBB##
+AA####BBBB##
+AACCCCCCCCCC
+AACCCCCCCCCC
+AACCCCCCCCCC
+AACCCCCCCCCC
+AACCCCCCCCCC
+AACCCCCCCCCC
+##CCCCCCCCCC
 "
 
-print( (plot_npc + theme(legend.position = c(0.8,0.4)))  +
-        main_branch_plt +  
-        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10)),
-                                   axis.text.x = element_text(colour = cell_colours, angle = 45)) ) + 
-        plot_layout(design = layout) )
+print(  
+  (plot_npc + theme(legend.position = "top", legend.justification = "top", axis.text.y = element_text(size = 12)))  +
+  (main_branch_plt + theme(axis.text.y = element_text(size = 15))) +
+          
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
+        plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
 
 ```
 
 
+
+```{r overviewResults2, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
+
+
+
+namer = function(term){
+  return (hpo$name[term])
+}
+terms = ontologyIndex::get_term_property(hpo,property="children" ,term = hpo$id[which(hpo$name == "Phenotypic abnormality")],as_names=FALSE)
+terms = append(terms,hpo$id[which(hpo$name == "Phenotypic abnormality")])
+
+terms <- data.frame("terms" = terms, "colour" = "gray")
+
+
+
+plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system", "Abnormality of the immune system")
+named_colours <- c()
+for (i in seq(length(plot_branches))) {
+  named_colours[plot_branches[i]] <- palette_branch[i]
+}
+
+term_colours <- c()
+term_names <- c()
+term_labels <- c()
+for (t in terms$terms) {
+  cur_name <- hpo$name[t]
+  term_names <- append(term_names, cur_name)
+  
+  if( cur_name == "Phenotypic abnormality") {
+    term_labels <- append(term_labels, cur_name)
+    term_colours <- append(term_colours, "lightblue")
+  } else if (cur_name %in% plot_branches) {
+    term_labels <- append(term_labels, "")
+    term_colours <- append(term_colours, named_colours[cur_name])
+  } else {
+    term_labels <- append(term_labels, " ")
+    term_colours <- append(term_colours, "gray")
+  }
+}
+ 
+terms$colour <- term_colours 
+terms$name <- term_names 
+terms$labels <- term_labels
+
+
+phenotypic_abnormality_children <- ontologyPlot::onto_plot(hpo, terms= terms$terms,label = terms$labels,
+          shape="circle",fontsize = 80,fillcolor = terms$colour ,edge_attributes = list(color="grey"))
+
+
+
+
+layout <- "
+AA####BBBB##
+AA####BBBB##
+AACCCCCCCCCC
+AACCCCCCCCCC
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+##DDDDDDDDDD
+"
+
+print(  
+  (plot_npc + theme(legend.position = "top", legend.justification = "top", axis.text.y = element_text(size = 12)))  +
+  (main_branch_plt + theme(axis.text.y = element_text(size = 15))) +
+          ggplotify(phenotypic_abnormality_children, height_px = 300, width_px = 1200) + # try increase height_px 
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
+        plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
+
+```
+
+
+
 # Figure 3 HPO Patterns and relationships
 These show common patterns seen in HPO, related to ongology level, n genes etc.
+
+```{r proportion_expected_plt, echo = FALSE}
+# modifying this function to be more specific about colours used. 
+proportion_of_expected_enrichments_plot_2 <- function (all_results_merged, hpo, target_cells = c("Excitatory neurons", 
+    "Limbic system neurons"), cell_type_description = "Neuronal cells", 
+    HPO_Ids = ontologyIndex::get_descendants(hpo, hpo$id[match("Abnormality of the nervous system", 
+        hpo$name)]), phenotype_description = "Nervous system phenotypes", 
+    color_pal = c("#619CFF","#F8766D","#00BA38","gray"), color_expected_phenotypes = 1, 
+    color_other_phenotypes = 4, blank_x_axis = FALSE) 
+{
+    cur_descendants_names = c()
+    for (d in HPO_Ids) {
+        cur_descendants_names = append(cur_descendants_names, 
+            paste(hpo$name[d]))
+    }
+    all_results_merged$cur_branch = "Other"
+    all_results_merged[all_results_merged$list %in% cur_descendants_names, 
+        ]$cur_branch = phenotype_description
+    all_results_merged$cur_branch = factor(all_results_merged$cur_branch)
+    all_results_merged$minus_log_p = round(-log10(all_results_merged$p + 
+        1e-06), digits = 0)
+    proportional_results = data.frame()
+    for (logp in unique(all_results_merged$minus_log_p)) {
+        cur = all_results_merged[all_results_merged$minus_log_p == 
+            logp, ]
+        prop_branch = 100 * (length(cur$cur_branch[cur$cur_branch == 
+            phenotype_description & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+            target_cells]))
+        prop_other = 100 * (length(cur$cur_branch[cur$cur_branch == 
+            "Other" & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+            target_cells]))
+        proportional_results = rbind(proportional_results, data.frame(cur_branch = phenotype_description, 
+            prop = prop_branch, minus_log_p = logp))
+        proportional_results = rbind(proportional_results, data.frame(cur_branch = "Other", 
+            prop = prop_other, minus_log_p = logp))
+    }
+    #color_pal = wesanderson::wes_palette(wes_color_palette, n_colors)
+    prop_plot <- ggplot(proportional_results, aes(x = minus_log_p, 
+        y = prop, color = cur_branch)) + geom_point(size = 3) + 
+        geom_line(mapping = aes(linetype = cur_branch), size = 0.6) + 
+        labs(color = "", linetype = "") + ylab(paste0("% Enrichments in \"", 
+        cell_type_description, "\"")) + 
+      scale_y_continuous(limits = c(0, 100)) + cowplot::theme_cowplot() + 
+        scale_color_manual(values = c(color_pal[color_expected_phenotypes], 
+            color_pal[color_other_phenotypes])) + theme(legend.position = c(0.5,0.95), 
+        legend.text = element_text(size = 6.5), title = element_text(size = 9))
+      if (! blank_x_axis){
+        prop_plot = prop_plot + xlab("-log10(p)")
+      } else {
+        prop_plot = prop_plot + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+      } 
+    return(list(prop_plot, proportional_results))
+}
+
+```
 
 
 ```{r patterns, message=FALSE, warning=FALSE}
@@ -260,25 +632,27 @@ plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardi
 expected_cells = c("Excitatory neurons", "Cardiomyocytes","Antigen presenting cells")
 correlation_results = data.frame()  
 proportion_plots = list()
+blank_x = c(TRUE, TRUE, FALSE)
 for (i in seq(length(plot_branches))) {
-  cur_plot <- proportion_of_expected_enrichments_plot(all_results_merged,
+  cur_plot <- proportion_of_expected_enrichments_plot_2(all_results_merged,
    hpo,
    target_cells=c(expected_cells[i]),
    cell_type_description = expected_cells[i],
    HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
    phenotype_description = plot_branches[i],
-   wes_color_palette="Darjeeling1",
-   n_colors = 4,
+   color_pal =  c("#619CFF","#F8766D","#00BA38","gray"),
    color_expected_phenotypes = i,
-   color_other_phenotypes = 4)
+   color_other_phenotypes = 4, blank_x_axis = blank_x[i])
   proportion_plots[[i]] = cur_plot[[1]]
   correlation_results = rbind(correlation_results,cur_plot[[2]])
 }
 
-sigplot <- cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C"))
+#sigplot <- cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C"))
 
 
 # ont level plots (violin) #####################################################
+blank_x <-   theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+      
 
 ont_levels <- data.frame("phenotype"=unique(phenotype_to_genes$Phenotype),
                          "hpo_id"=hpo$id[match(unique(phenotype_to_genes$Phenotype),hpo$name)])
@@ -304,7 +678,8 @@ ontlvl_ncells_plt <- ggplot(ont_levels, mapping=aes(x= factor(ont_lev), y=n_asso
   geom_violin(fill = NA) +
   geom_smooth(color = pal[2], method="loess",mapping = aes(x=ont_lev)) +
   cowplot::theme_cowplot() +
-  labs(x="Ontology level", y="Associated cells/phenotype (n)",title = "n associated cells/phenotype by ontology level")
+  labs(x="Ontology level", y="Associated cells/phenotype (n)",title = "n associated cells/phenotype by ontology level")+
+  blank_x
 #ontlvl_ncells_plt
 
 
@@ -325,7 +700,9 @@ ontlvl_fold_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = fold_change)) 
   geom_violin(fill = NA) +
   geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
   cowplot::theme_cowplot() +
-  labs(x="Ontology level", y="Fold change",title = "Fold change in specific expression by ontology level")
+  labs(x="Ontology level", y="Fold change",title = "Fold change in specific expression by ontology level") +
+  blank_x
+  
 
 # ngenes plt (stat smooth takes too long/doesnt work with all results so just use signif ?)
 ngenes<-c()
@@ -342,7 +719,7 @@ ontlvl_ngenes_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = ngenes)) +
   cowplot::theme_cowplot() +
   labs(x="Ontology level", y="Genes (n)",title = "Number of genes by ontology level")
 
-ontlvlplots <- cowplot::plot_grid(plotlist=list(ontlvl_ncells_plt,ontlvl_fold_plt,ontlvl_ngenes_plt),align = "hv",nrow = 1)
+#ontlvlplots <- cowplot::plot_grid(plotlist=list(ontlvl_ncells_plt,ontlvl_fold_plt,ontlvl_ngenes_plt),align = "hv",nrow = 1)
 
 
 
@@ -350,9 +727,17 @@ ontlvlplots <- cowplot::plot_grid(plotlist=list(ontlvl_ncells_plt,ontlvl_fold_pl
 
 
 Here is Fig \ref{fig:hpopatterns}
-```{r hpopatterns, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:hpopatterns}\\textbf{ontology level plots} Plots describing relationships between expected cell types, significance, and ontology level.", message = FALSE, warning = FALSE }
-
-print(sigplot / ontlvlplots )
+```{r hpopatterns, fig.height = 12, fig.width = 15, fig.cap = "\\label{fig:hpopatterns}\\textbf{ontology level plots} Plots describing relationships between expected cell types, significance, and ontology level.", message = FALSE, warning = FALSE }
+blank_x_axis <- theme(x.axis.title =  element_blank(), axis.text.x = element_blank())
+print(
+  ( ontlvl_ncells_plt /
+     ontlvl_fold_plt /
+     ontlvl_ngenes_plt) 
+  |
+  ( proportion_plots[[1]]/
+     proportion_plots[[2]]/
+     proportion_plots[[3]])
+)
 
 ```
 
