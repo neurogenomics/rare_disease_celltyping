@@ -103,7 +103,7 @@ ggplotify <- function(plot_object, height_px = 1000, width_px = 1000) {
 
 # Figure 1 - Explanatory and introductory plots
 
-```{r gen_fig1_plots, message = FALSE, warning = FALSE}
+```{r gen_fig1_plots, message = FALSE, warning = FALSE, echo = FALSE}
 
 # ADHD ancestor terms 
 namer = function(term){
@@ -130,7 +130,7 @@ Here is an example of Figure \ref{fig:explanatoryPlots}
 
 
 
-```{r explanatoryPlots,fig.height=20,fig.width=20,fig.cap = "\\label{fig:explanatoryPlots}\\textbf{Explanatory and Introductory plots.} These plots were mostly used in the introduction of my report.", message=FALSE, warning =FALSE, results = FALSE}
+```{r explanatoryPlots,fig.height=20,fig.width=20,fig.cap = "\\label{fig:explanatoryPlots}\\textbf{Explanatory and Introductory plots.} These plots were mostly used in the introduction of my report.", message=FALSE, warning =FALSE, results = FALSE, echo = FALSE}
 
 
 adhd_ancestors <- ggplotify(adhd_ancestors)
@@ -463,7 +463,7 @@ facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch_den(all_results_merge
 
 Here is Fig \ref{fig:overviewResults}
 
-```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE, eval= FALSE }
+```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE, eval= FALSE, echo = FALSE }
 
 
 layout <- "
@@ -490,7 +490,7 @@ print(
 
 
 
-```{r overviewResults2, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
+```{r overviewResults2, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE , echo = FALSE}
 
 
 
@@ -562,7 +562,7 @@ Fig2 = (
         ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
         plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
 
-ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
+#ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
 print(Fig2)
 
 ```
@@ -663,11 +663,11 @@ phenoNet$label <- ""
 phenoNet$label[1] <- "Phenotypic abnormality"
 
 ggnetPlt <- ggnet_plt_discrete_colour(phenoNet, colour_column = "colour")
-ggsave("pheno_ab_net.png", ggnetPlt, dpi = 400, )
+#ggsave("pheno_ab_net.png", ggnetPlt, dpi = 400, )
 ```
 
-# Test with ggnetwork
-```{r testplot, fig.height = 20, fig.width = 20}
+
+```{r testplot, fig.height = 20, fig.width = 20, echo = FALSE}
 
 layout <- "
 AA#####BBBBB
@@ -690,7 +690,7 @@ Fig2 = (
         ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
         plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
 
-ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
+#ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
 print(Fig2)
 
 
@@ -746,7 +746,7 @@ proportion_of_expected_enrichments_plot_2 <- function (all_results_merged, hpo, 
       scale_y_continuous(limits = c(0, 100)) + cowplot::theme_cowplot() + 
         scale_color_manual(values = c(color_pal[color_expected_phenotypes], 
             color_pal[color_other_phenotypes])) + theme(legend.position = c(0.5,0.95), 
-        legend.text = element_text(size = 6.5), title = element_text(size = 9))
+        legend.text = element_text(size = 10), title = element_text(size = 11), axis.title.y = element_text(size=12))
       if (! blank_x_axis){
         prop_plot = prop_plot + xlab("-log10(p)")
       } else {
@@ -773,7 +773,7 @@ for (i in seq(length(plot_branches))) {
    cell_type_description = expected_cells[i],
    HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
    phenotype_description = plot_branches[i],
-   color_pal =  c("#619CFF","#F8766D","#00BA38","gray"),
+   color_pal =  c(palette_branch[1],palette_branch[2],palette_branch[3],"gray"),
    color_expected_phenotypes = i,
    color_other_phenotypes = 4, blank_x_axis = blank_x[i])
   proportion_plots[[i]] = cur_plot[[1]]
@@ -860,16 +860,20 @@ ontlvl_ngenes_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = ngenes)) +
 
 
 Here is Fig \ref{fig:hpopatterns}
-```{r hpopatterns, fig.height = 12, fig.width = 15, fig.cap = "\\label{fig:hpopatterns}\\textbf{ontology level plots} Plots describing relationships between expected cell types, significance, and ontology level.", message = FALSE, warning = FALSE }
+```{r hpopatterns, fig.height = 12, fig.width = 15, fig.cap = "\\label{fig:hpopatterns}\\textbf{ontology level plots} Plots describing relationships between expected cell types, significance, and ontology level.", message = FALSE, warning = FALSE , echo = FALSE}
 blank_x_axis <- theme(x.axis.title =  element_blank(), axis.text.x = element_blank())
 print(
-  ( ontlvl_ncells_plt /
-     ontlvl_fold_plt /
-     ontlvl_ngenes_plt) 
-  |
-  ( proportion_plots[[1]]/
-     proportion_plots[[2]]/
-     proportion_plots[[3]])
+  (
+    ( ontlvl_ncells_plt /
+       ontlvl_fold_plt /
+       ontlvl_ngenes_plt
+      ) 
+    |
+    ( proportion_plots[[1]]  /
+       proportion_plots[[2]] /
+       proportion_plots[[3]] 
+      ) 
+  ) +  plot_annotation(tag_levels = LETTERS) 
 )
 
 ```
@@ -1054,7 +1058,7 @@ plt2 = ewce.plot(subset_results, mtc_method = "BH", ctd = ctd)$withDendro
 
 
 Here is Fig \ref{fig:socail}
-```{r social, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:social}\\textbf{Social interactions} Enrichments in cell types for impaired social interactions.", message = FALSE, warning = FALSE }
+```{r social, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:social}\\textbf{Social interactions} Enrichments in cell types for impaired social interactions.", message = FALSE, warning = FALSE , echo = FALSE}
 
 print(plt1/ (social_ancestors | plt2))
 
