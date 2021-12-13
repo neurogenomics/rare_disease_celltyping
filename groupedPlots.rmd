@@ -15,7 +15,7 @@ grouping so far can be seen in the file `figure_group_planning.md`.
 
 
 # Load dependencies
-```{r dependencies, message = FALSE, warning= FALSE}
+```{r dependencies, message = FALSE, warning= FALSE, echo=FALSE}
 library(patchwork)
 
 library(ggplot2)
@@ -61,7 +61,7 @@ if (!require(HPOExplorer)) {
 The facet packages (patchwork and cowplot facet_grid etc) dont seem to work with
 non-ggplot plots. So this function is here to convert the plots to ggplot format
 
-```{r ggplotify}
+```{r ggplotify, echo=FALSE}
 
 savePlot <- function (plot, w = 1000, h = 1000, path = "savedPlot.png") {
   png(path,width = w, height = h)
@@ -161,8 +161,6 @@ plot_n_signif_phenos_per_cell_by_branch_den <- function (all_results_merged, plo
   main_branch_df = data.frame(hpo_id = hpo_branches, phenotype = hpo_branches_names)
   descendants = list()
   for (b in hpo_branches[[1]]) {
-    print(b)
-    print(hpo$name[b])
     descendants[[hpo$name[b]]] = ontologyIndex::get_descendants(hpo, 
                                                                 b)
   }
@@ -171,7 +169,7 @@ plot_n_signif_phenos_per_cell_by_branch_den <- function (all_results_merged, plo
     all_results_merged$branch = NA
     pheno_branches = c()
     for (p in phenotypes) {
-      print(p)
+
       index = match(p, hpo$name)
       if (!is.na(index)) {
         id = hpo$id[[index]]
@@ -184,9 +182,9 @@ plot_n_signif_phenos_per_cell_by_branch_den <- function (all_results_merged, plo
     }
     all_results_merged$branch = NA
     remaining = length(unique(all_results_merged$list))
-    cat("Asigning branch to phenotypes\nN remaining:\n")
+    #cat("Asigning branch to phenotypes\nN remaining:\n")
     for (p in unique(all_results_merged$list)) {
-      cat("\r", remaining, "      ")
+      #cat("\r", remaining, "      ")
       remaining = remaining - 1
       all_results_merged$branch[all_results_merged$list == 
                                   p] = pheno_branches[p]
@@ -396,7 +394,7 @@ phenos_per_cell_colourText <- function (all_results_merged, cell_mappings, fold 
 
 
 
-```{r overviewResults_code, warning=FALSE, message=FALSE, results=FALSE}
+```{r overviewResults_code, warning=FALSE, message=FALSE, results=FALSE, echo=FALSE}
 
 # Phenos per cell plot
 descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
@@ -436,8 +434,8 @@ phenosPerBranch <- function (phenotype_to_genes, hpo, highlighted_branches = c("
   }
   
   phenos_per_branch_plt <- ggplot(phenos_per_branch, aes(x = n_phenos, 
-                                                         y = branch, color = target, fill = target)) + 
-    geom_segment(mapping = aes(xend = 0,  yend = branch), size = 5, colour = phenos_per_branch$color) + xlab("Descendants (n)") + 
+                                                         y = branch)) + 
+    geom_segment(mapping = aes(xend = 0,  yend = branch), size = 3, color = phenos_per_branch$color, fill = phenos_per_branch$color) + xlab("Descendants (n)") + 
     ylab(element_blank()) + 
     scale_color_manual(values = color_pal) + 
     theme(axis.line.x = element_blank(), panel.background = element_blank(), 
@@ -465,7 +463,7 @@ facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch_den(all_results_merge
 
 Here is Fig \ref{fig:overviewResults}
 
-```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE }
+```{r overviewResults, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:overviewResults}\\textbf{Overview results} plots describing the number of significant results.", message = FALSE, warning = FALSE, eval= FALSE }
 
 
 layout <- "
@@ -542,9 +540,10 @@ phenotypic_abnormality_children <- ontologyPlot::onto_plot(hpo, terms= terms$ter
 
 
 
+
 layout <- "
-AA####BBBB##
-AA####BBBB##
+AA###BBBBB##
+AA###BBBBB##
 AACCCCCCCCCC
 AACCCCCCCCCC
 AADDDDDDDDDD
@@ -552,18 +551,152 @@ AADDDDDDDDDD
 AADDDDDDDDDD
 AADDDDDDDDDD
 AADDDDDDDDDD
-##DDDDDDDDDD
+AADDDDDDDDDD
 "
 
-print(  
-  (plot_npc + theme(legend.position = "top", legend.justification = "top", axis.text.y = element_text(size = 12)))  +
-  (main_branch_plt + theme(axis.text.y = element_text(size = 15))) +
-          ggplotify(phenotypic_abnormality_children, height_px = 300, width_px = 1200) + # try increase height_px 
+
+Fig2 = (  
+  (plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  +
+  (main_branch_plt + theme(axis.text.y = element_text(size = 13))) +
+          ggplotify(phenotypic_abnormality_children, height_px = 300, width_px = 1200) + # try increase height_px (orig 300,1200) 
         ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
         plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
 
+ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
+print(Fig2)
+
 ```
 
+
+## Testing ggnetwork plot 
+```{r, echo=FALSE}
+
+
+make_network_object_2 <-  function (phenos, adjacency, hpo, colour_column = "fold_change", labels_column = "Phenotype", hover = FALSE) 
+{
+    create_node_data <- function(phenoNet, phenos, phenos_column) {
+        nodeData <- c()
+        for (p in phenoNet$vertex.names) {
+            nodeData <- append(nodeData, phenos[, phenos_column][phenos$HPO_Id == 
+                p][1])
+        }
+        return(nodeData)
+    }
+    adjacency <- adjacency[phenos$HPO_Id, phenos$HPO_Id]
+    hierarchy <- HPOExplorer::get_relative_ont_level_multiple(phenoAdj = adjacency, 
+        hpo = hpo, reverse = TRUE) + 1   # <- remove the :: for the package 
+    names(hierarchy) <- rownames(adjacency)
+    phenos$hierarchy <- hierarchy[phenos$HPO_Id]
+    phenoNet <- ggnetwork::ggnetwork(adjacency, arrow.gap = 0)
+    if (hover) {
+          phenoNet$hover <- create_node_data(phenoNet, phenos, "hover")
+    }
+    phenoNet$hierarchy <- create_node_data(phenoNet, phenos, 
+        "hierarchy")
+    phenoNet$label <- create_node_data(phenoNet, phenos, labels_column)
+    if (!colour_column == FALSE) {
+        phenoNet[, colour_column] <- create_node_data(phenoNet, phenos, 
+        colour_column)      
+    }
+
+    return(phenoNet)
+}
+
+
+
+ggnet_plt_discrete_colour <- function (phenoNet, colour_column = "fold_change", colour_label = "Fold change", size_col = "n") 
+{
+    message("ggnetwork_plot")
+    network_plot <- ggplot(phenoNet, aes(x = x, y = y, xend = xend, 
+        yend = yend)) + ggnetwork::geom_edges(color = "darkgray") + 
+        geom_point(aes(size=n*100000),colour = phenoNet[,colour_column], alpha = 0.5) + 
+        geom_point(aes(size=n),colour = phenoNet[,colour_column]) + 
+        geom_text(aes(label = label), color = "black") + 
+
+        guides(size = "none") + labs(colour = colour_label) + 
+        theme_void()
+    return(network_plot)
+}
+
+
+
+
+  plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system", "Abnormality of the immune system")
+named_colours <- c()
+for (i in seq(length(plot_branches))) {
+  named_colours[plot_branches[i]] <- palette_branch[i]
+}
+pheno_abnorm_id <- hpo$id[which(hpo$name == "Phenotypic abnormality")]
+phenos <- append(paste(pheno_abnorm_id), hpo$children[pheno_abnorm_id][[1]])
+n_phenos <- c()
+names <- c()
+term_colours <- c()
+for (p in phenos) {
+  cur_name <- hpo$name[p]
+  names <- append(names, cur_name)
+  n_phenos <- append(n_phenos,length(ontologyIndex::get_descendants(hpo, p)))
+
+  
+  if( cur_name == "Phenotypic abnormality") {
+    term_labels <- append(term_labels, cur_name)
+    term_colours <- append(term_colours, "lightblue")
+  } else if (cur_name %in% plot_branches) {
+    term_labels <- append(term_labels, "")
+    term_colours <- append(term_colours, named_colours[cur_name])
+  } else {
+    term_labels <- append(term_labels, " ")
+    term_colours <- append(term_colours, "gray")
+  }
+}
+
+phenos <- data.frame("HPO_Id" = phenos, "n" = n_phenos, "name" = names, "colour" = term_colours)
+pheno_adj <- HPOExplorer::adjacency_matrix(unique(phenos$HPO_Id), hpo)
+phenoNet <- make_network_object_2(phenos, pheno_adj,hpo, colour_column = "colour", labels_column = "name")
+
+n <- c()
+for (p in phenoNet$vertex.names) {
+  n <- append(n, phenos$n[phenos$HPO_Id == p][1])
+}
+phenoNet$n <- n; rm(n)
+
+phenoNet$label <- ""
+phenoNet$label[1] <- "Phenotypic abnormality"
+
+ggnetPlt <- ggnet_plt_discrete_colour(phenoNet, colour_column = "colour")
+ggsave("pheno_ab_net.png", ggnetPlt, dpi = 400, )
+```
+
+# Test with ggnetwork
+```{r testplot, fig.height = 20, fig.width = 20}
+
+layout <- "
+AA#####BBBBB
+AA#CCCCBBBBB
+AA#CCCCBBBBB
+AA#CCCCBBBBB
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+"
+
+
+Fig2 = (  
+  (plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  +
+  (main_branch_plt + theme(axis.text.y = element_text(size = 13))) +
+          ggnetPlt + # try increase height_px (orig 300,1200) 
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
+        plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
+
+ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
+print(Fig2)
+
+
+
+```
+Not sure if this looks good here, but could be useful somewhere for showing the network structure and highlighting certain phenotypes by colour? 
 
 
 # Figure 3 HPO Patterns and relationships
@@ -625,7 +758,7 @@ proportion_of_expected_enrichments_plot_2 <- function (all_results_merged, hpo, 
 ```
 
 
-```{r patterns, message=FALSE, warning=FALSE}
+```{r patterns, message=FALSE, warning=FALSE, echo=FALSE}
 
 # Significance and expected cell type ##########################################
 plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
@@ -743,7 +876,7 @@ print(
 
 # Figure 4 infections
 
-```{r, infectionPlots}
+```{r, infectionPlots, echo=FALSE}
 
 namer = function(term){
   return (hpo$name[term])
@@ -866,7 +999,7 @@ recurrentGram_plt <- ggplot(pheno_df, aes(x = CellType, y= fold_change, fill = l
 
 
 Here is Fig \ref{fig:infections}
-```{r infections, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:infections}\\textbf{Recurrent infections} Cells associated with recurrent infections.", message = FALSE, warning = FALSE }
+```{r infections, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:infections}\\textbf{Recurrent infections} Cells associated with recurrent infections.", message = FALSE, warning = FALSE , echo=FALSE}
 
 print((branch_plt|infect_ancestors)/(recurrentBact_fold_plt|recurrentGram_plt))
 
@@ -876,7 +1009,7 @@ print((branch_plt|infect_ancestors)/(recurrentBact_fold_plt|recurrentGram_plt))
 
 # Figure - social interactions
 
-```{r}
+```{r, echo=FALSE}
 library(EWCE)
 library(ggplot2)
 library(cowplot)
