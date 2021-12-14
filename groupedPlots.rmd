@@ -881,8 +881,70 @@ print(
 # Figure 4 infections
 
 ```{r, infectionPlots, echo=FALSE}
+all_results_merged$HPO_id[all_results_merged$list == "Recurrent gram-negative bacterial infections"] <- paste(hpo$id[which(hpo$name == "Recurrent gram-negative bacterial infections")])
+bact_inf_child <- hpo$children[which(hpo$name == "Recurrent bacterial infections")][[1]];  
+bact_inf_child <- append(paste(hpo$id[which(hpo$name == "Recurrent bacterial infections")]), bact_inf_child)
+gram_inf_child <- hpo$children[which(hpo$name == "Recurrent gram-negative bacterial infections")][[1]];  
+gram_inf_child <- append(paste(hpo$id[which(hpo$name == "Recurrent gram-negative bacterial infections")]), gram_inf_child)
+both <- unique(append(bact_inf_child, gram_inf_child))
 
-namer = function(term){
+terms = ontologyIndex::get_descendants(hpo,"HP:0002719", exclude_roots = FALSE)
+phenos <- all_results_merged[all_results_merged$HPO_id %in% terms, ]
+nsig <- c()
+pheno<- c()
+colour<-c()
+name<-c()
+for (p in unique(phenos$HPO_id)) {
+  nsig <- append(nsig, length(phenos$q[phenos$HPO_id == p & phenos$q < 0.05]))
+  pheno <- append(pheno, p)
+  if (p %in% both) {
+    colour <- append(colour, "blue")
+    if (hpo$name[p] %in% c("Recurrent bacterial infections","Recurrent gram-negative bacterial infections")) {
+      name <- append(name, hpo$name[p]) 
+    } else {
+      name <- append(name, "")
+    }
+  } else {
+    colour <- append(colour, "grey")  
+    name<-  append(name, "")
+  }
+
+}
+phenos <- data.frame("HPO_Id" = pheno,"n" = nsig, "colour" = colour, "name" = name)
+
+
+
+ggnet_plt_discrete_colour <- function (phenoNet, colour_column = "fold_change",  size_col = "n"){
+    message("ggnetwork_plot")
+    network_plot <- ggplot(phenoNet, aes(x = x, y = y, xend = xend, 
+        yend = yend)) + ggnetwork::geom_edges(color = "darkgray") + 
+        geom_point(aes(size=(n+1)*50),colour = phenoNet[,colour_column], alpha = 0.5) + 
+        geom_point(aes(size=(n+1)*10),colour = phenoNet[,colour_column]) + 
+        geom_text(aes(label = label), color = "black") + 
+
+        #guides(size = "none") + 
+        theme_void() +
+      theme(legend.text = element_blank()) + labs(size = "n significant \nenrichments")
+    return(network_plot)
+}
+
+
+
+pheno_adj <- HPOExplorer::adjacency_matrix(unique(phenos$HPO_Id), hpo)
+phenoNet <- make_network_object_2(phenos, pheno_adj,hpo, colour_column = "colour", labels_column = "name")
+n <- c()
+for (p in phenoNet$vertex.names) {
+  n <- append(n,phenos$n[phenos$HPO_Id == p][1])
+}
+phenoNet$n <- n
+
+
+ggnetPlt <- ggnet_plt_discrete_colour(phenoNet, colour_column = "colour", size_col = "n")
+ggsave("bactnet.png", ggnetPlt, dpi=400)
+
+
+
+namer = function(term) {
   return (hpo$name[term])
 }
 
@@ -890,6 +952,8 @@ terms = ontologyIndex::get_descendants(hpo,"HP:0002719", exclude_roots = FALSE)
 infect_ancestors <- onto_plot(hpo, terms= terms[2:length(terms)],label = namer,
           shape="circle",fontsize = 80, edge_attributes = list(color="grey"))
 infect_ancestors <- ggplotify(infect_ancestors)
+
+
 # branch_plt ###################
 library(wesanderson)
 color_pal = wes_palette("Darjeeling1",4)
@@ -1002,12 +1066,43 @@ recurrentGram_plt <- ggplot(pheno_df, aes(x = CellType, y= fold_change, fill = l
 ```
 
 
-Here is Fig \ref{fig:infections}
-```{r infections, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:infections}\\textbf{Recurrent infections} Cells associated with recurrent infections.", message = FALSE, warning = FALSE , echo=FALSE}
+Here is Fig \ref{fig:infections}    
 
-print((branch_plt|infect_ancestors)/(recurrentBact_fold_plt|recurrentGram_plt))
+\newpage
+```{r infections, fig.height = 15, fig.width = 10, fig.cap = "\\label{fig:infections}\\textbf{Recurrent infections} Cells associated with recurrent infections.", message = FALSE, warning = FALSE , echo=FALSE}
+layout<- "
+AAAAA
+AAAAA
+AAAAA
+BBBBB
+"
+print( ( ggnetPlt /  branch_plt ) + plot_layout(design = layout))
 
 ```
+
+
+```{r infections2, fig.height = 20, fig.width = 20, fig.cap = "\\label{fig:infections}\\textbf{Recurrent infections} Cells associated with recurrent infections.", message = FALSE, warning = FALSE , echo=FALSE}
+
+
+layout<- "
+AAAAAAAA
+BBBBBBBB
+BBBBBBBB
+BBBBBBBB
+CCCCCCCC
+CCCCCCCC
+CCCCCCCC
+"
+
+
+print( (branch_plt + theme(axis.text.x = element_blank())) + 
+        (recurrentBact_fold_plt  + theme(axis.text.x = element_blank())) + 
+        recurrentGram_plt + 
+        plot_layout(design=layout))
+
+```
+
+
 
 
 
