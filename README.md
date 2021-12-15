@@ -8,3 +8,10 @@ You can find the link from here... it changes every once in a while...
 https://hpo.jax.org/app/download/annotation
 
 Currently the correct file is: http://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt
+
+# Paper 
+* [Paper Rmd](https://github.com/neurogenomics/rare_disease_ewce/blob/master/paper.rmd): This is a fork of the masters project writeup.
+* [Masters Rmd](https://github.com/neurogenomics/rare_disease_ewce/blob/master/report_BobbyGordonSmith_masters_RD_project_writeup.Rmd): This is the original masters writeup.
+* [Masters Knitted](https://github.com/neurogenomics/rare_disease_ewce/blob/master/report%20(1).pdf): Knitted versoin of the masters writeup.
+* [Grouped figures Rmd](https://github.com/neurogenomics/rare_disease_ewce/blob/master/groupedPlots.rmd): These are the plots for the paper grouped into larger figures. This is still under development and there is a markdown [here](https://github.com/neurogenomics/rare_disease_ewce/blob/master/figure_group_planning.md) for planning the groupings. 
+* [Grouped figures knitted](https://github.com/neurogenomics/rare_disease_ewce/blob/master/groupedPlots.pdf): This is the leatest knitted version of grouped figures.

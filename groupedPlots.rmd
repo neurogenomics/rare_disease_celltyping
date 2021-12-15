@@ -667,13 +667,13 @@ ggnetPlt <- ggnet_plt_discrete_colour(phenoNet, colour_column = "colour")
 ```
 
 
-```{r testplot, fig.height = 20, fig.width = 20, echo = FALSE}
+```{r testplot, fig.height = 16, fig.width = 18, echo = FALSE}
 
 layout <- "
-AA#####BBBBB
-AA#CCCCBBBBB
-AA#CCCCBBBBB
-AA#CCCCBBBBB
+AA#BBBBBBBBB
+AA#BBBBBBBBB
+AA#BBBBBBBBB
+AA#BBBBBBBBB
 AADDDDDDDDDD
 AADDDDDDDDDD
 AADDDDDDDDDD
@@ -685,7 +685,6 @@ AADDDDDDDDDD
 
 Fig2 = (  
   (plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  +
-  (main_branch_plt + theme(axis.text.y = element_text(size = 13))) +
           ggnetPlt + # try increase height_px (orig 300,1200) 
         ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
         plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
