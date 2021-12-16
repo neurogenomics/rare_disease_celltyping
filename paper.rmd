@@ -29,26 +29,75 @@ abstract: \singlespace Despite the name, rare diseases (RD) contribute to a sign
 ---
 
 ```{r echo = FALSE, message = FALSE, warning=FALSE}
-# Dependencies 
+
+
+library(patchwork)
+
+library(ggplot2)
+library(ontologyIndex)
+library(ontologyPlot)
+library(EWCE)
+library(cowplot)
+library(wesanderson)
+library(dplyr)
+
+data(hpo)
+phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_genes.txt")
+disease_descriptions = readRDS("data/disease_descriptions.Rda")
+rownames(disease_descriptions) = disease_descriptions$HPO_id
+load("data/Descartes_All_Results_extras.rda")
+descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
+descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1)
+#tm_mappings = read.csv("data/TabulaMuris_celltype_mapping.csv")
+ctd = readRDS("data/CTD_Descartes_withplot.rds")
+
+source("source/cell_select_ggnetwork_plot.R")
+source("source/phenotypes_per_cell_plot.R")
+source("source/ewce_plot_function.R")
+
 if (!require(HPOEWCE)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("ovrhuman/HPOEWCE")
   library(HPOEWCE)
 }
 if (!require(MultiEWCE)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("neurogenomics/MultiEWCE")
   library(MultiEWCE)
 }
 if (!require(HPOExplorer)) {
+  #install.packages("rd_package/RareDiseaseEWCE", repos=NULL, type="source")
   devtools::install_github("neurogenomics/HPOExplorer")
   library(HPOExplorer)
 }
-library(ontologyIndex)
-library(ontologyPlot)
-library(ggplot2)
-data(hpo)
-load(params$results_data)
-ctd = readRDS("data/CTD_Descartes_withplot.rds")
-phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_genes.txt")
+
+
+savePlot <- function (plot, w = 1000, h = 1000, path = "savedPlot.png") {
+  png(path,width = w, height = h)
+  print(plot)
+  dev.off()
+}
+
+ggloadImage <- function(path) {
+  img <- png::readPNG(path)
+  g <- grid::rasterGrob(img,interpolate = TRUE)
+  plt <- qplot(1:10,1:10,geom="blank") +
+    annotation_custom(g,xmin=-Inf,xmax=Inf,ymin = -Inf, ymax=Inf) +
+    theme_blank()
+  return(plt)
+}
+
+
+ggplotify <- function(plot_object, height_px = 1000, width_px = 1000) {
+  fp <- "ggplotify_temp.png"
+  savePlot(plot_object, width_px, height_px, fp)
+  plt <- ggloadImage(fp)
+  file.remove(fp)
+  return(plt)
+}
+
+
+
 ```
 
 
@@ -147,116 +196,611 @@ The EWCE package has a function for visualising results (`ewce_plot`) which retu
 ## Multiple testing adjustment
 Due to the high multiple testing burden of this analysis, the Benjamini-Hochberg (BH) method was used to limit the false discovery rate (FDR). Traditional family-wise error rate based methods, like Bonferroni corrections, are too conservative when performing these types of high-throughput analyses, resulting in the rejection of many positive results. Instead, BH corrects the proportion of significant findings down to an acceptable FDR [@BenjaminiHochberg1995]. The p-values that have been adjusted for FDR are referred to as q-values.
 
-## Analysis Makefile
+## Analysis workflow [needs to be updated]
 This analysis involved multiple steps, including pulling the data from online resources, cleaning and formatting it and running the analysis. A makefile (`Makefile.R`) was created to automate the whole process. This RD EWCE analysis makefile was then pushed to the UKDRI Neurogenomics lab [GitHub](https://github.com/neurogenomics/), a remote host for software development and version control. This allows it to be reused in follow up analysis, when more phenotypic data becomes available, as well as to be developed further for future studies by other researchers. 
 
-First, the makefile calls a function, `gen_ctd`, which is stored in the `source` directory. This downloads the latest scRNA-seq data set from Descartes and produces the cell type data (CTD) file by calculating specificity scores for each gene and cell in the scRNA data set. The CTD is structured as a list of matrices of normalised specificity scores, with columns representing the cell type and rows representing gene. The matrices are generated at various levels of cell-clustering resolution, so that the user can decide how specific they wish to be in distinguishing between cell sub-types. In this case, the levels generated were Level 1 (Cell lineage), Level 2 (Organ Cell lineage), Level 3 (Cell lineage Developmental day), and Level 4 (Organ Cell lineage Developmental day). The level 1 data was used as it provides sufficient resolution without over-complicating the results or increasing the multiple testing burden unnecessarily. The `gen_results` function is then called, which pulls the phenotype gene lists from the HPO website and runs EWCE on each, using the CTD file gene-cell specificity scores. 
+A visual representation of the workflow can be seen in Figure \ref{fig:Figure2}. The latest scRNA-seq data set is downlaoded from Descartes and used to produce the cell type data (CTD) file by calculating specificity scores for each gene-cell combination. The CTD is structured as a list of matrices of normalised specificity scores, with columns representing the cell type and rows representing gene. The matrices are generated at various levels of cell-clustering resolution, so that the user can decide how specific they wish to be in distinguishing between cell sub-types. In this case, the levels generated were Level 1 (Cell lineage), Level 2 (Organ Cell lineage), Level 3 (Cell lineage Developmental day), and Level 4 (Organ Cell lineage Developmental day). The level 1 data was used as it provides sufficient resolution without over-complicating the results or increasing the multiple testing burden unnecessarily. The `gen_results` function is then called, which pulls the phenotype gene lists from the HPO website and runs EWCE on each, using the CTD file gene-cell specificity scores. 
 
-In order to run the EWCE analysis with $100\,000$ bootstraps on `r length(unique(phenotype_to_genes$Phenotype))` phenotypes, significant computational resources were required. To make this possible, the program was written to support parallel processing. A secure shell connection (SSH) was then established with the Imperial College High Performance computing (HPC) service; and an 8 CPU machine with 96 GB of random access memory (RAM) was requested for an interactive session using the following command:  
-
-`qsub -I -l select=01:ncpus=8:mem=96gb -l walltime=08:00:00` 
-
-The Rare Disease EWCE R project was then cloned from the GitHub repository onto the HPC. There is a time limit of 8 hours per HPC job, which was not sufficient to complete the whole analysis. To get around this, the individual results generated for each phenotype were output as separate `.RDS` files. Another script (`completed_phenotypes.R`) was created to identify which phenotypes had already been analysed by reading the file names in the output directory. It then removes the completed phenotypes from the input data set, making it possible to continue the analysis from where it left off after the previous job was terminated. As this had to be repeated many times, a shell script was created. It loads the Anaconda development environment, and then executes the the `completed_phenotype.R` and `Makefile.R` scripts [@anaconda]. The shell script was placed in a `while` loop so that, in cases where the analysis prematurely terminated due to error, it would restart automatically (see Code Supplementary - example 1).
-
-The analysis ran at a rate of approximately 90 phenotypes per hour and took a little over 100 hours to complete. A terminal multiplexer (Tmux) was used so that the session would continue to run in the event of disconnection.
+In order to run the EWCE analysis with $100\,000$ bootstraps on `r length(unique(phenotype_to_genes$Phenotype))` phenotypes, significant computational resources were required. To make this possible, the EWCE R package was modified to support parallel processing. A secure shell connection (SSH) was then established with the Imperial College High Performance computing (HPC) service; and an 8 CPU machine with 96 GB of random access memory (RAM) was requested. The analysis ran at a rate of approximately 90 phenotypes per hour and took a little over 100 hours to complete. A terminal multiplexer (Tmux) was used so that the session would continue to run in the event of disconnection.
  
-## Rare disease web application
-A web-based application was made so that the study can have its maximum impact. It is important for researchers and clinicians to be able to retrieve relevant results without the need for substantial computational resources and specialist knowledge of enrichment analysis. As the results give cell-phenotype relationships, they need to be retrievable by both fields (cell type and phenotype), and it must also be possible to subset them by significance and effect size (q-value and fold change). Due to the heavy computation required to generate the figures and subset the results, the cell selection and phenotype selection features were developed as separate web applications to reduce loading times. The apps were created using the Shiny Web application Framework for R and deployed on the [ShinyApps](https://www.shinyapps.io/) server [@Shiny_package]. A landing page was created using HTML and CSS to provide links to the apps, data sources, and code repositories; as well as to give general information about the project (see Figure \ref{fig:EWCE_home}). 
+## Results Portal
+A web-based application was made so that the study can have its maximum impact. It is important for researchers and clinicians to be able to retrieve relevant results without the need for substantial computational resources and specialist knowledge of enrichment analysis. As the results give cell-phenotype relationships, they need to be retrievable by both fields (cell type and phenotype), and it must also be possible to subset them by significance and effect size (q-value and fold change). Due to the heavy computation required to generate the figures and subset the results, the cell selection and phenotype selection features were developed as separate web applications to reduce loading times. The apps were created using the Shiny Web application Framework for R and deployed on the [ShinyApps](https://www.shinyapps.io/) server [@Shiny_package]. A landing page was created using HTML and CSS to provide links to the apps, data sources, and code repositories; as well as to give general information about the project. 
 
-```{r EWCE_home,fig.cap = "\\label{fig:EWCE_home}\\textbf{Rare disease EWCE homepage.} The website homepage has links to the Cell sellect and phenotype select apps, as well as to the HPO. The about page contains further information on sources and relevant links. It was created using the markup languages, HTML and CSS. More applications and features for the website are currently in production.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
+```{r Figure2,  fig.width = 20, fig.cap = "\\label{fig:Figure2}\\textbf{Workflow.} \\textbf{A} The scRNA-seq data was taken from the Descartes Human Cell Atlas and the phenotype associated genelists from the Human Phenotype Ontology. \\textbf{B} This represents the computation of results using EWCE, where a specificity score for the target gene list, in a given cell, is calculated and then compared with a distribution of 100,000 randomly sampled genelist of the same length. \\textbf{C} This is the interactive results portal. It allows the user to search for significant phenotype enricments for a given cell type. The figure is generated using a combination of bespoke functions and the ggplot2 and ggnetwork packages [@ggplot2_package; @ggnetwork_package]. The size of the nodes represents the direction of the \"is_a\" relationship between nodes, where parent terms are larger than their child terms. Expression fold change is represented by the colour. In this example, the user has selected Acinar cells, with a significance threshold of \\textit{q}<0.005 and a fold change threshold of > 5. The hover box is comprised of further results and a phenotype definition pulled from the HPO API.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 #figure_count = figure_count + 1; figures$EWCE_home = figure_count;
 library(imager)
-ewceHome = load.image("figures/EWCE_home.png")
-print(plot(ewceHome, axes = FALSE))
+Figure1 = load.image("figures/rd_workflow2.png")
+print(plot(Figure1, axes = FALSE))
 ```
 
-A demonstration of the interactive plot feature from the cell-select app can be seen in Figure \ref{fig:Interactive_plot_acinar_demo} below. The ggnetowrk R package was used to give x and y coordinates to each phenotype in the network and the plotting was done using the ggplot2 R package [@ggnetwork_package; @ggplot2_package]. Mapping of the ontology level of the phenotypes to the size of the node was done so that phenotypes higher up the HPO hierarchy appear larger than those below (within a connected component of the graph). This is done by checking if a phenotypes parent node is present in the component to be plotted. If the parent is not present, the function returns zero, if a parent node is present, the function returns $1 + f(parent)$. In other words, the function then calls its self recursively to check if the parent phenotype also has a parent phenotype present. This happens repeatedly until the last parent is found and the result can be returned (see Supplementary - Code example 2).
+A demonstration of the interactive plot feature from the cell-select app can be seen in Figure \ref{fig:Figure2} C. The ggnetowrk R package was used to give x and y coordinates to each phenotype in the network and the plotting was done using the ggplot2 R package [@ggnetwork_package; @ggplot2_package]. Mapping of the ontology level of the phenotypes to the size of the node was done with some bespoke implementation of graph algorithms so that phenotypes higher up the HPO hierarchy appear larger than those below (within a connected component of the graph). Functions were also made to generate the hover box by pulling data from the HPO API. This allows the user to see the results and disease definition when their mouse hovers over. These functions were then included in the [HPOExplorer](https://github.com/neurogenomics/HPOExplorer) R package for use in other projects. 
 
-The box on the interactive plot, seen in Figure \ref{fig:Interactive_plot_acinar_demo}, shows information about each phenotype when the mouse hovers above it. It includes the results for the selected phenotype, as well as a disease description pulled directly from the HPO via an application program interface (API). This was done for all terms. New lines ("\\n") were added to the disease descriptions using a custom built function to prevent the box getting too wide when the description is long. A `.RDS` file containing the hover box information was stored on the ShinyApps server. 
+The interactive plot works well for exploring the data. However, it is less clear when printed as a static image. A second, more print-friendly version, was also created and users may download the figure from the app. This was created using the ontologyX R package `onto_plot` function, modified to allow a heat map of fold change. An example of these print friendly plots can be Figure \ref{fig:Figure2} A, which is a subset of the HPO network. 
 
-\newpage
-
-
-```{r Interactive_plot_acinar_demo,fig.cap = "\\label{fig:Interactive_plot_acinar_demo}\\textbf{Interactive web app for exploring significant phenotype enrichments for a given cell.} This is the interactive RD EWCE app for searching for significant phenotype enrichments within a selected cell type. The figure is generated using a combination of bespoke functions and the ggplot2 and ggnetwork packages [@ggplot2_package; @ggnetwork_package]. The size of the nodes represents the direction of the \"is_a\" relationship between nodes, where parent terms are larger than their child terms. Expression fold change is represented by the colour. In this example, the user has selected Acinar cells, with a significance threshold of \\textit{q}<0.005 and a fold change threshold of > 5. This is designed for dynamically interacting with the data to find interesting results. The hover box was created by connecting to the HPO website API and it provides a description of the phenotype when the cursor hovers over it.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
-
-#figure_count = figure_count + 1; figures$EWCE_home = figure_count;
-acinar_interactive = load.image("figures/interactive_cell_celect_acinar_demo.png")
-print(plot(acinar_interactive, axes = FALSE))
-
-
-```
-
-The interactive plot works well for exploring the data. However, it is less clear when printed as a static image. A second, more print-friendly version, was also created and users may download the figure from the app. This was created using the ontologyX R package `onto_plot` function, modified to allow a heat map of fold change. An example of the figures that can be created is shown in Figure \ref{fig:acinarOntIndex}. Again, as in Figure \ref{fig:Interactive_plot_acinar_demo}, the user has selected acinar cells, *q*<0.005 and fold change > 5 [@ontologyXpackage2017]. The heat map represents fold change in specific expression of the gene list (compared to the mean expression of bootstrapped gene lists of the same length). Note, it can be seen that higher fold changes (red) are typically found towards the leaf nodes, where phenotypes are more specific (this will be covered in more detail later, see Figure \ref{fig:HPO_level_fold} A). 
-
-```{r acinarOntIndex,fig.height=6,fig.width=12,fig.cap = "\\label{fig:acinarOntIndex}\\textbf{Print-friendly version of the cell select app.} This is a demonstration of the figures produced by the print-friendly version of the cell select app, created using the modified functions from the ontolgyX R package [@ontologyXpackage2017]. The same user settings have been selected as in the interactive plot demonstration (Acinar cells where \\textit{q}<0.05 and fold change > 5). This version of the figure is more well suited to printing as it represents the HPO hierarchy vertically and has less overlapping text.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
-
-# Network Plot Acinar cells 
-cell = "Acinar cells"
-print(one_cell_ontology_plot_heatmap(all_results_merged,cell=cell, heatmapped_value = "fold change",
-                                            0.005, 5, phenotype_to_genes, hpo))
-
-
-
-```
 
 \newpage
 # Results
 
-The Descartes human scRNA data clustered into `r length(unique(all_results_merged$CellType))` unique cell types. There were `r length(all_results_merged$CellType[all_results_merged$q < 0.05])` significant cell-phenotype associations across all cells (*q*<0.05). The number of significant phenotype associations for each individual cell type can be seen in Figure \ref{fig:pheno_per_cell}. 
-
-```{r pheno_per_cell, fig.height = 10,fig.width = 10,fig.cap = "\\label{fig:pheno_per_cell}\\textbf{Number of significant enrichments per cell.} This figure shows how many significant phenotype enrichments were found for each cell type, where q<0.05 and fold change > 1.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 
 
+```{r pheno_by_branch_withd_dend, echo = FALSE, warning = FALSE , results=FALSE,message = FALSE }
+palette_branch <- wesanderson::wes_palette("Darjeeling1")
+
+
+plot_n_signif_phenos_per_cell_by_branch_den <- function (all_results_merged, plot_branches = c("Abnormality of the nervous system", 
+                                                "Abnormality of the cardiovascular system", "Abnormality of the immune system"), 
+          q_threshold = 0.05, hpo = hpo, phenotype_to_genes = phenotype_to_genes, 
+          ctd = ctd, make_dendro = TRUE, palette_branch = c("#FF0000", "#00A08A", "#F2AD00")) 
+{
+  hpo_branches = hpo$children["HP:0000118"]
+  hpo_branches_names = c()
+  for (b in hpo_branches) {
+    hpo_branches_names = c(hpo_branches_names, hpo$name[b])
+  }
+  main_branch_df = data.frame(hpo_id = hpo_branches, phenotype = hpo_branches_names)
+  descendants = list()
+  for (b in hpo_branches[[1]]) {
+    descendants[[hpo$name[b]]] = ontologyIndex::get_descendants(hpo, 
+                                                                b)
+  }
+  if (!"branch" %in% colnames(all_results_merged)) {
+    phenotypes = unique(phenotype_to_genes$Phenotype)
+    all_results_merged$branch = NA
+    pheno_branches = c()
+    for (p in phenotypes) {
+
+      index = match(p, hpo$name)
+      if (!is.na(index)) {
+        id = hpo$id[[index]]
+        for (i in seq(1, length(descendants))) {
+          if (id %in% descendants[[i]]) {
+            pheno_branches[p] = names(descendants[i])
+          }
+        }
+      }
+    }
+    all_results_merged$branch = NA
+    remaining = length(unique(all_results_merged$list))
+    #cat("Asigning branch to phenotypes\nN remaining:\n")
+    for (p in unique(all_results_merged$list)) {
+      #cat("\r", remaining, "      ")
+      remaining = remaining - 1
+      all_results_merged$branch[all_results_merged$list == 
+                                  p] = pheno_branches[p]
+    }
+  }
+  signif_results = all_results_merged[all_results_merged$q <= 
+                                        q_threshold & !is.na(all_results_merged$branch), ]
+  n_signif_per_cell_by_branch = data.frame()
+  for (b in unique(plot_branches)) {
+    for (c in unique(all_results_merged$CellType)) {
+      n = length(signif_results[signif_results$CellType == 
+                                  c & signif_results$branch == b, ]$list)
+      n_signif_per_cell_by_branch = rbind(n_signif_per_cell_by_branch, 
+                                          data.frame(branch = b, CellType = c, n_signif = n))
+    }
+  }
+  n_signif_per_cell_by_branch$hypergeo_p = NA
+  total_signif = length(signif_results$q)
+  for (i in seq(1, length(n_signif_per_cell_by_branch$CellType))) {
+    cell = n_signif_per_cell_by_branch$CellType[i]
+    branch = n_signif_per_cell_by_branch$branch[i]
+    group1 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$CellType == 
+                                                        cell])
+    group2 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$branch == 
+                                                        branch])
+    overlap = n_signif_per_cell_by_branch$n_signif[i]
+    n_signif_per_cell_by_branch$hypergeo_p[i] = stats::phyper(overlap - 
+                                                                1, group2, total_signif - group2, group1, lower.tail = FALSE)
+  }
+  n_signif_per_cell_by_branch$hypergeo_q = stats::p.adjust(n_signif_per_cell_by_branch$hypergeo_p, 
+                                                           method = "BH")
+  n_signif_per_cell_by_branch$signif_asterics = ""
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.05] = "*"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.005] = "**"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-04] = "***"
+  n_signif_per_cell_by_branch$signif_asterics[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-05] = "****"
+  cell_order = factor(gsub("_", " ", ctd[[1]]$plotting$cell_ordering))
+  n_signif_per_cell_by_branch$cell_order = match(n_signif_per_cell_by_branch$CellType, 
+                                                 cell_order)
+  n_signif_per_cell_by_branch$CellType = stats::reorder(n_signif_per_cell_by_branch$CellType, 
+                                                        n_signif_per_cell_by_branch$cell_order)
+  n_signif_per_cell_by_branch$branch_f <- factor(n_signif_per_cell_by_branch$branch, 
+                                                 levels = plot_branches)
+
+  
+  # maybe wont work
+  cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+#ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours = append(cell_colours, ns_colour)
+  } else if (c %in% immune_cell_types) (
+    cell_colours = append(cell_colours, immune_colour)
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours = append(cell_colours, card_colour)
+  } else {
+    cell_colours = append(cell_colours,"black")
+  }
+}
+
+named_colours = c()
+for (i in seq(1, length(plot_branches))) {
+  named_colours[plot_branches[i]] = palette_branch[i]
+}
+  
+
+  facet_branch_plt <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_branch$branch %in% 
+                                                           plot_branches, ], aes(x = CellType, y = n_signif, fill = branch)) + 
+    geom_col() + scale_colour_manual(values =  named_colours,aesthetics = "fill") +
+    geom_text(mapping = aes(label = signif_asterics, 
+                                         y = n_signif + 5)) + cowplot::theme_cowplot() + ylab("Enrichments (n)") + 
+    xlab("Cell type") + theme(axis.text.x = element_text(angle = 90, 
+                                                         hjust = 1), legend.position = "none") + facet_wrap(~branch_f, 
+                                                                                                            ncol = 1)
+
+
+  facet_branch_plt = facet_branch_plt + theme(axis.text.x = element_text(colour = cell_colours, angle = 45))
+  
+  if (make_dendro) {
+    the_dendrogram = ctd[[1]]$plotting$ggdendro_horizontal +
+      theme(plot.margin = unit(c(0, 0, 0, 0), units = "cm")) +
+      #  scale_x_discrete(breaks = total_res$CellType)
+      scale_x_discrete(breaks = ctd[[1]]$plotting$cell_ordering)
+    # CHANGE ^: added scale_x_discrete to set the mapping of the dendro to the x axis scale
+    
+    facet_branch_plt = cowplot::plot_grid(the_dendrogram, facet_branch_plt,axis = "lr",
+                                          align = "v", ncol = 1,
+                                          rel_heights = c(0.5, 3))
+    # CHANGE ^: align argument to "v" and rel_heights to c(0.3,1) to make dend and barchart closer
+    
+    #output$withDendro = combined_plot
+  }
+  
+  
+  
+    return(facet_branch_plt)
+}
+
+################################################################################
+# Create hashmap for cell names to assocaited colour
+cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+#ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours[c] = ns_colour
+  } else if (c %in% immune_cell_types) (
+    cell_colours[c] = immune_colour
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours[c] = card_colour
+  } else {
+    cell_colours[c] = "black"
+  }
+}
+
+  
+
+
+
+
+
+phenos_per_cell_colourText <- function (all_results_merged, cell_mappings, fold = 1, q_val = 0.005, 
+    dataset = "Descartes", cell_colours_hashmap = cell_colours) 
+{
+    phenos_per_cell = data.frame()
+    for (c in unique(all_results_merged$CellType)) {
+        cur_cell = c
+        n_phenos = length(all_results_merged[all_results_merged$CellType == 
+            c & all_results_merged$q < q_val & all_results_merged$fold_change > 
+            fold, "list"])
+        phenos_per_cell = rbind(phenos_per_cell, data.frame(Cell = cur_cell, 
+            n_phenos = n_phenos))
+    }
+    n_pheno_text = phenos_per_cell
+    phenos_per_cell$Tissue = rep(NA, length(phenos_per_cell$Cell))
+    if (dataset == "Descartes") {
+        phenos_per_cell_tissue = data.frame()
+        for (i in seq(1:length(phenos_per_cell$Cell))) {
+            cur = cell_mappings[cell_mappings$level1 == paste(phenos_per_cell$Cell[i]), 
+                ]$tissue
+            for (t in unique(cur)) {
+                if (!is.na(t)) {
+                  phenos_per_cell$Tissue[i] = t
+                  phenos_per_cell_tissue = rbind(phenos_per_cell_tissue, 
+                    phenos_per_cell[i, ])
+                }
+            }
+        }
+        phenos_per_cell = phenos_per_cell_tissue
+    }
+    phenos_per_cell$Cell = stats::reorder(phenos_per_cell$Cell, 
+        phenos_per_cell$n_phenos)
+    if (dataset == "Descartes") {
+        for (i in seq(1, length(phenos_per_cell$Cell))) {
+            cur = phenos_per_cell[phenos_per_cell$Cell == phenos_per_cell$Cell[i], 
+                ]
+            phenos_per_cell$n_phenos[i] = phenos_per_cell$n_phenos[i]/length(unique(cur$Tissue))
+        }
+    }
+    
+    
+   ## Need to sort this out as an option and add arguments for it 
+    phenos_per_cell$Cell_colour <- cell_colours_hashmap[phenos_per_cell$Cell]
+
+    
+    explan_plt <- ggplot(phenos_per_cell, aes(n_phenos, as.factor(Cell))) + 
+        scale_x_continuous("", expand = c(0, 0), limits = c(0, 
+            max(n_pheno_text$n_phenos) + 55)) + theme_classic() + 
+        scale_y_discrete(phenos_per_cell$Cell) + labs(title = paste0("Significantly enriched phenotypes per cell (q < ", 
+        q_val, ", fold change > ", fold, ")")) + 
+        ylab("Cell Type")
+    if (dataset == "Descartes") {
+        explan_plt = explan_plt + geom_col(aes(fill = Tissue), 
+            size = 2, position = "stack")
+    }
+    else {
+        explan_plt = explan_plt + geom_segment(aes(xend = 0, 
+            yend = Cell), size = 2)
+    }
+    explan_plt = explan_plt + geom_text(data = n_pheno_text, 
+        aes(label = n_phenos, x = n_phenos + 26, y = Cell), size = 4, 
+        color = "black") + ylab("Cell Type") + theme(axis.title.y = element_blank(), axis.text.y = element_text(colour = phenos_per_cell$Cell_colour))
+    return(explan_plt)
+}
+
+################################################################################
+
+# Phenos per cell plot
 descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
 descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1)
+plot_npc = phenos_per_cell_colourText(all_results_merged,descartes_mappings, fold=1,q_val=0.05, cell_colours_hashmap = cell_colours)
 
-plot_npc = plot_phenos_per_cell1(all_results_merged,descartes_mappings, fold=1,q_val=0.05)
-plot_npc = plot_npc
-print(plot_npc)
-phenos_per_cell_df = dataframe_phenos_per_cell(all_results_merged,descartes_mappings, fold=1,q_val=0.05)
+# Main branches of hpo
+#main_branch_plt <- plot_n_phenotypes_per_branch_hpo(phenotype_to_genes=phenotype_to_genes,hpo=hpo)
+phenosPerBranch <- function (phenotype_to_genes, hpo, highlighted_branches = c("Abnormality of the nervous system", 
+                                                            "Abnormality of the cardiovascular system", "Abnormality of the immune system"),
+                             set_colors = c("#619CFF","#F8766D","#00BA38") ,
+          background_branches = hpo$children["HP:0000118"][[1]], 
+          wes_anderson_palette = "Moonrise3") 
+{
+  color_pal <- wesanderson::wes_palette(wes_anderson_palette, 
+                                        2)
+  highlighted_branches_ids <- hpo$id[match(highlighted_branches, 
+                                           hpo$name)]
+  phenos_per_branch <- data.frame()
+  for (b in background_branches) {
+    n <- length(ontologyIndex::get_descendants(hpo, b))
+    if (b %in% highlighted_branches_ids) {
+      target_branch <- "target"
+    }
+    else {
+      target_branch <- "Other"
+    }
+    phenos_per_branch <- rbind(phenos_per_branch, data.frame(branch = hpo$name[b], 
+                                                             n_phenos = n, target = target_branch))
+  }
+  phenos_per_branch$branch <- stats::reorder(phenos_per_branch$branch, 
+                                             phenos_per_branch$n_phenos)
+  
+  phenos_per_branch$color <- "gray"
+  for (i in seq(1, length(set_colors))) {
+    phenos_per_branch$color[phenos_per_branch$branch == highlighted_branches[i]] <- set_colors[i]
+  }
+  
+  phenos_per_branch_plt <- ggplot(phenos_per_branch, aes(x = n_phenos, 
+                                                         y = branch)) + 
+    geom_segment(mapping = aes(xend = 0,  yend = branch), size = 3, color = phenos_per_branch$color, fill = phenos_per_branch$color) + xlab("Descendants (n)") + 
+    ylab(element_blank()) + 
+    scale_color_manual(values = color_pal) + 
+    theme(axis.line.x = element_blank(), panel.background = element_blank(), 
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          axis.line.y = element_line(color = "black"), 
+          axis.ticks.x = element_blank(), axis.text.x = element_blank(), 
+          axis.text.y = element_text(size = 11),
+          legend.position = "none") +
+    scale_x_continuous(position = "top")
+  return(phenos_per_branch_plt)
+}
+main_branch_plt <- phenosPerBranch(phenotype_to_genes, hpo, set_colors = palette_branch[1:3])
+
+
+
+# Phenos per cell by branch
+
+
+plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
+facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch_den(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd, make_dendro =TRUE)
+
 
 ```
+
+```{r Figure3, fig.height=20, fig.width = 20, fig.cap = "\\label{fig:Figure3}\\textbf{A} This shows how many significant phenotype enrichments were found for each cell type, where q<0.05 and fold change > 1. \\textbf{B} Shows the child terms of phenotypic abnormality (ID: HP:0000118). These constitute the main branches of the HPO, or the main classes of phenotypic abnormality. The bars represent the number of descendant terms within each branch. \\textbf{C} This is a representation of the main branches from phenotypic abnormality. The three branches that we will explore more depely in further examples have been colour coded. \\textbf{D} This shows the number of significant enrichments per cell from three main branches of the HPO. It can be seen that the greatest number of significant enrichments are seen in the cell types that we would expect. For example, the vast majority of enrichments in the nervous system branch are assocaited with cells related to the nervous system. An additional hypergeometric test was done to show where the number of significant enrichments in a branch is significantly elevated, asterics, ****, *** **, and *, indicate that \\textit{q}<0.00001, 0.0001, 0.001, and 0.05, respectively. The cells are ordered by their dendrogram grouping, which can be seen at the top.", message = FALSE, warning = FALSE, echo = FALSE }
+
+
+
+namer = function(term){
+  return (hpo$name[term])
+}
+terms = ontologyIndex::get_term_property(hpo,property="children" ,term = hpo$id[which(hpo$name == "Phenotypic abnormality")],as_names=FALSE)
+terms = append(terms,hpo$id[which(hpo$name == "Phenotypic abnormality")])
+
+terms <- data.frame("terms" = terms, "colour" = "gray")
+
+
+
+plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system", "Abnormality of the immune system")
+named_colours <- c()
+for (i in seq(length(plot_branches))) {
+  named_colours[plot_branches[i]] <- palette_branch[i]
+}
+
+term_colours <- c()
+term_names <- c()
+term_labels <- c()
+for (t in terms$terms) {
+  cur_name <- hpo$name[t]
+  term_names <- append(term_names, cur_name)
+  
+  if( cur_name == "Phenotypic abnormality") {
+    term_labels <- append(term_labels, cur_name)
+    term_colours <- append(term_colours, "lightblue")
+  } else if (cur_name %in% plot_branches) {
+    term_labels <- append(term_labels, "")
+    term_colours <- append(term_colours, named_colours[cur_name])
+  } else {
+    term_labels <- append(term_labels, " ")
+    term_colours <- append(term_colours, "gray")
+  }
+}
+ 
+terms$colour <- term_colours 
+terms$name <- term_names 
+terms$labels <- term_labels
+
+
+phenotypic_abnormality_children <- ontologyPlot::onto_plot(hpo, terms= terms$terms,label = terms$labels,
+          shape="circle",fontsize = 80,fillcolor = terms$colour ,edge_attributes = list(color="grey"))
+
+
+
+
+
+layout <- "
+AA###BBBBB##
+AA###BBBBB##
+AACCCCCCCCCC
+AACCCCCCCCCC
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+AADDDDDDDDDD
+"
+
+
+Fig2 = (  
+  (plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  +
+  (main_branch_plt + theme(axis.text.y = element_text(size = 13))) +
+          ggplotify(phenotypic_abnormality_children, height_px = 300, width_px = 1200) + # try increase height_px (orig 300,1200) 
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
+        plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
+
+#ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
+print(Fig2)
+
+```
+
+```{r phenos_per_cell_df, echo = FALSE, message = FALSE, warning = FALSE, results= FALSE} 
+phenos_per_cell_df = dataframe_phenos_per_cell(all_results_merged,descartes_mappings, fold=1,q_val=0.05)
+```
+
+The Descartes human scRNA data clustered into `r length(unique(all_results_merged$CellType))` unique cell types. There were `r length(all_results_merged$CellType[all_results_merged$q < 0.05])` significant cell-phenotype associations across all cells (*q*<0.05). The number of significant phenotype associations for each individual cell type can be seen in Figure \ref{fig:Figure3} A. 
 
 The greatest number of significant phenotypes enriched for a single cell type was `r max(phenos_per_cell_df$n_phenos)`, seen in `r phenos_per_cell_df$Cell[match(max(phenos_per_cell_df$n_phenos),phenos_per_cell_df$n_phenos)]`, (where *q*<0.05 and fold change > 1).
 
 ## Expected cell types are associated with the main HPO branches 
-The root HPO term, phenotypic abnormality (HP:0000118), has `r length(hpo$children[["HP:0000118"]])` child phenotypes that represent the main classes of phenotypic abnormality in the HPO. These `r length(hpo$children[["HP:0000118"]])` branches can be seen in Figure \ref{fig:HPO_main_branches}. Abnormality of the nervous system, abnormality of the cardiovascular system, and abnormality of the immune system have been highlighted, as these branches have clear cell types in which there is expected to be high numbers of enrichments (neurons, cardiomyocytes, and immune cells, respectively). These expected associations will be used as a means of validating the results.
+The root HPO term, phenotypic abnormality (HP:0000118), has `r length(hpo$children[["HP:0000118"]])` child phenotypes that represent the main classes of phenotypic abnormality in the HPO. These `r length(hpo$children[["HP:0000118"]])` branches can be seen in Figure \ref{fig:Figure3} B. Abnormality of the nervous system, abnormality of the cardiovascular system, and abnormality of the immune system have been highlighted, as these branches have clear cell types in which there is expected to be high numbers of enrichments (neurons, cardiomyocytes, and immune cells, respectively). These expected associations will be used as a means of validating the results.
 
-
-```{r HPO_main_branches,fig.height=5,fig.width = 5,fig.cap = '\\label{fig:HPO_main_branches}\\textbf{Main branches of the HPO.} This shows all the child phenotypes under "Phenotypic abnormality" (ID: HP:0000118) in the HPO. These can be considered as the main classes of phenotypic abnormality, or the main branches of the HPO.', message=FALSE, echo=FALSE}
-
-
-plot_n_phenotypes_per_branch_hpo(phenotype_to_genes=phenotype_to_genes,hpo=hpo)
-
-```
-
-
-As can be seen in Figure \ref{fig:expected_cell_branch}, the phenotypes from these branches tend to have a greater number of significant enrichments in the expected cell types. A hypergeometric test was used to determine if the number of significantly enriched phenotypes for a cell type within a branch is significantly elevated. BH correction was used to account for multiple comparisons. A significant result from the hypergeometric test suggests that the branch as a whole is significantly associated with those cell types (the hypergeometric test results, seen in Fig. \ref{fig:expected_cell_branch}, are denoted by  \*\*\*\*, \*\*\* \*\*, and \*   which indicate that *q*<0.00001, 0.0001, 0.001, and 0.05, respectively). The cells are ordered by dendrogram grouping, so it can be seen that the large cluster of significant results in the "Abnormality of the nervous system" branch, ranging from astrocytes to sympathoblasts, are cells of the nervous system. The largest number of disease phenotypes in the nervous system branch are associated with limbic system neurons. In the immune system branch, there were a large number of significant enrichments in immune cells such as lymphoid cells, myeloid cells and antigen presenting cells. Finally, the cell type most significantly associated with abnormality of the cardiovascular system is cardiomyocytes (*q*<0.00001). These findings are in agreement with the predicted cell-phenotype relationships.
+As can be seen in Figure \ref{fig:Figure3} D, the phenotypes from these branches tend to have a greater number of significant enrichments in the expected cell types. A hypergeometric test was used to determine if the number of significantly enriched phenotypes for a cell type within a branch is significantly elevated. BH correction was used to account for multiple comparisons. A significant result from the hypergeometric test suggests that the branch as a whole is significantly associated with those cell types (the hypergeometric test results, seen in Fig. \ref{fig:expected_cell_branch}, are denoted by  \*\*\*\*, \*\*\* \*\*, and \*   which indicate that *q*<0.00001, 0.0001, 0.001, and 0.05, respectively). The cells are ordered by dendrogram grouping, so it can be seen that the large cluster of significant results in the "Abnormality of the nervous system" branch, ranging from astrocytes to sympathoblasts, are cells of the nervous system. The largest number of disease phenotypes in the nervous system branch are associated with limbic system neurons. In the immune system branch, there were a large number of significant enrichments in immune cells such as lymphoid cells, myeloid cells and antigen presenting cells. Finally, the cell type most significantly associated with abnormality of the cardiovascular system is cardiomyocytes (*q*<0.00001). These findings are in agreement with the predicted cell-phenotype relationships.
 
 Additionally, there are many novel results that may provoke new lines of research. For example, a significant number of sub-phenotypes of "Abnormality of the cardiovascular system" are enriched in hepatoblasts.   
 
-``` {r expected_cell_branch, fig.height = 10,fig.width = 10,fig.cap = "\\label{fig:expected_cell_branch}\\textbf{The number of significant enrichments per cell in three main branches of the HPO.} It can be seen that the greatest number of significant enrichments are seen in the cell types that we would expect for that branch. An additional hypergeometric test was done to show where the number of significant enrichments in a branch is significantly elevated, significant cases are highlighted with asterics ****, *** **, and *   which indicate that \\textit{q}<0.00001, 0.0001, 0.001, and 0.05, respectively. The cells are ordered by their dendrogram grouping", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
-
-
-plot_branches = c("Abnormality of the nervous system","Abnormality of the cardiovascular system","Abnormality of the immune system")
-
-facet_branch_plt = plot_n_signif_phenos_per_cell_by_branch(all_results_merged, plot_branches = plot_branches, q_threshold = 0.05, hpo=hpo, phenotype_to_genes=phenotype_to_genes, ctd=ctd)
-
-
-print(facet_branch_plt)
+```{r proportion_expected_plt, echo = FALSE}
+# modifying this function to be more specific about colours used. 
+proportion_of_expected_enrichments_plot_2 <- function (all_results_merged, hpo, target_cells = c("Excitatory neurons", 
+    "Limbic system neurons"), cell_type_description = "Neuronal cells", 
+    HPO_Ids = ontologyIndex::get_descendants(hpo, hpo$id[match("Abnormality of the nervous system", 
+        hpo$name)]), phenotype_description = "Nervous system phenotypes", 
+    color_pal = c("#619CFF","#F8766D","#00BA38","gray"), color_expected_phenotypes = 1, 
+    color_other_phenotypes = 4, blank_x_axis = FALSE) 
+{
+    cur_descendants_names = c()
+    for (d in HPO_Ids) {
+        cur_descendants_names = append(cur_descendants_names, 
+            paste(hpo$name[d]))
+    }
+    all_results_merged$cur_branch = "Other"
+    all_results_merged[all_results_merged$list %in% cur_descendants_names, 
+        ]$cur_branch = phenotype_description
+    all_results_merged$cur_branch = factor(all_results_merged$cur_branch)
+    all_results_merged$minus_log_p = round(-log10(all_results_merged$p + 
+        1e-06), digits = 0)
+    proportional_results = data.frame()
+    for (logp in unique(all_results_merged$minus_log_p)) {
+        cur = all_results_merged[all_results_merged$minus_log_p == 
+            logp, ]
+        prop_branch = 100 * (length(cur$cur_branch[cur$cur_branch == 
+            phenotype_description & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+            target_cells]))
+        prop_other = 100 * (length(cur$cur_branch[cur$cur_branch == 
+            "Other" & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+            target_cells]))
+        proportional_results = rbind(proportional_results, data.frame(cur_branch = phenotype_description, 
+            prop = prop_branch, minus_log_p = logp))
+        proportional_results = rbind(proportional_results, data.frame(cur_branch = "Other", 
+            prop = prop_other, minus_log_p = logp))
+    }
+    #color_pal = wesanderson::wes_palette(wes_color_palette, n_colors)
+    prop_plot <- ggplot(proportional_results, aes(x = minus_log_p, 
+        y = prop, color = cur_branch)) + geom_point(size = 3) + 
+        geom_line(mapping = aes(linetype = cur_branch), size = 0.6) + 
+        labs(color = "", linetype = "") + ylab(paste0("% Enrichments in \"", 
+        cell_type_description, "\"")) + 
+      scale_y_continuous(limits = c(0, 100)) + cowplot::theme_cowplot() + 
+        scale_color_manual(values = c(color_pal[color_expected_phenotypes], 
+            color_pal[color_other_phenotypes])) + theme(legend.position = c(0.5,0.95), 
+        legend.text = element_text(size = 10), title = element_text(size = 11), axis.title.y = element_text(size=12))
+      if (! blank_x_axis){
+        prop_plot = prop_plot + xlab("-log10(p)")
+      } else {
+        prop_plot = prop_plot + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+      } 
+    return(list(prop_plot, proportional_results))
+}
 
 ```
 
+```{r patterns, message=FALSE, warning=FALSE, echo=FALSE}
 
-To further demonstrate that the analysis finds expected phenotype-cell relationships, excitatory neurons, cardiomyocytes, and antigen presenting cells were again used. Figure \ref{fig:signif_expected_cell} shows that if we take all results for a particular cell, the more significantly associated phenotypes disproportionately come from the expected branch of the HPO. 
+# Significance and expected cell type ##########################################
+plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
+expected_cells = c("Excitatory neurons", "Cardiomyocytes","Antigen presenting cells")
+correlation_results = data.frame()  
+proportion_plots = list()
+blank_x = c(TRUE, TRUE, FALSE)
+for (i in seq(length(plot_branches))) {
+  cur_plot <- proportion_of_expected_enrichments_plot_2(all_results_merged,
+   hpo,
+   target_cells=c(expected_cells[i]),
+   cell_type_description = expected_cells[i],
+   HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
+   phenotype_description = plot_branches[i],
+   color_pal =  c(palette_branch[1],palette_branch[2],palette_branch[3],"gray"),
+   color_expected_phenotypes = i,
+   color_other_phenotypes = 4, blank_x_axis = blank_x[i])
+  proportion_plots[[i]] = cur_plot[[1]]
+  correlation_results = rbind(correlation_results,cur_plot[[2]])
+}
 
-```{r signif_expected_cell,fig.height = 4, fig.width = 10,fig.cap = "\\label{fig:signif_expected_cell}\\textbf{The relationship between significance threshold and the proportion of enrichments found in the expected HPO branch.} As more stringent significance thresholds for enrichment in a particular cell type are used, the proportion of enrichments from an expected HPO branch increases. This validates the method as it shows that many of the strong phenotype-cell associations are in agreement with our current understanding. \\textbf{A} shows the proportion of enrichments for abnormality of the nervous system descendants in excitatory neurons as significance threshold is increased, \\textbf{B} looks at the cardiovascular system branch and cardiomyocytes, and \\textbf{C} looks at the immune system branch and antigen presenting cells.", message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
+#sigplot <- cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C"))
+
+
+# ont level plots (violin) #####################################################
+blank_x <-   theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+      
+
+ont_levels <- data.frame("phenotype"=unique(phenotype_to_genes$Phenotype),
+                         "hpo_id"=hpo$id[match(unique(phenotype_to_genes$Phenotype),hpo$name)])
+ont_levels <- ont_levels[complete.cases(ont_levels),]
+lvls <- c()
+for (id in ont_levels$hpo_id) {
+  lvls = append(lvls, get_ont_level(hpo,id))
+}
+ont_levels$ont_lev <- lvls
+rm(lvls)
+
+n_associated_cells <- c()
+for (p in ont_levels$phenotype) {
+  #n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05]))
+  n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1]))
+}
+ont_levels$n_associated_cells <- n_associated_cells
+rm(n_associated_cells)
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ncells_plt <- ggplot(ont_levels, mapping=aes(x= factor(ont_lev), y=n_associated_cells)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ont_lev)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Associated cells/phenotype (n)",title = "n associated cells/phenotype by ontology level")+
+  blank_x
+#ontlvl_ncells_plt
+
+
+
+# ont level facet
+
+signif_res <- all_results_merged[all_results_merged$q < 0.05,]
+ontlevz <- c()
+for (p in unique(signif_res$HPO_id)) {
+  ontlevz[p] <- get_ont_level(hpo,p)
+}
+signif_res$ontlvl <- ontlevz[signif_res$HPO_id]
+signif_res <- signif_res[complete.cases(signif_res),]
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_fold_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = fold_change)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Fold change",title = "Fold change in specific expression by ontology level") +
+  blank_x
+  
+
+# ngenes plt (stat smooth takes too long/doesnt work with all results so just use signif ?)
+ngenes<-c()
+for(p in unique(signif_res$list)) {
+  ngenes[p] <- length(get_gene_list(p,phenotype_to_genes))
+}
+signif_res$ngenes <- ngenes[signif_res$list]
+signif_res <- signif_res[complete.cases(signif_res),]
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ngenes_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = ngenes)) +
+  geom_jitter(color = pal[1]) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Genes (n)",title = "Number of genes by ontology level")
+
+#ontlvlplots <- cowplot::plot_grid(plotlist=list(ontlvl_ncells_plt,ontlvl_fold_plt,ontlvl_ngenes_plt),align = "hv",nrow = 1)
+
+
+
+```
+
+```{r Figure4, fig.height = 12, fig.width = 15, fig.cap = "\\label{fig:Figure4}\\textbf{A, B, and C}  \\textbf{D, E, and F} Show the relationship between significance threshold and the proportion of enrichments found in the expected HPO branch. As more stringent significance thresholds for enrichment in a particular cell type are used, the proportion of enrichments from an expected HPO branch increases. This validates the method as it shows that many of the strong phenotype-cell associations are in agreement with our current understanding. \\textbf{A} shows the proportion of enrichments for abnormality of the nervous system descendants in excitatory neurons as significance threshold is increased, \\textbf{B} looks at the cardiovascular system branch and cardiomyocytes, and \\textbf{C} looks at the immune system branch and antigen presenting cells.", message = FALSE, warning = FALSE , echo = FALSE}
+blank_x_axis <- theme(x.axis.title =  element_blank(), axis.text.x = element_blank())
+print(
+  (
+    ( ontlvl_ncells_plt /
+       ontlvl_fold_plt /
+       ontlvl_ngenes_plt
+      ) 
+    |
+    ( proportion_plots[[1]]  /
+       proportion_plots[[2]] /
+       proportion_plots[[3]] 
+      ) 
+  ) +  plot_annotation(tag_levels = LETTERS) 
+)
+
+```
+
+```{r signif_expected_cell_pearsons, message=FALSE, echo=FALSE, warning =FALSE, results = FALSE}
 
 
 plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
 expected_cells = c("Excitatory neurons", "Cardiomyocytes","Antigen presenting cells")
 correlation_results = data.frame()  
-proportion_plots = list()
+# proportion_plots = list()
 for (i in seq(length(plot_branches))) {
   cur_plot <- proportion_of_expected_enrichments_plot(all_results_merged,
    hpo,
@@ -268,22 +812,23 @@ for (i in seq(length(plot_branches))) {
    n_colors = 4,
    color_expected_phenotypes = i,
    color_other_phenotypes = 4)
-  proportion_plots[[i]] = cur_plot[[1]]
+#  proportion_plots[[i]] = cur_plot[[1]]
   correlation_results = rbind(correlation_results,cur_plot[[2]])
 }
 
-print(cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C")))
+#print(cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("A","B","C")))
 pearsons_expected = cor.test(correlation_results$minus_log_p[correlation_results$cur_branch != "Other"],correlation_results$prop[correlation_results$cur_branch != "Other"],method="pearson")
 
 
 ```
 
-In other words, Figure \ref{fig:signif_expected_cell} shows that as more stringent significance thresholds are used, the proportion of enriched phenotypes from the expected HPO branch increases (*r*~`r pearsons_expected$parameter`~=`r pearsons_expected$estimate`, *p*=`r pearsons_expected$p.value`).
+
+To further demonstrate that the analysis finds expected phenotype-cell relationships, excitatory neurons, cardiomyocytes, and antigen presenting cells were again used. Figure \ref{fig:Figure4} D, E, and F show that if we take all results for a particular cell, the more significantly associated phenotypes disproportionately come from the expected branch of the HPO. In other words, as more stringent significance thresholds are used, the proportion of enriched phenotypes from the expected HPO branch increases (*r*~`r pearsons_expected$parameter`~=`r pearsons_expected$estimate`, *p*=`r pearsons_expected$p.value`).
 
 ## Low ontology level terms have high specific expression in enriched cells
-It was then hypothesised that significant enrichments would have higher specific expression towards the leaf nodes of the HPO, compared to terms closer to the root. We quantify specific expression by fold change. This denotes how many times greater the specific expression is in a gene list, relative to the mean expression of random bootstrapped gene lists of the same length, in a given cell type (see Figure \ref{fig:HPO_level_fold} A). In other words, the strength of the enrichment. Ontology level represents the position of a term in the HPO heirarchy. It denotes, how many generations of sub-phenotypes (descendants) a term has. For example, an ontology level 4 term like "Recurrent infections" has 4 generations of descendant terms below it, including "Recurrent gram-negative bacterial infections", which in turn has 2 generations of descendants, so it is at ontology level 2. The root term of the HPO (Phenotypic abnormality) is at ontology level 13.
+It was then hypothesised that significant enrichments would have higher specific expression towards the leaf nodes of the HPO, compared to terms closer to the root. We quantify specific expression by fold change. This denotes how many times greater the specific expression is in a gene list, relative to the mean expression of random bootstrapped gene lists of the same length, in a given cell type, in other words, the strength of the enrichment. This effect can be seen in Figure \ref{fig:Figure4} A and B. Ontology level represents the position of a term in the HPO heirarchy. It denotes, how many generations of sub-phenotypes (descendants) a term has. For example, an ontology level 4 term like "Recurrent infections" has 4 generations of descendant terms below it, including "Recurrent gram-negative bacterial infections", which in turn has 2 generations of descendants, so it is at ontology level 2. The root term of the HPO (Phenotypic abnormality) is at ontology level 13. As ontology level approaches zero, the number of signifcantly assocaited cells goes down and the fold change in specific expression goes up. 
 
-The relationship between ontology level and fold change shows that the phenotypes at higher ontology levels, which encompass a broad range of traits, generally a have lower specific expression. Conversely, the significant associations at lower HPO levels tend to have higher specific expression of the phenotype gene list in the associated cell type. Figure \ref{fig:HPO_level_fold} B shows that higher ontology level phenotypes also tend to have longer gene lists. Conversely, the more narrowly defined phenotypes at lower ontology levels are generally associated with only a few genes. This further supports the idea that the gene lists at lower levels tend to be more specific.
+The relationship between ontology level and fold change shows that the phenotypes at higher ontology levels, which encompass a broad range of traits, generally a have lower specific expression. Conversely, the significant associations at lower HPO levels tend to have higher specific expression of the phenotype gene list in the associated cell type. Figure \ref{fig:Figure4} C shows that the higher ontology level phenotypes also tend to have longer gene lists. Conversely, the more narrowly defined phenotypes at lower ontology levels are generally associated with only a few genes. This further supports the idea that the gene lists at lower levels tend to be more specific.
 
 ```{r HPO_level_fold,fig.height=4,fig.width =8,fig.cap = '\\label{fig:HPO_level_fold}\\textbf{Relationship between ontology level and expression specificity. A:}  More narrowly defined phenotypes, at lower HPO levels, show more specific expression of their gene lists in significantly associated cells than phenotypes at higher HPO levels. Ontology level represents how many generations of sub-phenotypes a term has in the HPO. As we progress out towards these leaf-nodes (ontology level 0), the specific expression of the gene list tends to be higher in significantly enriched cell types. The level of specific expression is represented as fold change here. \\textbf{B:} At higher ontology levels, the phenotypes encompass a larger number of traits and are associated with larger lists of genes. The lower ontology level phenotypes are more narrowly defined and are often associated with only a few genes, possibly making them good targets for therapy and research.', message=FALSE, echo=FALSE}
 
@@ -296,7 +841,7 @@ n_desc_rec_inf = length(get_descendants(hpo, "HP:0002719"))
 
 
 ## Low ontology level terms are enriched in expected and novel cell types
-While figures \ref{fig:expected_cell_branch} and \ref{fig:signif_expected_cell} show that high-level HPO terms are generally associated with expected cell types, figure \ref{fig:recurrent_inf_n_per_cell} shows that expected cell-phenotype relationships are also found at the more specific phenotypes at lower HPO levels. As an example, we look at all descendant terms of Recurrent infections (HP:0002719), which includes `r n_desc_rec_inf` HPO terms at ontology levels ranging from 0 to 3. The hypothesis is that they will be primarily enriched in cells involved in the immune system. It was predicted that, from these sub-phenotypes, the number of significant enrichments in immune system associated cell types would be greater than the number of significant results in all other cell types combined.
+While figures \ref{fig:Figure3} D and \ref{fig:Figure4} D, E, and F show that high-level HPO terms are generally associated with expected cell types, figure \ref{fig:recurrent_inf_n_per_cell} shows that expected cell-phenotype relationships are also found at the more specific phenotypes at lower HPO levels. As an example, we look at all descendant terms of Recurrent infections (HP:0002719), which includes `r n_desc_rec_inf` HPO terms at ontology levels ranging from 0 to 3. The hypothesis is that they will be primarily enriched in cells involved in the immune system. It was predicted that, from these sub-phenotypes, the number of significant enrichments in immune system associated cell types would be greater than the number of significant results in all other cell types combined.
 
 
 ```{r recurrent_inf_n_per_cell,fig.width=10,fig.height=6,fig.cap = '\\label{fig:recurrent_inf_n_per_cell}\\textbf{Significant enrichments per cell for all descendant terms of Recurrent infections.} This shows the number of significantly enriched phenotypes per cell for descendant terms of "Recurrent infections". As expected, the majority of enrichments are found in cells involved in the immune system, including antigen presenting cells, hematopoietic cells, yhymocytes, myeloid cells, and lymphoid cells. These collectively account for 68 significant enrichments. We also find novel enrichments in ciliated epithelial cells, ductal cells, ureteric bud cells, hepatoblasts, and some undefined cells. These may warrant further investigation.', message=FALSE, echo=FALSE}
