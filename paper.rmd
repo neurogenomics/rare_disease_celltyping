@@ -8,7 +8,7 @@ header-includes:
     - \renewcommand{\familydefault}{\sfdefault}
 theme: Springer
 title: \singlespace Identification of cell types involved in rare disease-associated human phenotypes
-subtitle: \singlespace Imperial college - Molecular and cellular biosciences project 2 \newline (6500 words)
+subtitle: \singlespace Using expression weighted celltype enrichment analysis to identify cell-phenotype relationships in scRNA-seq data from Descarets and phenotype associated genelists from the human phenotype ontology
 #date: 03/08/2021
 author: 
 - Robert Gordon-Smith, Molecular and Cellular Biosciences MRes
