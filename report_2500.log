@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  17 DEC 2021 11:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  20 DEC 2021 14:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**paper.tex
-(./paper.tex
+**report_2500.tex
+(./report_2500.tex
 LaTeX2e <2021-06-01> patch level 1
 L3 programming layer <2021-07-12> (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf
 -dist/tex/latex/base/article.cls
@@ -368,24 +368,6 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layoutvoffset=\dimen159
 \Gm@dimlist=\toks24
 )
-(c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.
-sty
-Package: fancyvrb 2021/01/20 v3.7 verbatim text (tvz,hv)
-\FV@CodeLineNo=\count281
-\FV@InFile=\read2
-\FV@TabBox=\box52
-\c@FancyVerbLine=\count282
-\FV@StepNumber=\count283
-\FV@OutFile=\write3
-) (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/framed/framed.st
-y
-Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
-\OuterFrameSep=\skip53
-\fb@frw=\dimen160
-\fb@frh=\dimen161
-\FrameRule=\dimen162
-\FrameSep=\dimen163
-)
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.
 sty
 Package: graphicx 2020/12/05 v1.2c Enhanced LaTeX Graphics (DPC,SPQR)
@@ -402,8 +384,8 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 107.
 )
-\Gin@req@height=\dimen164
-\Gin@req@width=\dimen165
+\Gin@req@height=\dimen160
+\Gin@req@width=\dimen161
 )
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/setspace/setspace.
 sty
@@ -412,27 +394,27 @@ Package: setspace 2011/12/19 v6.7a set line spacing
 y
 Package: helvet 2020/03/25 PSNFSS-v9.3 (WaS) 
 )
-\cslhangindent=\skip54
-\csllabelwidth=\skip55
+\cslhangindent=\skip53
+\csllabelwidth=\skip54
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count284
-\calc@Bcount=\count285
-\calc@Adimen=\dimen166
-\calc@Bdimen=\dimen167
-\calc@Askip=\skip56
-\calc@Bskip=\skip57
+\calc@Acount=\count281
+\calc@Bcount=\count282
+\calc@Adimen=\dimen162
+\calc@Bdimen=\dimen163
+\calc@Askip=\skip55
+\calc@Bskip=\skip56
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count286
-\calc@Cskip=\skip58
+\calc@Ccount=\count283
+\calc@Cskip=\skip57
 )
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.
 sty
 Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count287
+\etb@tempcnta=\count284
 )
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 15
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 11
 2.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
@@ -440,29 +422,29 @@ File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backen
 d-pdftex.def
 File: l3backend-pdftex.def 2021-07-12 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count288
-\l__pdf_internal_box=\box53
-) (./paper.aux)
-\openout1 = `paper.aux'.
+\l__color_backend_stack_int=\count285
+\l__pdf_internal_box=\box52
+) (./report_2500.aux)
+\openout1 = `report_2500.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 152.
-LaTeX Font Info:    ... okay on input line 152.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 112.
+LaTeX Font Info:    ... okay on input line 112.
 
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epsto
 pdf-base.sty
@@ -475,7 +457,7 @@ df-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 152.
+Package hyperref Info: Link coloring ON on input line 112.
 
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.s
 ty
@@ -489,14 +471,14 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count289
+\c@section@level=\count286
 )
-LaTeX Info: Redefining \ref on input line 152.
-LaTeX Info: Redefining \pageref on input line 152.
-LaTeX Info: Redefining \nameref on input line 152.
-(./paper.out) (./paper.out)
-\@outlinefile=\write4
-\openout4 = `paper.out'.
+LaTeX Info: Redefining \ref on input line 112.
+LaTeX Info: Redefining \pageref on input line 112.
+LaTeX Info: Redefining \nameref on input line 112.
+(./report_2500.out) (./report_2500.out)
+\@outlinefile=\write3
+\openout3 = `report_2500.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -533,206 +515,131 @@ LaTeX Info: Redefining \nameref on input line 152.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-54.
+14.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-54.
+14.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-154.
+114.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-154.
+114.
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 154.
+(Font)              <14.4> on input line 114.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 154.
+(Font)              <10> on input line 114.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 154.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 154
+(Font)              <7> on input line 114.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 114
 .
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 154
+LaTeX Font Info:    Trying to load font information for U+msb on input line 114
 .
 (c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (15.96951pt too wide) in paragraph at lines 154--154
+Overfull \hbox (15.96951pt too wide) in paragraph at lines 114--114
  [] 
  []
 
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 168.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 128.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 182.
+(Font)              <10.95> on input line 142.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 182.
+(Font)              <8> on input line 142.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 182.
+(Font)              <6> on input line 142.
 [1
 
 {c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdfte
 x.map}]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 227.
-[2]
-<paper_files/figure-latex/ADHD_ancestors-1.pdf, id=105, 469.755pt x 325.215pt>
-File: paper_files/figure-latex/ADHD_ancestors-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/ADHD_ancestors-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/ADHD_ancestors-1.pdf  used on
- input line 242.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[3] [4 <./paper_files/figure-latex/ADHD_ancestors-1.pdf>] [5] [6] [7] [8]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-16.
-(c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [9] [10]
-<paper_files/figure-latex/Figure2-1.pdf, id=166, 1445.4pt x 325.215pt>
-File: paper_files/figure-latex/Figure2-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/Figure2-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/Figure2-1.pdf  used on input 
-line 506.
-(pdftex.def)             Requested size: 469.74944pt x 105.69362pt.
+(Font)              <12> on input line 168.
+[2] [3]
+<report_2500_files/figure-latex/Figure1-1.pdf, id=52, 1445.4pt x 1445.4pt>
+File: report_2500_files/figure-latex/Figure1-1.pdf Graphic file (type pdf)
+<use report_2500_files/figure-latex/Figure1-1.pdf>
+Package pdftex.def Info: report_2500_files/figure-latex/Figure1-1.pdf  used on 
+input line 251.
+(pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 523.
-[11 <./paper_files/figure-latex/Figure2-1.pdf>] [12]
-<paper_files/figure-latex/Figure3-1.pdf, id=182, 1445.4pt x 1445.4pt>
-File: paper_files/figure-latex/Figure3-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/Figure3-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/Figure3-1.pdf  used on input 
-line 555.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 268.
+
+LaTeX Warning: Float too large for page by 20.34532pt on input line 269.
+
+[4] [5 <./report_2500_files/figure-latex/Figure1-1.pdf>]
+<report_2500_files/figure-latex/Figure2-1.pdf, id=67, 1445.4pt x 1445.4pt>
+File: report_2500_files/figure-latex/Figure2-1.pdf Graphic file (type pdf)
+<use report_2500_files/figure-latex/Figure2-1.pdf>
+Package pdftex.def Info: report_2500_files/figure-latex/Figure2-1.pdf  used on 
+input line 278.
 (pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
 
-LaTeX Warning: Float too large for page by 34.9894pt on input line 575.
+LaTeX Warning: Float too large for page by 5.84532pt on input line 295.
 
-
-LaTeX Warning: Reference `fig:expected_cell_branch' on page 13 undefined on inp
-ut line 609.
-
-[13] [14 <./paper_files/figure-latex/Figure3-1.pdf>]
-<paper_files/figure-latex/Figure4-1.pdf, id=203, 1084.05pt x 867.24pt>
-File: paper_files/figure-latex/Figure4-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/Figure4-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/Figure4-1.pdf  used on input 
-line 631.
+<report_2500_files/figure-latex/Figure3-1.pdf, id=70, 1084.05pt x 867.24pt>
+File: report_2500_files/figure-latex/Figure3-1.pdf Graphic file (type pdf)
+<use report_2500_files/figure-latex/Figure3-1.pdf>
+Package pdftex.def Info: report_2500_files/figure-latex/Figure3-1.pdf  used on 
+input line 331.
 (pdftex.def)             Requested size: 469.75496pt x 375.80397pt.
-[15] [16 <./paper_files/figure-latex/Figure4-1.pdf>]
-<paper_files/figure-latex/HPO_level_fold-1.pdf, id=226, 578.16pt x 289.08pt>
-File: paper_files/figure-latex/HPO_level_fold-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/HPO_level_fold-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/HPO_level_fold-1.pdf  used on
- input line 692.
-(pdftex.def)             Requested size: 469.75385pt x 234.8769pt.
-<paper_files/figure-latex/recurrent_inf_n_per_cell-1.pdf, id=230, 722.7pt x 433
-.62pt>
-File: paper_files/figure-latex/recurrent_inf_n_per_cell-1.pdf Graphic file (typ
-e pdf)
-<use paper_files/figure-latex/recurrent_inf_n_per_cell-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/recurrent_inf_n_per_cell-1.pd
-f  used on input line 727.
-(pdftex.def)             Requested size: 469.76045pt x 281.85628pt.
-[17] [18 <./paper_files/figure-latex/HPO_level_fold-1.pdf>] [19 <./paper_files/
-figure-latex/recurrent_inf_n_per_cell-1.pdf>]
-<paper_files/figure-latex/recurrent_bacterial_inf-1.pdf, id=260, 722.7pt x 722.
-7pt>
-File: paper_files/figure-latex/recurrent_bacterial_inf-1.pdf Graphic file (type
- pdf)
-<use paper_files/figure-latex/recurrent_bacterial_inf-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/recurrent_bacterial_inf-1.pdf
-  used on input line 755.
-(pdftex.def)             Requested size: 469.76045pt x 469.76045pt.
+[6] [7 <./report_2500_files/figure-latex/Figure2-1.pdf>] [8 <./report_2500_file
+s/figure-latex/Figure3-1.pdf>]
+<report_2500_files/figure-latex/Figure4-1.pdf, id=104, 1445.4pt x 1445.4pt>
+File: report_2500_files/figure-latex/Figure4-1.pdf Graphic file (type pdf)
+<use report_2500_files/figure-latex/Figure4-1.pdf>
+Package pdftex.def Info: report_2500_files/figure-latex/Figure4-1.pdf  used on 
+input line 379.
+(pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
 LaTeX Font Info:    Font shape `T1/phv/b/it' in size <12> not available
-(Font)              Font shape `T1/phv/b/sl' tried instead on input line 760.
-<paper_files/figure-latex/recurrent_gramneg_inf-1.pdf, id=262, 722.7pt x 722.7p
-t>
-File: paper_files/figure-latex/recurrent_gramneg_inf-1.pdf Graphic file (type p
-df)
-<use paper_files/figure-latex/recurrent_gramneg_inf-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/recurrent_gramneg_inf-1.pdf  
-used on input line 779.
-(pdftex.def)             Requested size: 469.76045pt x 469.76045pt.
-<paper_files/figure-latex/impared_social-1.pdf, id=264, 722.7pt x 578.16pt>
-File: paper_files/figure-latex/impared_social-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/impared_social-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/impared_social-1.pdf  used on
- input line 794.
-(pdftex.def)             Requested size: 469.76045pt x 375.80836pt.
-<paper_files/figure-latex/poor_eye_contact-1.pdf, id=266, 722.7pt x 578.16pt>
-File: paper_files/figure-latex/poor_eye_contact-1.pdf Graphic file (type pdf)
-<use paper_files/figure-latex/poor_eye_contact-1.pdf>
-Package pdftex.def Info: paper_files/figure-latex/poor_eye_contact-1.pdf  used 
-on input line 812.
-(pdftex.def)             Requested size: 469.76045pt x 375.80836pt.
-[20] [21 <./paper_files/figure-latex/recurrent_bacterial_inf-1.pdf>] [22 <./pap
-er_files/figure-latex/recurrent_gramneg_inf-1.pdf>] [23 <./paper_files/figure-l
-atex/impared_social-1.pdf>] [24 <./paper_files/figure-latex/poor_eye_contact-1.
-pdf>]
+(Font)              Font shape `T1/phv/b/sl' tried instead on input line 396.
 
-LaTeX Warning: Reference `fig:expected_cell_branch' on page 25 undefined on inp
-ut line 852.
+LaTeX Warning: Float too large for page by 5.84532pt on input line 397.
 
-[25] [26] [27] [28] [29] [30] [31] [32] [33]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1134.
-[34] [35] [36] [37] [38] [39] [40] (./paper.aux)
-
-LaTeX Warning: There were undefined references.
-
-Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: C2AA29ADD305A0047D22780BBC6968C9;4426.
- )
-(\end occurred inside a group at level 3)
-
-### semi simple group (level 3) entered at line 1218 (\begingroup)
-### semi simple group (level 2) entered at line 1164 (\begingroup)
-### semi simple group (level 1) entered at line 1124 (\begingroup)
-### bottom level 
+[9] [10 <./report_2500_files/figure-latex/Figure4-1.pdf>] [11] [12] [13] [14] [
+15] [16] [17] [18] [19] (./report_2500.aux)
+Package rerunfilecheck Info: File `report_2500.out' has not changed.
+(rerunfilecheck)             Checksum: 0FBF8F2C85F7458E209B5E86B28D1763;907.
+ ) 
 Here is how much of TeX's memory you used:
- 11366 strings out of 480502
- 170216 string characters out of 5898081
- 496993 words of memory out of 5000000
- 28702 multiletter control sequences out of 15000+600000
- 473734 words of font info for 94 fonts, out of 8000000 for 9000
+ 10697 strings out of 480502
+ 158128 string characters out of 5898081
+ 484723 words of memory out of 5000000
+ 28120 multiletter control sequences out of 15000+600000
+ 471043 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,10n,66p,1413b,528s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dv
-ips/lm/lm-ec.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/d
-vips/base/8r.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/d
-vips/lm/lm-mathsy.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/
-enc/dvips/lm/lm-rm.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts
-/enc/dvips/lm/lm-mathex.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/
-fonts/enc/dvips/lm/lm-mathit.enc}<c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-
-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/t
-exmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/Users/bobby/AppData/Roaming/Tiny
-TeX/texmf-dist/fonts/type1/public/lm/lmmi8.pfb><c:/Users/bobby/AppData/Roaming/
-TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/bobby/AppData/Roam
-ing/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/bobby/AppData/R
-oaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/bobby/AppD
-ata/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy8.pfb><c:/Users/bobby/
-AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/b
-obby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt12.pfb><c:/Us
-ers/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-<c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhv
-b8a.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/helv
-etic/uhvbo8a.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1
-/urw/helvetic/uhvr8a.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fon
-ts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on paper.pdf (40 pages, 1718826 bytes).
+ 60i,6n,66p,1308b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.en
+c}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.e
+nc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mat
+hsy.enc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/l
+m-mathit.enc}<c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/pub
+lic/lm/lmmi12.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/type
+1/public/lm/lmr12.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/
+type1/public/lm/lmr8.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fon
+ts/type1/public/lm/lmsy10.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dis
+t/fonts/type1/public/lm/lmsy8.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf
+-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><c:/Users/bobby/AppData/Roaming/TinyT
+eX/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb><c:/Users/bobby/AppData/Roam
+ing/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><c:/Users/bobby/AppD
+ata/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
+Output written on report_2500.pdf (19 pages, 1563784 bytes).
 PDF statistics:
- 549 PDF objects out of 1000 (max. 8388607)
- 453 compressed objects within 5 object streams
- 123 named destinations out of 1000 (max. 500000)
- 219 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 274 PDF objects out of 1000 (max. 8388607)
+ 223 compressed objects within 3 object streams
+ 56 named destinations out of 1000 (max. 500000)
+ 69 words of extra memory for PDF output out of 10000 (max. 10000000)
 

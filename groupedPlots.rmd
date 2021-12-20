@@ -669,25 +669,107 @@ ggnetPlt <- ggnet_plt_discrete_colour(phenoNet, colour_column = "colour")
 
 ```{r testplot, fig.height = 16, fig.width = 18, echo = FALSE}
 
-layout <- "
-AA#BBBBBBBBB
-AA#BBBBBBBBB
-AA#BBBBBBBBB
-AA#BBBBBBBBB
-AADDDDDDDDDD
-AADDDDDDDDDD
-AADDDDDDDDDD
-AADDDDDDDDDD
-AADDDDDDDDDD
-AADDDDDDDDDD
-"
+
+
+
+phenos_per_cell_colourText <- function (all_results_merged, cell_mappings, fold = 1, q_val = 0.005, 
+                                        dataset = "Descartes", cell_colours_hashmap = cell_colours) 
+{
+  phenos_per_cell = data.frame()
+  for (c in unique(all_results_merged$CellType)) {
+    cur_cell = c
+    n_phenos = length(all_results_merged[all_results_merged$CellType == 
+                                           c & all_results_merged$q < q_val & all_results_merged$fold_change > 
+                                           fold, "list"])
+    phenos_per_cell = rbind(phenos_per_cell, data.frame(Cell = cur_cell, 
+                                                        n_phenos = n_phenos))
+  }
+  n_pheno_text = phenos_per_cell
+  phenos_per_cell$Tissue = rep(NA, length(phenos_per_cell$Cell))
+  if (dataset == "Descartes") {
+    phenos_per_cell_tissue = data.frame()
+    for (i in seq(1:length(phenos_per_cell$Cell))) {
+      cur = cell_mappings[cell_mappings$level1 == paste(phenos_per_cell$Cell[i]), 
+      ]$tissue
+      for (t in unique(cur)) {
+        if (!is.na(t)) {
+          phenos_per_cell$Tissue[i] = t
+          phenos_per_cell_tissue = rbind(phenos_per_cell_tissue, 
+                                         phenos_per_cell[i, ])
+        }
+      }
+    }
+    
+    phenos_per_cell = phenos_per_cell_tissue
+  }
+  
+
+  if (dataset == "Descartes") {
+    for (i in seq(1, length(phenos_per_cell$Cell))) {
+      cur = phenos_per_cell[phenos_per_cell$Cell == phenos_per_cell$Cell[i], 
+      ]
+      phenos_per_cell$n_phenos[i] = phenos_per_cell$n_phenos[i]/length(unique(cur$Tissue))
+    }
+  }
+  
+  
+  ## Need to sort this out as an option and add arguments for it 
+  phenos_per_cell$Cell_colour <- cell_colours_hashmap[phenos_per_cell$Cell]
+  
+  
+  explan_plt <- ggplot(phenos_per_cell, aes(n_phenos, as.factor(Cell))) + 
+    scale_x_continuous("", expand = c(0, 0), limits = c(0, 
+                                                        max(n_pheno_text$n_phenos) + 55)) + theme_classic() + 
+    scale_y_discrete(breaks = ctd[[1]]$plotting$cell_ordering) + labs(title = paste0("Significantly enriched phenotypes per cell (q < ", 
+                                                                 q_val, ", fold change > ", fold, ")")) + 
+    
+    ylab("Cell Type")
+  if (dataset == "Descartes") {
+    explan_plt = explan_plt + geom_col(aes(fill = Tissue), 
+                                       size = 2, position = "stack")
+  }
+  else {
+    explan_plt = explan_plt + geom_segment(aes(xend = 0, 
+                                               yend = Cell), size = 2)
+  }
+  explan_plt = explan_plt + geom_text(data = n_pheno_text, 
+                                      aes(label = n_phenos, x = n_phenos + 26, y = Cell), size = 4, 
+                                      color = "black") + ylab("Cell Type") + theme(axis.title.y = element_blank(), axis.text.y = element_text(colour = phenos_per_cell$Cell_colour))
+  return(explan_plt)
+}
+
+
+
+cell_order <- ctd[[1]]$plotting$cell_ordering
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+#ns_colour = "#619CFF"; card_colour = "#F8766D"; immune_colour = "#00BA38";
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours[c] = ns_colour
+  } else if (c %in% immune_cell_types) (
+    cell_colours[c] = immune_colour
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours[c] = card_colour
+  } else {
+    cell_colours[c] = "black"
+  }
+}
+
+descartes_mappings = read.csv("data/DescartesHuman_celltype_mapping.csv")
+descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1)
+plot_npc = phenos_per_cell_colourText(all_results_merged,descartes_mappings, fold=1,q_val=0.05, cell_colours_hashmap = cell_colours)  + coord_flip() + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+
+
 
 
 Fig2 = (  
-  (plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  +
-          ggnetPlt + # try increase height_px (orig 300,1200) 
-        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) ) + 
-        plot_layout(design = layout) + plot_annotation(tag_levels = LETTERS) )
+  ((plot_npc + theme(legend.position =c(0.7,0.3), axis.text.y = element_text(size = 12)))  /
+        ( facet_branch_plt + theme(axis.title.y =element_text(margin = margin(l = -15, b = -10))) )) + 
+       plot_annotation(tag_levels = LETTERS) )
 
 #ggsave("fig2.png",Fig2, dpi = 400, width = 24, height = 20)
 print(Fig2)
