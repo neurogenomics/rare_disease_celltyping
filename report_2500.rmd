@@ -550,12 +550,12 @@ signif_res$ontlvl <- ontlevz[signif_res$HPO_id]
 signif_res <- signif_res[complete.cases(signif_res),]
 
 pal <- wesanderson::wes_palette("Darjeeling2", n=2)
-ontlvl_fold_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = fold_change)) +
+ontlvl_fold_plt <- ggplot(signif_res, aes(x = factor(ontlvl), y = log10(fold_change))) +
   geom_jitter(color = pal[1]) +
   geom_violin(fill = NA) +
   geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
   cowplot::theme_cowplot() +
-  labs(x="Ontology level", y="Fold change",title = "Fold change in specific expression by ontology level") +
+  labs(x="Ontology level", y="log10(Fold change)",title = "Fold change in specific expression by ontology level") +
   blank_x
   
 
