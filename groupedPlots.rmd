@@ -780,6 +780,7 @@ print(Fig2)
 Not sure if this looks good here, but could be useful somewhere for showing the network structure and highlighting certain phenotypes by colour? 
 
 
+
 # Figure 3 HPO Patterns and relationships
 These show common patterns seen in HPO, related to ongology level, n genes etc.
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  21 DEC 2021 12:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  28 DEC 2021 13:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -557,71 +557,68 @@ Overfull \hbox (15.96951pt too wide) in paragraph at lines 114--114
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
 (Font)              Font shape `T1/phv/m/sl' tried instead on input line 128.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 142.
+(Font)              <10.95> on input line 141.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 142.
+(Font)              <8> on input line 141.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 142.
+(Font)              <6> on input line 141.
 [1
 
 {c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdfte
 x.map}]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 168.
-[2] [3]
-<report_2500_files/figure-latex/Figure1-1.pdf, id=52, 1445.4pt x 1445.4pt>
+(Font)              <12> on input line 167.
+[2]
+<report_2500_files/figure-latex/Figure1-1.pdf, id=43, 1445.4pt x 1228.59pt>
 File: report_2500_files/figure-latex/Figure1-1.pdf Graphic file (type pdf)
 <use report_2500_files/figure-latex/Figure1-1.pdf>
 Package pdftex.def Info: report_2500_files/figure-latex/Figure1-1.pdf  used on 
-input line 251.
-(pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
-LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 268.
-
-LaTeX Warning: Float too large for page by 20.34532pt on input line 269.
-
-[4] [5 <./report_2500_files/figure-latex/Figure1-1.pdf>]
-<report_2500_files/figure-latex/Figure2-1.pdf, id=67, 1445.4pt x 1445.4pt>
+input line 207.
+(pdftex.def)             Requested size: 469.74944pt x 399.28702pt.
+[3] [4 <./report_2500_files/figure-latex/Figure1-1.pdf>]
+<report_2500_files/figure-latex/Figure2-1.pdf, id=57, 1445.4pt x 1445.4pt>
 File: report_2500_files/figure-latex/Figure2-1.pdf Graphic file (type pdf)
 <use report_2500_files/figure-latex/Figure2-1.pdf>
 Package pdftex.def Info: report_2500_files/figure-latex/Figure2-1.pdf  used on 
-input line 278.
+input line 227.
 (pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 243.
 
-LaTeX Warning: Float too large for page by 5.84532pt on input line 295.
+LaTeX Warning: Float too large for page by 5.84532pt on input line 244.
 
-<report_2500_files/figure-latex/Figure3-1.pdf, id=70, 1084.05pt x 867.24pt>
+<report_2500_files/figure-latex/Figure3-1.pdf, id=60, 1084.05pt x 867.24pt>
 File: report_2500_files/figure-latex/Figure3-1.pdf Graphic file (type pdf)
 <use report_2500_files/figure-latex/Figure3-1.pdf>
 Package pdftex.def Info: report_2500_files/figure-latex/Figure3-1.pdf  used on 
-input line 331.
+input line 280.
 (pdftex.def)             Requested size: 469.75496pt x 375.80397pt.
-[6] [7 <./report_2500_files/figure-latex/Figure2-1.pdf>] [8 <./report_2500_file
+[5] [6 <./report_2500_files/figure-latex/Figure2-1.pdf>] [7 <./report_2500_file
 s/figure-latex/Figure3-1.pdf>]
-<report_2500_files/figure-latex/Figure4-1.pdf, id=104, 1445.4pt x 1445.4pt>
+<report_2500_files/figure-latex/Figure4-1.pdf, id=94, 1445.4pt x 1445.4pt>
 File: report_2500_files/figure-latex/Figure4-1.pdf Graphic file (type pdf)
 <use report_2500_files/figure-latex/Figure4-1.pdf>
 Package pdftex.def Info: report_2500_files/figure-latex/Figure4-1.pdf  used on 
-input line 379.
+input line 330.
 (pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
 LaTeX Font Info:    Font shape `T1/phv/b/it' in size <12> not available
-(Font)              Font shape `T1/phv/b/sl' tried instead on input line 396.
+(Font)              Font shape `T1/phv/b/sl' tried instead on input line 349.
 
-LaTeX Warning: Float too large for page by 5.84532pt on input line 397.
+LaTeX Warning: Float too large for page by 20.34532pt on input line 350.
 
-[9] [10 <./report_2500_files/figure-latex/Figure4-1.pdf>] [11] [12] [13] [14] [
-15] [16] [17] [18] [19] (./report_2500.aux)
+[8] [9 <./report_2500_files/figure-latex/Figure4-1.pdf>] [10] [11] [12] [13] [1
+4] [15] [16] [17] [18] [19] (./report_2500.aux)
 Package rerunfilecheck Info: File `report_2500.out' has not changed.
-(rerunfilecheck)             Checksum: 0FBF8F2C85F7458E209B5E86B28D1763;907.
+(rerunfilecheck)             Checksum: 152676330C4F1BCEF50012514E99C84A;1154.
  ) 
 Here is how much of TeX's memory you used:
- 10697 strings out of 480502
- 158128 string characters out of 5898081
- 484723 words of memory out of 5000000
+ 10695 strings out of 480502
+ 158164 string characters out of 5898081
+ 484572 words of memory out of 5000000
  28120 multiletter control sequences out of 15000+600000
  471043 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,6n,66p,1308b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,6n,66p,1397b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.en
 c}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.e
 nc}{c:/Users/bobby/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mat
@@ -636,10 +633,10 @@ t/fonts/type1/public/lm/lmsy8.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf
 eX/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb><c:/Users/bobby/AppData/Roam
 ing/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><c:/Users/bobby/AppD
 ata/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on report_2500.pdf (19 pages, 1576188 bytes).
+Output written on report_2500.pdf (19 pages, 1575835 bytes).
 PDF statistics:
- 274 PDF objects out of 1000 (max. 8388607)
- 223 compressed objects within 3 object streams
- 56 named destinations out of 1000 (max. 500000)
+ 271 PDF objects out of 1000 (max. 8388607)
+ 220 compressed objects within 3 object streams
+ 54 named destinations out of 1000 (max. 500000)
  69 words of extra memory for PDF output out of 10000 (max. 10000000)
 
