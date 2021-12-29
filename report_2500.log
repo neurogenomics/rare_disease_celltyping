@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  28 DEC 2021 13:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.26)  29 DEC 2021 13:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -607,13 +607,13 @@ LaTeX Font Info:    Font shape `T1/phv/b/it' in size <12> not available
 LaTeX Warning: Float too large for page by 20.34532pt on input line 350.
 
 [8] [9 <./report_2500_files/figure-latex/Figure4-1.pdf>] [10] [11] [12] [13] [1
-4] [15] [16] [17] [18] [19] (./report_2500.aux)
+4] [15] [16] [17] (./report_2500.aux)
 Package rerunfilecheck Info: File `report_2500.out' has not changed.
-(rerunfilecheck)             Checksum: 152676330C4F1BCEF50012514E99C84A;1154.
+(rerunfilecheck)             Checksum: DF1D57E959C1BF3D90C9FD511441CAEE;1052.
  ) 
 Here is how much of TeX's memory you used:
- 10695 strings out of 480502
- 158164 string characters out of 5898081
+ 10690 strings out of 480502
+ 158051 string characters out of 5898081
  484572 words of memory out of 5000000
  28120 multiletter control sequences out of 15000+600000
  471043 words of font info for 90 fonts, out of 8000000 for 9000
@@ -633,10 +633,10 @@ t/fonts/type1/public/lm/lmsy8.pfb><c:/Users/bobby/AppData/Roaming/TinyTeX/texmf
 eX/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb><c:/Users/bobby/AppData/Roam
 ing/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><c:/Users/bobby/AppD
 ata/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on report_2500.pdf (19 pages, 1575835 bytes).
+Output written on report_2500.pdf (17 pages, 1569121 bytes).
 PDF statistics:
- 271 PDF objects out of 1000 (max. 8388607)
- 220 compressed objects within 3 object streams
- 54 named destinations out of 1000 (max. 500000)
+ 251 PDF objects out of 1000 (max. 8388607)
+ 202 compressed objects within 3 object streams
+ 49 named destinations out of 1000 (max. 500000)
  69 words of extra memory for PDF output out of 10000 (max. 10000000)
 
