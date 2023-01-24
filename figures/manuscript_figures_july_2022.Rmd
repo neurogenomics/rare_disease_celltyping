@@ -1,0 +1,585 @@
+---
+title: "Figures for rare disease manuscript"
+author: "Kitty Murphy"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+This rmarkdown contains the code and figures for the rare disease manuscript. The code was originally written by Bobby Gordon Smith and has been adapted by Kitty Murphy. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(patchwork)
+library(ontologyIndex)
+library(ontologyPlot)
+library(EWCE)
+library(cowplot)
+library(wesanderson)
+library(dplyr)
+library(ggdendro)
+library(HPOExplorer)
+```
+
+```{r load_input_data, echo = FALSE, message = FALSE, warning=FALSE}
+data(hpo) # keep 
+phenotype_to_genes = HPOExplorer::load_phenotype_to_genes("data/phenotype_to_genes.txt") 
+#disease_descriptions = readRDS("data/disease_descriptions.Rda")
+#rownames(disease_descriptions) = disease_descriptions$HPO_id
+load("data/Descartes_All_Results_extras.rda") 
+descartes_mappings <- read.csv("data/DescartesHuman_celltype_mapping.csv") 
+descartes_mappings$level1 = gsub("_"," ",descartes_mappings$level1) 
+load("data/ctd_DescartesHuman.rda") 
+
+source("code/cell_select_ggnetwork_plot.R") 
+source("code/phenotypes_per_cell_plot.R")
+source("code/ewce_plot_function.R")
+```
+
+```{r fig_1_code, echo = FALSE, warning = FALSE, message = FALSE}
+### Plot cell type dendrogram - for some reason EWCE::prep_dendro() won't work with the descartes ctd I got from magma.celltyping so I'm running the code line by line instead
+ctdIN <- ctd[["level1"]]
+binned_file_dist <- stats::dist(Matrix::t(ctdIN$specificity_quantiles))
+binned_file_dist_hclust <- stats::hclust(binned_file_dist)
+ddata <- ggdendro::dendro_data(binned_file_dist_hclust,
+                               type = "rectangle"
+)
+ordered_cells <- as.character(ddata$labels$label)
+a1 <- ggplot(ggdendro::segment(ddata)) +
+  geom_segment(aes_string(x = "x", y = "y", xend = "xend", yend = "yend")) +
+  coord_flip() +
+  ggdendro::theme_dendro()
+a1 <- a1 + scale_x_continuous(expand = c(0, 1.3))
+b1 <- ggplot(ggdendro::segment(ddata)) +
+  geom_segment(aes_string(x = "x", y = "y", xend = "xend", yend = "yend")) +
+  ggdendro::theme_dendro()
+b1 <- b1 + scale_x_continuous(expand = c(0, 1.3))
+ctdIN$plotting <- list()
+ctdIN$plotting$ggdendro_vertical <- a1
+ctdIN$plotting$ggdendro_horizontal <- b1
+ctdIN$plotting$cell_ordering <- ordered_cells
+
+dendro <- ctdIN$plotting$ggdendro_horizontal +
+  scale_x_discrete(breaks = ctd[[1]]$plotting$cell_ordering)
+
+# Extract order of cells in dendrogam and colour code neuronal, cardiac, and immune cell types 
+palette_branch <- wesanderson::wes_palette("Darjeeling1")
+
+cell_order <- ctdIN$plotting$cell_ordering
+cell_order = gsub("_"," ",cell_order)
+neuronal_cell_types = cell_order[seq(14,32)]
+immune_cell_types = cell_order[c(5,6,7,75,76,77)]
+cardiac_cell_types = cell_order[c(42,4)]
+ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+cell_colours = c()
+for (c in cell_order) {
+  if (c %in% neuronal_cell_types) {
+    cell_colours[c] = ns_colour
+  } else if (c %in% immune_cell_types) (
+    cell_colours[c] = immune_colour
+  ) else if (c %in% cardiac_cell_types) {
+    cell_colours[c] = card_colour
+  } else {
+    cell_colours[c] = "black"
+  }
+}
+
+## function to plot the number of significant enrichments per cell type across all branches 
+plot_phenos_per_ct <- function(all_results_merged, cell_mappings, fold = 1, q_val = 0.05, dataset = "Descartes")
+{
+  phenos_per_ct = data.frame()
+  for (c in unique(all_results_merged$CellType)) {
+    cur_cell = c
+    n_phenos = length(all_results_merged[all_results_merged$CellType == 
+                                           c & all_results_merged$q < q_val & all_results_merged$fold_change > 
+                                           fold, "list"])
+    phenos_per_ct = rbind(phenos_per_ct, data.frame(Cell = cur_cell, 
+                                                    n_phenos = n_phenos))
+  }
+  n_pheno_text = phenos_per_ct
+  phenos_per_ct$Tissue = rep(NA, length(phenos_per_ct$Cell))
+  if (dataset == "Descartes") {
+    phenos_per_ct_tissue = data.frame()
+    for (i in seq(1:length(phenos_per_ct$Cell))) {
+      cur = cell_mappings[cell_mappings$level1 == paste(phenos_per_ct$Cell[i]), 
+      ]$tissue
+      for (t in unique(cur)) {
+        if (!is.na(t)) {
+          phenos_per_ct$Tissue[i] = t
+          phenos_per_ct_tissue = rbind(phenos_per_ct_tissue, 
+                                         phenos_per_ct[i, ])
+        }
+      }
+    }
+    
+    phenos_per_ct = phenos_per_ct_tissue
+  }
+  
+  for (i in seq(1, length(phenos_per_ct$Cell))) {
+    cur = phenos_per_ct[phenos_per_ct$Cell == phenos_per_ct$Cell[i], 
+    ]
+    phenos_per_ct$n_phenos[i] = phenos_per_ct$n_phenos[i]/length(unique(cur$Tissue))
+  }
+  
+  phenos_per_ct$cell_order <- match(phenos_per_ct$Cell, cell_order)
+  phenos_per_ct$Cell <- stats::reorder(phenos_per_ct$Cell, phenos_per_ct$cell_order)
+  
+  n_pheno_text$Cell <- factor(n_pheno_text$Cell, levels=cell_order)
+  
+  plot <- ggplot(phenos_per_ct, aes(x=factor(Cell),y=n_phenos)) + 
+    scale_y_continuous("", expand = c(0, 0), limits = c(0, max(n_pheno_text$n_phenos) + 55)) + 
+    theme_classic() + 
+    labs(x="", title= "Number of significant enrichments per cell type") + 
+    geom_col(aes(fill = Tissue), size=4, position = "stack") + 
+    theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.text.x = element_blank(), 
+          axis.ticks.x = element_blank(), plot.title = element_text(hjust = 0.5, size =12)) 
+  
+  plot_text <- plot + geom_text(data = n_pheno_text, aes(label = n_phenos, y = n_phenos + 20), size = 3) + 
+    ylab("Cell type")
+  
+  return(plot_text)
+}
+
+# plot significant phenotypes per celltype across all branches 
+phenos_per_ct_plot <- plot_phenos_per_ct(all_results_merged, descartes_mappings)
+
+## function to plot the number of significant enrichments per cell type by branch e.g. abnormality of the nervous system
+plot_phenos_per_ct_by_branch <- function(all_results_merged, plot_branches = c("Abnormality of the nervous system", 
+                                                                               "Abnormality of the cardiovascular system", "Abnormality of the immune system"), 
+                                         q_threshold = 0.05, hpo = hpo, phenotype_to_genes = phenotype_to_genes, 
+                                         ctd = ctd, make_dendro = TRUE, palette_branch = c("#FF0000", "#00A08A", "#F2AD00")) 
+{
+  hpo_branches = hpo$children["HP:0000118"]
+  hpo_branches_names = c()
+  for (b in hpo_branches) {
+    hpo_branches_names = c(hpo_branches_names, hpo$name[b])
+  }
+  main_branch_df = data.frame(hpo_id = hpo_branches, phenotype = hpo_branches_names)
+  descendants = list()
+  for (b in hpo_branches[[1]]) {
+    descendants[[hpo$name[b]]] = ontologyIndex::get_descendants(hpo, 
+                                                                b)
+  }
+  if (!"branch" %in% colnames(all_results_merged)) {
+    phenotypes = unique(phenotype_to_genes$Phenotype)
+    all_results_merged$branch = NA
+    pheno_branches = c()
+    for (p in phenotypes) {
+      
+      index = match(p, hpo$name)
+      if (!is.na(index)) {
+        id = hpo$id[[index]]
+        for (i in seq(1, length(descendants))) {
+          if (id %in% descendants[[i]]) {
+            pheno_branches[p] = names(descendants[i])
+          }
+        }
+      }
+    }
+    all_results_merged$branch = NA
+    remaining = length(unique(all_results_merged$list))
+    #cat("Asigning branch to phenotypes\nN remaining:\n")
+    for (p in unique(all_results_merged$list)) {
+      #cat("\r", remaining, "      ")
+      remaining = remaining - 1
+      all_results_merged$branch[all_results_merged$list == 
+                                  p] = pheno_branches[p]
+    }
+  }
+  signif_results = all_results_merged[all_results_merged$q <= 
+                                        q_threshold & !is.na(all_results_merged$branch), ]
+  n_signif_per_cell_by_branch = data.frame()
+  for (b in unique(plot_branches)) {
+    for (c in unique(all_results_merged$CellType)) {
+      n = length(signif_results[signif_results$CellType == 
+                                  c & signif_results$branch == b, ]$list)
+      n_signif_per_cell_by_branch = rbind(n_signif_per_cell_by_branch, 
+                                          data.frame(branch = b, CellType = c, n_signif = n))
+    }
+  }
+  n_signif_per_cell_by_branch$hypergeo_p = NA
+  total_signif = length(signif_results$q)
+  for (i in seq(1, length(n_signif_per_cell_by_branch$CellType))) {
+    cell = n_signif_per_cell_by_branch$CellType[i]
+    branch = n_signif_per_cell_by_branch$branch[i]
+    group1 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$CellType == 
+                                                        cell])
+    group2 = sum(n_signif_per_cell_by_branch$n_signif[n_signif_per_cell_by_branch$branch == 
+                                                        branch])
+    overlap = n_signif_per_cell_by_branch$n_signif[i]
+    n_signif_per_cell_by_branch$hypergeo_p[i] = stats::phyper(overlap - 
+                                                                1, group2, total_signif - group2, group1, lower.tail = FALSE)
+  }
+  n_signif_per_cell_by_branch$hypergeo_q = stats::p.adjust(n_signif_per_cell_by_branch$hypergeo_p, 
+                                                           method = "BH")
+  n_signif_per_cell_by_branch$signif_asterisk = ""
+  n_signif_per_cell_by_branch$signif_asterisk[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.05] = "*"
+  n_signif_per_cell_by_branch$signif_asterisk[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                0.005] = "**"
+  n_signif_per_cell_by_branch$signif_asterisk[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-04] = "***"
+  n_signif_per_cell_by_branch$signif_asterisk[n_signif_per_cell_by_branch$hypergeo_q < 
+                                                5e-05] = "****"
+  
+  n_signif_per_cell_by_branch$cell_order = match(n_signif_per_cell_by_branch$CellType, 
+                                                 cell_order)
+  n_signif_per_cell_by_branch$CellType = stats::reorder(n_signif_per_cell_by_branch$CellType, 
+                                                        n_signif_per_cell_by_branch$cell_order)
+  n_signif_per_cell_by_branch$branch_f <- factor(n_signif_per_cell_by_branch$branch, 
+                                                 levels = plot_branches)
+  
+  ns_colour = palette_branch[1]; card_colour = palette_branch[2]; immune_colour = palette_branch[3];
+  
+  named_colours = c()
+  for (i in seq(1, length(plot_branches))) {
+    named_colours[plot_branches[i]] = palette_branch[i]
+  }
+  
+  
+  facet_branch_plot <- ggplot(n_signif_per_cell_by_branch[n_signif_per_cell_by_branch$branch %in% 
+                                                            plot_branches, ], aes(x = CellType, y = n_signif, fill = branch)) + 
+    geom_col() + scale_colour_manual(values =  named_colours,aesthetics = "fill") +
+    geom_text(mapping = aes(label = signif_asterisk, 
+                            y = n_signif + 3)) + cowplot::theme_cowplot() + ylab("Enrichments (n)") + 
+    geom_hline(yintercept=0) +
+    xlab("Cell type") + theme(axis.text.x = element_text(angle = 90, 
+                                                         hjust = 1), legend.position = "none") + 
+    facet_wrap(~branch_f,  ncol = 1, scales = "free_y") + #, scales = "free_y") + # <- add back in?
+    theme(strip.background = element_rect(colour = "white", fill= "white"),axis.text.x = element_text(colour = cell_colours))
+  #scale_y_continuous(expand = c(0,0), limits = c(0,max(n_signif_per_cell_by_branch$n_signif)+6))
+  
+  return(facet_branch_plot)
+}
+
+# plot phenotypes per ct for the abnormality of the nervous system, cardiovascular system, and immune system
+phenos_per_ct_branch_plot <- plot_phenos_per_ct_by_branch(all_results_merged, plot_branches = c("Abnormality of the nervous system", 
+                                                                                                "Abnormality of the cardiovascular system", "Abnormality of the immune system"), 
+                                                          q_threshold = 0.05, hpo = hpo, phenotype_to_genes = phenotype_to_genes, 
+                                                          ctd = ctd, palette_branch = c("#FF0000", "#00A08A", "#F2AD00")) 
+
+```
+
+
+```{r pressure, echo=FALSE}
+plot_sig_threshold_prop_enrichments <- function (all_results_merged, hpo, target_cells = c("Excitatory neurons", 
+                                                                                                 "Limbic system neurons"), cell_type_description = "Neuronal cells", 
+                                                       HPO_Ids = ontologyIndex::get_descendants(hpo, hpo$id[match("Abnormality of the nervous system", 
+                                                                                                                  hpo$name)]), phenotype_description = "Nervous system phenotypes", 
+                                                       color_pal = c("#619CFF","#F8766D","#00BA38","gray"), color_expected_phenotypes = 1, 
+                                                       color_other_phenotypes = 4, blank_x_axis = FALSE) 
+{
+  cur_descendants_names = c()
+  for (d in HPO_Ids) {
+    cur_descendants_names = append(cur_descendants_names, 
+                                   paste(hpo$name[d]))
+  }
+  all_results_merged$cur_branch = "Other"
+  all_results_merged[all_results_merged$list %in% cur_descendants_names, 
+  ]$cur_branch = phenotype_description
+  all_results_merged$cur_branch = factor(all_results_merged$cur_branch)
+  all_results_merged$minus_log_p = round(-log10(all_results_merged$p + 
+                                                  1e-06), digits = 0)
+  proportional_results = data.frame()
+  for (logp in unique(all_results_merged$minus_log_p)) {
+    cur = all_results_merged[all_results_merged$minus_log_p == 
+                               logp, ]
+    prop_branch = 100 * (length(cur$cur_branch[cur$cur_branch == 
+                                                 phenotype_description & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+                                                                                                                                  target_cells]))
+    #prop_other = 100 * (length(cur$cur_branch[cur$cur_branch == 
+                                               # "Other" & cur$CellType %in% target_cells])/length(cur$cur_branch[cur$CellType %in% 
+                                                                                                                   #target_cells]))
+    proportional_results = rbind(proportional_results, data.frame(cur_branch = phenotype_description, 
+                                                                  prop = prop_branch, minus_log_p = logp))
+    #proportional_results = rbind(proportional_results, data.frame(cur_branch = "Other", 
+                                                                  #prop = prop_other, minus_log_p = logp))
+  }
+  #color_pal = wesanderson::wes_palette(wes_color_palette, n_colors)
+  cell_type_description <- tolower(cell_type_description)
+  prop_plot <- ggplot(proportional_results, aes(x = minus_log_p, 
+                                                y = prop, color = cur_branch)) + geom_point(size = 3) + 
+    geom_line(mapping = aes(linetype = cur_branch), size = 0.6) + 
+    labs(color = "", linetype = "") + ylab(paste0("Phenotype enrichments in ", 
+                                                  cell_type_description, " (%)")) + 
+    scale_y_continuous(limits = c(0, 100)) + cowplot::theme_cowplot() + 
+    scale_color_manual(values = c(color_pal[color_expected_phenotypes], 
+                                  color_pal[color_other_phenotypes])) + theme(legend.position = c(0.5,0.95), 
+                                                                              legend.text = element_text(size = 10), title = element_text(size = 11), axis.title.y = element_text(size=12))
+  if (! blank_x_axis){
+    prop_plot = prop_plot + xlab("-log10(p)")
+  } else {
+    prop_plot = prop_plot + theme(axis.title.x = element_blank(), axis.ticks.x = element_blank(), axis.text.x = element_blank())
+  } 
+  return(list(prop_plot, proportional_results))
+}
+
+# P value of enrichment against proportion of enrichments in expected cell types
+plot_branches = c("Abnormality of the nervous system", "Abnormality of the cardiovascular system", "Abnormality of the immune system")
+expected_cells = c("Excitatory neurons", "Cardiomyocytes","Antigen presenting cells")
+correlation_results = data.frame()  
+proportion_plots = list()
+blank_x = c(TRUE, FALSE, TRUE)
+for (i in seq(length(plot_branches))) {
+  cur_plot <- plot_sig_threshold_prop_enrichments(all_results_merged,
+   hpo,
+   target_cells=c(expected_cells[i]),
+   cell_type_description = expected_cells[i],
+   HPO_Ids = ontologyIndex::get_descendants(hpo,hpo$id[match(plot_branches[i],hpo$name)]),
+   phenotype_description = plot_branches[i],
+   color_pal =  c(palette_branch[1],palette_branch[2],palette_branch[3],"gray"),
+   color_expected_phenotypes = i,
+   color_other_phenotypes = 4, blank_x_axis = blank_x[i])
+  proportion_plots[[i]] = cur_plot[[1]]
+  correlation_results = rbind(correlation_results,cur_plot[[2]])
+}
+
+sig_threshold_prop_enrichments_plot <- cowplot::plot_grid(plotlist=proportion_plots, align = "h",nrow = 1,labels=c("D","E","F"))
+
+figure_1 <- cowplot::plot_grid(dendro, phenos_per_ct_plot,phenos_per_ct_branch_plot,sig_threshold_prop_enrichments_plot,axis = "lr",
+                               align = "v", ncol = 1, rel_heights = c(1, 2, 8,4),labels=c("A","B","C"))
+```
+
+## Figure 1
+
+```{r fig_1_plot, fig.height=22, fig.width = 22, message = FALSE, warning = FALSE, echo = FALSE }
+
+## Plot figure with number of significant enrichments across all branches, for branches of choice, and with dendrogram (Fig. 1 of manuscript)
+plot(figure_1)
+
+png('figures/manuscript_fig_1.png', width = 400, height = 400)
+
+print(figure_1)
+
+pdf('figures/manuscript_fig_1.pdf', height=20, width=20)
+
+print(figure_1)
+
+dev.off()
+```
+
+```{r fig_2_code, echo = FALSE, warning = FALSE, message = FALSE}
+# ontology level plots
+blank_x <-   theme(axis.title.x = element_blank())
+
+
+ont_levels <- data.frame("phenotype"=unique(phenotype_to_genes$Phenotype),
+                         "hpo_id"=hpo$id[match(unique(phenotype_to_genes$Phenotype),hpo$name)])
+ont_levels <- ont_levels[complete.cases(ont_levels),]
+lvls <- c()
+for (id in ont_levels$hpo_id) {
+  lvls = append(lvls, get_ont_level(hpo,id))
+}
+ont_levels$ont_lev <- lvls
+rm(lvls)
+
+n_associated_cells <- c()
+for (p in ont_levels$phenotype) {
+  #n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05]))
+  n_associated_cells <- append(n_associated_cells, length(all_results_merged$CellType[all_results_merged$list == p & all_results_merged$q < 0.05 & all_results_merged$fold_change > 1]))
+}
+ont_levels$n_associated_cells <- n_associated_cells
+rm(n_associated_cells)
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ncells_plot <- ggplot(ont_levels, mapping=aes(x= factor(ont_lev), y=n_associated_cells)) +
+  geom_jitter(color = pal[1], size=1) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ont_lev)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Number of associated cell types") +
+  blank_x
+#ontlvl_ncells_plt
+
+
+
+# ont level facet
+
+signif_res <- all_results_merged[all_results_merged$q < 0.05,]
+ontlevz <- c()
+for (p in unique(signif_res$HPO_id)) {
+  ontlevz[p] <- get_ont_level(hpo,p)
+}
+signif_res$ontlvl <- ontlevz[signif_res$HPO_id]
+signif_res <- signif_res[complete.cases(signif_res),]
+
+# scale fold change so that it lies on a scale of 0 to 1
+#signif_res$fold_enrichment <- signif_res$fold_change/max(signif_res$fold_change)
+
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_fold_plot <- ggplot(signif_res, aes(x = factor(ontlvl), y = log10(fold_change))) +
+  geom_jitter(color = pal[1], size=1) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="log10(fold enrichment)") 
+
+
+# ngenes plt (stat smooth takes too long/doesnt work with all results so just use signif ?)
+ngenes<-c()
+for(p in unique(signif_res$list)) {
+  ngenes[p] <- length(get_gene_list(p,phenotype_to_genes))
+}
+signif_res$ngenes <- ngenes[signif_res$list]
+signif_res <- signif_res[complete.cases(signif_res),]
+pal <- wesanderson::wes_palette("Darjeeling2", n=2)
+ontlvl_ngenes_plot <- ggplot(signif_res, aes(x = factor(ontlvl), y = ngenes)) +
+  geom_jitter(color = pal[1], size=1) +
+  geom_violin(fill = NA) +
+  geom_smooth(color = pal[2], method="loess",mapping = aes(x=ontlvl)) +
+  cowplot::theme_cowplot() +
+  labs(x="Ontology level", y="Number of genes") +
+  blank_x
+
+figure_2 <- cowplot::plot_grid(ontlvl_ncells_plot,ontlvl_fold_plot,ontlvl_ngenes_plot,align = "hv",nrow = 1,labels=c("A","B","C"))
+```
+
+## Figure 2
+
+```{r fig_2_plot, fig.height=10, fig.width = 20, message = FALSE, warning = FALSE, echo = FALSE }
+
+## Figure containing ontology level plots (Fig. 2 of manuscript)
+plot(figure_2)
+
+png('figures/manuscript_fig_2.png',width = 400, height = 400)
+
+print(figure_2)
+
+pdf('figures/manuscript_fig_2.pdf', height=10, width=20)
+
+print(figure_2)
+
+dev.off()
+```
+
+
+```{r fig_3_code, echo = FALSE, warning = FALSE, message = FALSE}
+
+color_pal = wes_palette("Darjeeling1",4)
+
+branch = "Recurrent infections"
+branch_id = paste(hpo$id[match(branch,hpo$name)])
+branch_descendants = paste(get_descendants(hpo,branch_id))
+branch_descendants_names = paste(hpo$name[branch_descendants])
+all_results_merged$list = paste(all_results_merged$list)
+#all_results_merged$cur_branch = paste(all_results_merged$cur_branch)
+
+all_results_merged$cur_branch = paste("Other")
+all_results_merged$cur_branch[all_results_merged$list %in% branch_descendants_names] = branch
+
+
+
+branch_signif_counts = data.frame()
+for (c in unique(all_results_merged$CellType)) {
+  n_signif = length(all_results_merged[all_results_merged$CellType == c & all_results_merged$cur_branch == branch & all_results_merged$q < 0.05, ]$q)
+  branch_signif_counts = rbind(branch_signif_counts,
+                               data.frame("branch"=branch,
+                                          "CellType"=c,
+                                          "n_signif"=n_signif))
+}
+
+cell_order = factor(gsub("_"," ",ctd[[1]]$plotting$cell_ordering))
+branch_signif_counts$cell_order = match(branch_signif_counts$CellType, cell_order)
+branch_signif_counts$CellType = reorder(branch_signif_counts$CellType, branch_signif_counts$cell_order)
+branch_signif_counts$labels = branch_signif_counts$n_signif
+branch_signif_counts$labels[branch_signif_counts$labels == 0] = ""
+
+recurrent_infections_plot <- ggplot(branch_signif_counts[branch_signif_counts$branch==branch,], aes(x=CellType,y=n_signif)) +
+  geom_col( fill = color_pal[2], color = "black") +
+  geom_text(mapping= aes(label = labels, y = n_signif + 3))+
+  theme_cowplot()+
+  ylab("Phenotypes (n)") +
+  xlab("") +
+  scale_y_continuous(expand=c(0,0), limits= c(0,max(branch_signif_counts$n_signif)+5))+
+  theme(axis.text.x = element_blank(), plot.title = element_text(size=16, hjust = 0.5), axis.ticks.x=element_blank()) +
+  ggtitle("Recurrent infections")
+
+
+# pheno_fold_plot
+pal <- wesanderson::wes_palette("GrandBudapest2")
+branch = "Recurrent bacterial infections"
+exclude_root = TRUE
+
+branch_id = paste(hpo$id[match(branch,hpo$name)])
+branch_descendants = hpo$children[[branch_id]]
+branch_descendants_names = paste(hpo$name[branch_descendants])
+if (exclude_root) {
+  branch_descendants_names = branch_descendants_names[branch_descendants_names != branch]
+} else {
+  branch_descendants_names = c(branch, branch_descendants_names)
+}
+pheno_df = all_results_merged[all_results_merged$list %in% branch_descendants_names, ]
+
+pheno_df$signif_asterics = ""
+pheno_df$signif_asterics[pheno_df$q<0.05] = "*"
+pheno_df$signif_asterics[pheno_df$q<0.001] = "**"
+pheno_df$signif_asterics[pheno_df$q<0.0001] = "***"
+pheno_df$signif_asterics[pheno_df$q<0.00001] = "****"
+
+recurr_bact_fold_plot <- ggplot(pheno_df, aes(x = CellType, y= fold_change, fill = list)) +
+  geom_col() +
+  geom_hline(yintercept=0) +
+  geom_text(label = pheno_df$signif_asterics, mapping = aes(y = fold_change + 1))+
+  theme_cowplot() +
+  scale_y_continuous(expand=c(0,0), limits= c(0,max(branch_signif_counts$n_signif)+2))+
+  ylab("Fold enrichment") +
+  xlab("Cell type") +
+  theme(axis.text.x = element_blank(), plot.title = element_text(size=16, hjust = 0.5), axis.ticks.x=element_blank(), legend.position="none",strip.background = element_blank()) +
+  facet_wrap(~list, ncol=1, scales = "free_y") +
+  scale_fill_manual(values = pal) +
+  ggtitle("Recurrent bacterial infections child terms")
+
+#################
+pal2 <- append(wesanderson::wes_palette("Darjeeling1"), wesanderson::wes_palette("Darjeeling2")[1])
+branch = "Recurrent gram-negative bacterial infections"
+exclude_root = TRUE
+
+branch_id = paste(hpo$id[match(branch,hpo$name)])
+branch_descendants = hpo$children[[branch_id]]
+branch_descendants_names = paste(hpo$name[branch_descendants])
+if (exclude_root) {
+  branch_descendants_names = branch_descendants_names[branch_descendants_names != branch]
+} else {
+  branch_descendants_names = c(branch, branch_descendants_names)
+}
+pheno_df = all_results_merged[all_results_merged$list %in% branch_descendants_names, ]
+
+pheno_df$signif_asterics = ""
+pheno_df$signif_asterics[pheno_df$q<0.05] = "*"
+pheno_df$signif_asterics[pheno_df$q<0.001] = "**"
+pheno_df$signif_asterics[pheno_df$q<0.0001] = "***"
+pheno_df$signif_asterics[pheno_df$q<0.00001] = "****"
+
+recurr_gram_fold_plot <- ggplot(pheno_df, aes(x = CellType, y= fold_change, fill = list)) +
+  ggtitle("Recurrent gram-negative bacterial infections child terms") +
+  geom_col() +
+  geom_text(label = pheno_df$signif_asterics, mapping = aes(y = fold_change + 1))+
+  theme_cowplot() +
+  scale_y_continuous(expand=c(0,0) ,limits= c(0,max(branch_signif_counts$n_signif)+2))+
+  ylab("Fold enrichment") +
+  xlab("Cell type") +
+  theme(axis.text.x = element_text(angle=90,hjust=1,vjust=0.2),plot.title = element_text(size=16, hjust = 0.5),legend.position = "none",strip.background = element_blank()) + 
+  facet_wrap(~list, ncol=1, scales = "free_y") +
+  scale_fill_manual(values= pal2)
+
+figure_3 <- cowplot::plot_grid(recurrent_infections_plot, recurr_bact_fold_plot, recurr_gram_fold_plot, axis = "lr",
+                               align = "v", ncol = 1, rel_heights = c(1.2, 4, 7),labels=c("A","B","C"))
+```
+
+## Figure 3
+
+```{r fig_3_plot, fig.height=20, fig.width = 20, message = FALSE, warning = FALSE, echo = FALSE}
+
+plot(figure_3)
+
+png('figures/manuscript_fig_3.png',width = 400, height = 400)
+
+print(figure_3)
+
+pdf('figures/manuscript_fig_3.pdf', height=20, width=20)
+
+print(figure_3)
+
+dev.off()
+```
