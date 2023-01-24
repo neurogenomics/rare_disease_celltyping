@@ -1,0 +1,45 @@
+---
+title: "Equation tests"
+subtitle: "a test of the subtitle"
+author: "bobby"
+date: "27/07/2021"
+output: pdf_document
+header-includes:
+  - \usepackage{helvet}
+  - \renewcommand{\familydefault}{\sfdefault}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Gene-cell specificity score
+
+$$
+e_{g,c} = \frac{\sum_{i=1}^{|L|}F(g,i,c)/N_c}{\sum_{r=1}^{k}(\sum_{i=1}^{|L|}F(g,i,r)/N_r)}
+$$
+
+# Remove low expression cases 
+
+$$
+F(g,i,c) = \begin{cases}
+  r_{g,i},\text{ }l_i = c\\
+  0,\text{ }l_i \neq c 
+\end{cases}
+$$
+
+# Sum specificity score for all genes in the target gene list
+
+$$
+\gamma(X,c) = \sum_{g \in X}e_{g,c}
+$$
+
+# calculate P enrichment 
+
+$$
+P(X\text{ enriched for }c) = \frac{\sum_{j=1}^{100000} \begin{cases}
+1 \text{ } \gamma(X,c) > \gamma(D_j,c) \\
+0 \text{ } \gamma(X,c) < \gamma(D_j,c) \end{cases} }{100000}
+$$
+
+
