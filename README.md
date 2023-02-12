@@ -1,17 +1,8 @@
-# rare_disease_ewce
-  - Code for generating the CTD files is stored within CTD_code
-  - The actual CTD files are in the lab dropbox
-  - Around 31st October 2017, I wrote a script ([process_hpo_to_genelists.r] which read in [TermsToUse.csv], which contained a list of brain relevant traits, and extracted those gene sets. At some point, I then modified this file to create [process_hpo_to_genelists-wholebody.r]. This no longer limited itself to brain relevant traits. It saved all the gene lists to the [GeneLists-WholeBody] folder which is also included in the repo.
+## Identification of cell types underlying thousands of rare diseases and subtraits
 
-# The raw data on genes->phenotypes
-You can find the link from here... it changes every once in a while...
-https://hpo.jax.org/app/download/annotation
+Authors: Kitty B. Murphy, Bobby Gordon-Smith, Jai Chapman, Momoko Otani, Brian M. Schilder, Nathan G. Skene
 
-Currently the correct file is: http://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt
+## Introduction
+Rare diseases (RDs) are uncommon as individual diagnoses, but as a group contribute to an enormous disease burden globally. However, partly due the low prevalence and high diversity of individual RDs, this category of diseases is understudied and under-resourced. The advent of large, standardised genetics databases has enabled high-throughput, comprehensive approaches that uncover new insights into the multi-scale aetiology of thousands of diseases. Here, using the Human Phenotype Ontology (9,677 annotated phenotypes) and multiple single-cell transcriptomic atlases (77 human cell types and 38 mouse cell types), we conducted >688,000 enrichment tests (x100,000 bootstrap iterations each) to identify >13,888 genetically supported cell type-phenotype associations. 
 
-# Report 
-* [Report pdf](https://github.com/neurogenomics/rare_disease_ewce/blob/master/report_2500.pdf): This is a fork of the masters project writeup. It needs to be condensed down to 2500 words including fig captions to meet the criteria for science report. 
-* [Masters Rmd](https://github.com/neurogenomics/rare_disease_ewce/blob/master/report_BobbyGordonSmith_masters_RD_project_writeup.Rmd): This is the original masters writeup.
-* [Masters Knitted](https://github.com/neurogenomics/rare_disease_ewce/blob/master/report%20(1).pdf): Knitted versoin of the masters writeup.
-* [Grouped figures Rmd](https://github.com/neurogenomics/rare_disease_ewce/blob/master/groupedPlots.rmd): These are the plots for the paper grouped into larger figures. This is still under development and there is a markdown [here](https://github.com/neurogenomics/rare_disease_ewce/blob/master/figure_group_planning.md) for planning the groupings. 
-* [Grouped figures knitted](https://github.com/neurogenomics/rare_disease_ewce/blob/master/groupedPlots.pdf): This is the leatest knitted version of grouped figures.
+This repository contains the data and code to replicate the analyses in our preprint: 
