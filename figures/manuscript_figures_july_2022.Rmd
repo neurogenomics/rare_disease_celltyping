@@ -21,6 +21,7 @@ library(MultiEWCE)
 ```
 
 ```{r load_input_data, echo = FALSE, message = FALSE, warning=FALSE}
+setwd("/Volumes/cm1118/projects/neurogenomics-lab/live/Projects/rare_disease_ewce")
 hpo <- get_hpo() # keep 
 phenotype_to_genes <- load_phenotype_to_genes("data/phenotype_to_genes.txt") 
 all_results_merged <- load_example_results()

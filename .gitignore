@@ -18,3 +18,5 @@ rec_inf_figure_test.r
 overview_fig_test.r
 cell_types.csv
 test.png
+kitty/*.RData
+pbs/pbs_output

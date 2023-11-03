@@ -1,0 +1,22 @@
+Nervous_system,Immune,Cardiovascular
+Microglia,Lymphoid cells,Smooth muscle cells
+Astrocytes,Microglia,Epicardial fat cells
+Oligodendrocytes,Myeloid cells,Cardiomyocytes
+Purkinje neurons,Lymphatic endothelial cells,Endocardial cells
+SKOR2 NPSR1 positive cells,Thymic epithelial cells,NA
+SLC24A4 PEX5L positive cells,CLC IL5RA positive cells,NA
+Inhibitory neurons,CCL19 CCL21 positive cells,NA
+Limbic system neurons,Antigen presenting cells,NA
+Ganglion cells,Hematopoietic stem cells,NA
+Excitatory neurons,Thymocytes,NA
+Inhibitory interneurons,NA,NA
+Granule neurons,NA,NA
+Unipolar brush cells,NA,NA
+Photoreceptor cells,NA,NA
+Retinal progenitors and Muller glia,NA,NA
+Bipolar cells,NA,NA
+PDE11A FAM19A2 positive cells,NA,NA
+Amacrine cells,NA,NA
+Horizontal cells,NA,NA
+ENS neurons,NA,NA
+Schwann cells,NA,NA
