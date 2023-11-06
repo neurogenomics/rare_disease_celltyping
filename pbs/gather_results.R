@@ -6,7 +6,7 @@ f <- list.files(ephemeral,
 f2 <- sapply(f, function(x){list.files(x,pattern = ".rds", full.names = TRUE)})
 # f3 <- sapply(f2, function(x){file.rename(x,file.path(dirname(x),"gen_results.rds"))})
 
-length(unlist(f2))
+length(unlist(f2)) 
 dat <- (
   lapply(unlist(f2), readRDS) |> 
     data.table::rbindlist(use.names = TRUE, idcol = "batch")
@@ -23,10 +23,10 @@ missing_dat <- gene_data[!hpo_id %in% unique(dat$hpo_id)]
 length(unique(missing_dat$hpo_id)) 
 head(sort(unique(missing_dat$hpo_name)),100) 
 
-### Peak at the most recent pbs output logs
-logs <- system(intern = TRUE,
-               paste("ls",ephemeral_logs,"-Artlsh | tail -10")
-               )
+#### Inspect PBS logs ####
+## Peak at the most recent pbs output logs 
+## to figure out why some of the jobs failed.
+logs <- system(paste("ls",ephemeral_logs,"-Artlsh | tail -10"), intern = TRUE)
 logs_df <- data.table::fread(text = logs)[,path:=paste0(file.path(ephemeral_logs,V10))]
 logs_df[,type:=ifelse(grepl("pbs.e",V10,fixed = TRUE),"e","o")]
 out <- lapply(logs_df[type=="e",]$path,function(x){
