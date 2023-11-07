@@ -1,11 +1,11 @@
-#### Find all results files ####
-ephemeral <- "/rds/general/project/neurogenomics-lab/ephemeral/rare_disease/"
+#### Set paths ####
+ephemeral <- "/rds/general/project/neurogenomics-lab/ephemeral/rare_disease1/"
 ephemeral_logs <- file.path(dirname(ephemeral),"rare_disease.pbs_output")
+
+#### Find all results files ####
 f <- list.files(ephemeral, 
                 full.names = TRUE)
 f2 <- sapply(f, function(x){list.files(x,pattern = ".rds", full.names = TRUE)})
-# f3 <- sapply(f2, function(x){file.rename(x,file.path(dirname(x),"gen_results.rds"))})
-
 length(unlist(f2)) 
 dat <- (
   lapply(unlist(f2), readRDS) |> 
@@ -21,15 +21,24 @@ gene_data[,n_gene:=(length(unique(gene_symbol))),by="hpo_id"]
 gene_data <- gene_data[n_gene>=4,][,batch_id:=.GRP, by="hpo_id"]
 missing_dat <- gene_data[!hpo_id %in% unique(dat$hpo_id)]
 length(unique(missing_dat$hpo_id)) 
-head(sort(unique(missing_dat$hpo_name)),100) 
+head(sort(unique(missing_dat$hpo_name)),10) 
 
 #### Inspect PBS logs ####
-## Peak at the most recent pbs output logs 
-## to figure out why some of the jobs failed.
+## Peak at the most recent PBS output logs 
+## to figure out why some of the batches/subjobs failed.
+## Get the most recent jobID
+## Would normally use `qstat -xf` to get this info, 
+## but our HPC is not configured to enable this.
 logs <- system(paste("ls",ephemeral_logs,"-Artlsh | tail -10"), intern = TRUE)
-logs_df <- data.table::fread(text = logs)[,path:=paste0(file.path(ephemeral_logs,V10))]
-logs_df[,type:=ifelse(grepl("pbs.e",V10,fixed = TRUE),"e","o")]
-out <- lapply(logs_df[type=="e",]$path,function(x){
+jobID <- gsub("[a-z]","",rev(strsplit(tail(logs,1),"\\.")[[1]])[2])
+logs_df <- data.table::data.table(batch_id=unique(missing_dat$batch_id))[,
+  path:=file.path(ephemeral_logs,
+                 paste("rare_disease_celltyping.pbs",
+                       paste0("e",jobID),batch_id,sep=".")
+  )
+][file.exists(path),]
+## Print the logs for each batch
+out <- lapply(logs_df$path,function(x){
   message("\n~~~~~~~~~~",basename(x),"~~~~~~~~~~")
   readLines(x)|>cat(sep = "\n")
 })
