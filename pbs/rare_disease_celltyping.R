@@ -11,7 +11,7 @@ option_list <-list(
 );
 opt_parser <- optparse::OptionParser(option_list=option_list)
 opt <- optparse::parse_args(opt_parser)
-root <- "/rds/general/project/neurogenomics-lab/ephemeral/rare_disease"
+root <- "/rds/general/project/neurogenomics-lab/ephemeral/rare_disease_min_genes1"
 
 
 library(MultiEWCE)
@@ -27,7 +27,7 @@ gene_data <- HPOExplorer::load_phenotype_to_genes()
 gene_data <- gene_data[gene_symbol %in% rownames(ctd[[annotLevel]]$mean_exp)]
 ## Subset to only those with >=4 genes
 gene_data[,n_gene:=(length(unique(gene_symbol))),by="hpo_id"]
-gene_data <- gene_data[n_gene>=4,]
+gene_data <- gene_data[n_gene<4,]
 
 #### Split HPO IDs into N chunks ####
 ids <- unique(gene_data$hpo_id)

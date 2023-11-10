@@ -1,9 +1,9 @@
 #PBS -l walltime=168:00:00
 #PBS -l select=1:ncpus=40:mem=128gb -q med-bio
-#PBS -J 1-7015
+#PBS -J 1-3936
 module load anaconda3/personal
 source activate bioc
 cd $PBS_O_WORKDIR
 
-Rscript /rds/general/project/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/rare_disease_celltyping.R -i $PBS_ARRAY_INDEX -n 1 -b 7015
+Rscript /rds/general/project/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/rare_disease_celltyping.R -i $PBS_ARRAY_INDEX -n 1 -b 3936
 
