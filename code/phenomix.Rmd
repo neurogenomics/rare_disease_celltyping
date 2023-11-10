@@ -1,0 +1,133 @@
+---
+title: "phenomix"
+author: "Brian M. Schilder"
+date: "2023-11-10"
+output: html_document
+---
+
+
+# Phenotype x celltype enrichment tests
+
+```{r} 
+id_types = c("hpo_id")
+xmat <- phenomix:::prepare_hpo_matrix(value.var = "evidence_score_mean",
+                           id_types = id_types,
+                           fill = 0)
+ctd <- MultiEWCE::load_example_ctd(file = "ctd_DescartesHuman.rds")
+ymat <- ctd$level_2$specificity 
+
+{
+    t1 <- Sys.time()
+    lm_res <- iterate_lm(xmat = xmat, 
+                         ymat = ymat, 
+                         workers = NULL)
+    t2 <- Sys.time()
+    print(t2-t1)
+}
+top_res <- lm_res[q<0.05]|> 
+    dplyr::group_by(xvar) |> 
+    dplyr::slice_max(order_by = F, n = 1) |>
+    dplyr::arrange(desc(F))  |>
+    dplyr::mutate(hpo_id = xvar,
+                  CellType = yvar) |>
+    data.table::data.table()
+top_res$hpo_name <- HPOExplorer::harmonise_phenotypes(top_res$xvar, as_hpo_ids = FALSE)
+View(top_res)
+
+res=MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
+res_merged <- merge(
+    (lm_res|> 
+         data.table::setnames(c("xvar","yvar","F"),c("hpo_id","CellType","fold_change"),
+                              skip_absent = TRUE))[,c("hpo_id","CellType","p","q","fold_change")],
+    res[,c("hpo_id","CellType","p","q","fold_change")],
+    by=c("hpo_id","CellType"),
+    suffixes = c("_phenomix","_MultiEWCE")
+)[,cs_MultiEWCE:=(1-q_MultiEWCE)*fold_change_MultiEWCE][,cs_phenomix:=(1-q_phenomix)*fold_change_phenomix]
+
+ct_p <- cor.test(res_merged$p_MultiEWCE,res_merged$p_phenomix)
+ct_q <- cor.test(res_merged$q_MultiEWCE,res_merged$q_phenomix)
+ct_fc <- cor.test(res_merged$fold_change_MultiEWCE,res_merged$fold_change_phenomix)
+ct_cs <- cor.test(res_merged$cs_MultiEWCE,res_merged$cs_phenomix)
+# lm(res_merged$fold_change_MultiEWCE~res_merged$fold_change_phenomix) |> summary()
+
+## Compare overlap in top CellType per hpo_id via each method
+res_top <- res_merged[q_MultiEWCE<.05,.(CellType_phenomix=CellType[which.max(fold_change_phenomix)],
+              CellType_MultiEWCE=CellType[which.max(fold_change_MultiEWCE)]),
+           by=hpo_id][,matched:=CellType_phenomix==CellType_MultiEWCE]
+res_top <- res_merged[q_MultiEWCE<.05,.(CellType_phenomix=CellType[which.min(p_phenomix)],
+                                        CellType_MultiEWCE=CellType[which.min(p_MultiEWCE)]),
+                      by=hpo_id][,matched:=CellType_phenomix==CellType_MultiEWCE]
+sum(res_top$matched)/nrow(res_top)*100
+
+
+library(ggplot2)
+ggplot(res_merged,
+       aes(x=-log10(q_MultiEWCE+1e-100),
+           y=-log10(q_phenomix+1e-100),
+           color=.[q_phenomix<0.05]))+
+    geom_point(show.legend = FALSE)+
+    # facet_wrap(~CellType,scales = "free")+
+    theme_bw()
+ggplot(res_merged,
+       aes(x=log10(scales::rescale(fold_change_MultiEWCE)),
+           y=log10(scales::rescale(fold_change_phenomix)),
+           color=CellType))+
+    geom_point(show.legend = FALSE)+
+    # facet_wrap(~CellType,scales = "free")+
+    theme_bw()
+
+```
+
+
+
+# Seurat processing
+
+## 
+
+```{r}
+id_types = c("disease_id","hpo_id")
+dt_genes <-  HPOExplorer::load_phenotype_to_genes(1)
+dt_genes[,symptom_id:=paste(disease_id,hpo_id,sep=".")]
+dt_genes <- HPOExplorer::add_evidence(dt_genes)
+ev <- dt_genes[,list(evidence_score_grouped=mean(evidence_score_mean)),by=id_types]
+dt_annot <- HPOExplorer::make_phenos_dataframe(
+    phenotype_to_genes = dt_genes,
+    add_disease_data = TRUE,
+    add_hoverboxes = FALSE)
+dt_annot <- dt_annot[ev,on=id_types]
+dt_annot[,symptom_id:=paste(disease_id,hpo_id,sep=".")]
+dt_genes <- dt_genes[symptom_id %in% unique( dt_annot$symptom_id),]
+
+dt_annot <- HPOExplorer::add_disease_definition(dt_annot)
+dt_annot[,DEFINITION:=data.table::fcoalesce(definition,Definitions,hpo_name,disease_name)]
+
+obj <- prepare_hpo(dt_genes = dt_genes,
+                   dt_annot = dt_annot,
+                   id_types= id_types,
+                   vars.to.regress = c("n_genes"),
+                   run_nlp=FALSE)
+
+obj$n_genes_log <- log10(obj$n_genes)
+Seurat::FeaturePlot(obj, 
+                    features = "n_genes_log",
+                    alpha = .5)
+
+
+scnlp_res <- scNLP::plot_tfidf(
+    obj,
+    label_var = "DEFINITION",
+    terms_per_cluster = 1,
+    size_var = "n_genes",
+    point_size = .5,
+    point_palette = pals::kovesi.cyclic_mrybm_35_75_c68_s25(
+        length(unique(obj@meta.data[["seurat_clusters"]]))
+    )
+)
+
+
+
+# xmat <- scKirby::get_x(obj,
+#                        slot="scale.data",
+#                        n=1)
+```
+
