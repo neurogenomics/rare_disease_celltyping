@@ -1,0 +1,498 @@
+---
+title: "Validation"
+author: "Brian M. Schilder"
+date: "2023-12-21"
+output: html_document
+---
+
+**Tools**
+- [scOntoMatch](https://github.com/Papatheodorou-Group/scOntoMatch/)
+- [metacells](https://github.com/tanaylab/metacells)
+- [SATURN](https://github.com/snap-stanford/SATURN)
+
+**Datasets**
+- [HumanCellLandscape](https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1)
+- [DescartesHuman](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
+  - [1 million-cell subset](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
+
+
+```{r setup}
+library(MultiEWCE)
+```
+
+
+# Import data
+## MultiEWCE results
+```{r}
+ctd_names <- c("DescartesHuman","HumanCellLandscape")
+res <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
+  readRDS(paste0("/Volumes/bms20/projects/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/",x,"/rare_disease_min_genes4.rds"))
+}) #|> data.table::rbindlist(idcol="ctd")
+# ctd_lvls <- res[,unique(annotLevel),keyby="ctd"]
+```
+
+## scRNAseq
+```{r}
+obj_list <- list()
+obj_list[["DescartesHuman"]] <- readRDS("~/Downloads/db4d63ab-0ca3-4fa5-b0cf-34955227912d.rds")
+obj_list[["HumanCellLandscape"]] <- readRDS("~/Downloads/1b7484e3-83a0-47fe-847e-54d811a2adae.rds")
+```
+
+## Map CellOntology IDs onto original names in results files.
+
+```{r}
+map_celltypes <- function(dat,
+                          map,
+                          celltype_col = list(
+                            dat="CellType",
+                            map=c("Main_cluster_name",
+                                  "author_cell_type")
+                          ),
+                          cellontology_id_col=list(
+                            map=c("cell_type_ontology_term_id",
+                                  "cell_type")
+                          ),
+                          rm_prefixes=c("Adult","Fetus","HESC")
+                          ){
+  #### Ensure both inputs are data.tables ####
+  map <- data.table::as.data.table(map)
+  celltype_col$map <- celltype_col$map[
+    celltype_col$map %in% names(map)
+  ]
+  cellontology_id_col$map <- cellontology_id_col$map[
+    cellontology_id_col$map %in% names(map)
+  ]
+  map <- map[,c(celltype_col$map, cellontology_id_col$map), with=FALSE] |>
+    unique()
+  map <- map[,.SD[1], by=c(celltype_col$map)]
+  dat <- data.table::as.data.table(dat)
+  #### Map original cell annotation to EWCE standardised version ####
+  map[,(celltype_col$dat):=EWCE::fix_celltype_names(get(celltype_col$map), 
+                                                    make_unique = FALSE)]
+  if(!is.null(rm_prefixes)){
+    dat[,(celltype_col$dat):=gsub(
+      pattern=paste0(paste0("^",rm_prefixes,"_"),collapse="|"),
+      replacement="",
+      x=get(celltype_col$dat), ignore.case = TRUE)]
+  }
+  #### Merge ####
+  dat_mapped <- data.table::merge.data.table(x = dat,
+                                             y = map,
+                                             by = celltype_col$dat,
+                                             all.x = TRUE,
+                                             all.y = FALSE) 
+  data.table::setnames(dat_mapped, 
+                       c(celltype_col$map,"cell_type"),
+                       c("CellType_original","cell_type_ontology"),
+                       skip_absent = TRUE)
+  return(dat_mapped)
+}
+
+res_mapped <- lapply(stats::setNames(names(res),
+                                     names(res)),
+                     function(x){
+  dat <- res[[x]]
+   if(x=="DescartesHuman"){
+    dat[,stage:="Fetus"]
+  }
+  if(x=="HumanCellLandscape"){
+    dat[,stage:=data.table::tstrsplit(CellType,"_",keep=1)]
+  }
+  map_celltypes(dat = dat,
+                map = obj_list[[x]]@meta.data)
+})
+```
+
+### Merge all results
+
+Merge all results into a single data.table.
+```{r}
+RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
+RES[,pheno_celltype:=paste(hpo_id,cell_type_ontology_term_id,sep="_")]
+### Count number of unique celltypes per dataset ###
+RES[,length(unique(CellType)), by=c("ctd","stage")]
+```
+
+
+## CellTypeDatasets
+```r
+ctd <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
+  MultiEWCE::load_example_ctd(paste0("ctd_",x,".rds"))
+}) 
+Xctd <- lapply(ctd_names, function(x){
+  lvl <- ctd_lvls["DescartesHuman"][[2]]
+  ctd[[x]][[lvl]]$specificity
+}) |> do.call(what = Seurat::RowMergeSparseMatrices)
+```
+
+# Harmonise celltypes
+
+Only 13 celltype IDs are shared between the two datasets, partly due to differing ontology level annotations. 
+
+```{r}
+report_matches <- function(obj_list,
+                           col="cell_type"){
+  lapply(obj_list, function(x){
+    ct <- unique(x@meta.data[[col]])
+    message(col,": ",length(ct))
+    return(ct)
+  }) |> Reduce(f=intersect)
+}
+report_matches(obj_list, col="cell_type")
+```
+
+```{r})
+lapply(obj_list, function(x){
+  ct <- unique(x$cell_type)
+  message("cell_type: ",length(ct))
+  return(ct)
+}) |> Reduce(f=intersect)
+```
+
+Thus, we must traverse the ontology to find the last common ancestor of each cell type.
+We use `scOntoMatch` to do this.
+
+```{r}
+ont <- ontologyIndex::get_OBO(
+  file = "https://github.com/obophenotype/cell-ontology/releases/download/v2023-10-19/cl-basic.obo")
+
+# obj_list_minimal = scOntoMatch::ontoMultiMinimal(obj_list = obj_list, 
+#                                                  ont = ont,
+#                                                  anno_col = "cell_type",
+#                                                  onto_id_col = "cell_type_ontology_term_id")
+# report_matches(obj_list, col="cell_ontology_base")
+
+obj_list_matched <- scOntoMatch::ontoMultiMatch(obj_list = obj_list,
+                                               ont = ont,
+                                               anno_col = 'cell_type',
+                                               onto_id_col = "cell_type_ontology_term_id")
+report_matches(obj_list, col="cell_ontology_mapped")
+```
+
+
+# Compare results
+
+## Across datasets: DescartesHuman vs HumanCellLandscape
+
+Within the fetal data, is there a correlation beteween phenotype-celltype enrichment statistics (p-value, q-value, fold-change) across CTD references?
+```{r}
+RES2 <- RES|> 
+  # subset(stage=="Fetus") |>
+  # subset(q<0.05)|>
+  data.table::dcast.data.table(
+  formula = hpo_id+stage+CellType_mapped ~ ctd,
+  fun.aggregate = mean,
+  drop = TRUE,
+  value.var = c("p","q","fold_change"))
+RES2 <- RES2[complete.cases(RES2)][,test_id:=.I]
+### All results
+message(length(unique(RES2$CellType_mapped))," comparable celltypes.")
+message(length(unique(RES2$hpo_id))," comparable phenotypes.")
+
+### Significant results in both CTDs
+RES_SIG <- RES2[q_HumanCellLandscape<.05 & q_DescartesHuman<.05]
+message(length(unique(RES_SIG$CellType_mapped))," comparable celltypes (FDR<0.05).")
+message(length(unique(RES_SIG$hpo_id))," comparable phenotypes (FDR<0.05).")
+```
+
+### All results (q<1)
+
+This plot makes no distinction between stages in DescartesHumna (fetal only)
+and HumanCellLandscape (Human Embyronic Stem Cells (HESC), Fetal, and Adult).
+```{r}
+RES2 |>
+  ggstatsplot::ggscatterstats(x="p_HumanCellLandscape", 
+                              y="p_DescartesHuman",
+                              point.args = list(alpha=.01)) +
+    geom_density_2d_filled(alpha=.85) 
+
+```
+### Signficant results (q<0.05)
+
+```{r}
+plot_cor <- function(dt,
+                     x="fold_change_HumanCellLandscape",
+                     y="fold_change_DescartesHuman",
+                     trans='log10'){
+gg <- dt |>
+  # subset(stage=="Fetus")|>
+  # subset(q_DescartesHuman<0.05 & q_HumanCellLandscape<0.05) |>
+  ggplot(aes(x=!!sym(x),
+                 y=!!sym(y)
+  )) +
+  geom_density_2d_filled() +
+  geom_point(alpha=.2, color="white")+
+  # geom_hex() +
+  geom_smooth(method="lm") +
+  ggpubr::stat_cor(color="white")+
+  ggside::geom_xsidehistogram(fill="blue") +
+  ggside::geom_ysidehistogram(fill="slateblue") +
+  theme_bw()
+  if(!is.null(trans)){
+    gg <- gg + 
+      scale_x_continuous(trans=trans) +
+      scale_y_continuous(trans=trans) +
+      labs(x=paste0(trans,"(",x,")"),
+           y=paste0(trans,"(",y,")"))
+  }
+  return(gg)
+}
+```
+
+
+```{r}
+plot_cor(RES_SIG, 
+         x="fold_change_HumanCellLandscape",
+         y="fold_change_DescartesHuman")
+```
+
+### Precision-Recall
+
+Compute the % of significant (FDR<5%) phenotype-celltype enrichment results recapitulated using each reference.
+```{r}
+compute_pr <- function(dt, 
+                       ref_qcut=.05){
+  ground_truth <- dt[q_DescartesHuman<ref_qcut]$test_id
+  lapply(c(0.001,0.01,seq(0,1,.05)), function(pcut){
+    r2 <- dt[q_HumanCellLandscape<pcut]
+    TP <- r2$test_id %in% ground_truth |> length()
+    TN <- !(r2$test_id %in% ground_truth) |> length()
+    FN <- ground_truth[!(ground_truth %in% r2$test_id)] |> length()
+    FP <- r2$test_id[!(r2$test_id %in% ground_truth)] |> length()
+    data.table::data.table(
+      # TP/TP+FP
+      precision=TP/(TP+FP),
+      # TP/TP+FN
+      recall=TP/(TP+FN),
+      # TP+TN/total
+      accuracy=(TP+TN)/(TP+TN+FP+FN),
+      ## Add pvalue threshold
+      pvalue_threshold=pcut,
+      ref_qcut=ref_qcut
+    )
+}) |> data.table::rbindlist()
+}
+```
+
+
+```{r}
+
+pr <- lapply(c(0.01,0.05,seq(0,1,.1)), function(ref_qcut){
+  compute_pr(RES2, ref_qcut=ref_qcut)
+})|> data.table::rbindlist()
+
+pr |>
+  ggplot(aes(x=recall, y=precision, 
+             color=as.factor(pvalue_threshold))) +
+  geom_line() +
+  geom_point(alpha=.5) +
+  geom_hline(yintercept=.05, linetype="dashed") +
+  geom_vline(xintercept=.05, linetype="dashed") +
+  theme_bw()
+
+## plot accuracy vs. pvalue threshold
+pr |>
+  ggplot(aes(x=pvalue_threshold, y=accuracy, 
+             color=as.factor(ref_qcut))) +
+  geom_line() +
+  geom_point(alpha=.5) +
+  geom_hline(yintercept=.05, linetype="dashed") +
+  geom_vline(xintercept=.05, linetype="dashed") +
+  theme_bw()
+
+
+```
+## Within datasets: HumanCellLandscape
+
+```{r}
+
+RES_HCL <- res$HumanCellLandscape |>
+  subset(stage!="HESC")|>
+  data.table::dcast.data.table(
+  formula = hpo_id+CellType_mapped ~ stage,
+  fun.aggregate = mean,
+  drop = TRUE,
+  value.var = c("p","q","fold_change"))
+RES_HCL <- RES_HCL[complete.cases(RES_HCL)][,test_id:=.I]
+### All results
+message(length(unique(RES_HCL$CellType_mapped))," comparable celltypes.")
+message(length(unique(RES_HCL$hpo_id))," comparable phenotypes.")
+
+### Significant results in both CTDs
+RES_SIG <- RES_HCL[q_Adult<.05 & q_Fetus<.05]
+message(length(unique(RES_SIG$CellType_mapped))," comparable celltypes (FDR<0.05).")
+message(length(unique(RES_SIG$hpo_id))," comparable phenotypes (FDR<0.05).")
+```
+
+## All results (q<1)
+
+```{r}
+RES_HCL |>
+  ggstatsplot::ggscatterstats(x="p_Adult", 
+                              y="p_Fetus",
+                              point.args = list(alpha=.01)) +
+    geom_density_2d_filled(alpha=.85) 
+```
+
+## Signficant results (q<0.05)
+
+```{r}
+
+plot_cor(RES_SIG, 
+         x="fold_change_Adult",
+         y="fold_change_Fetus")
+
+```
+
+### Significant in only Adult OR Fetus
+
+```{r}
+adult_only <- RES_HCL[q_Adult<.05 & q_Fetus>=.05] 
+fetus_only <- RES_HCL[q_Adult>=.05 & q_Fetus<.05] 
+```
+
+
+
+# Ground truth
+
+Compare the results to some ground truth datasets from the 
+Monarch Knowledge Graph.
+
+## Manual inspection
+
+After manual inspection it was found that 100% of known causal cell types (and/or their immediate precursors) were recapitulated by our MultiEWCE results. In many instances, our results further resolved the specific cell subtype(s) underlying the phenotype (e.g. "neuron" to "visceromotor neuron", or "muscle cell" to "ventricular cardiac muscle cell").
+
+Sperm and other germ cells could not be assessed due to their absence in both transcriptomic reference datasets.
+```{r}
+RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
+
+kg <- data.table::fread("~/Downloads/monarch_kg_cells.csv")
+kg <- kg[from %in% unique(RES$hpo_id)]
+message(paste(
+  "Remaining:",length(unique(kg$from)),
+  "phenotypes across",length(unique(kg$to)),"celltypes."
+))
+
+kg_res <- data.table::merge.data.table(
+  kg[,c("from","to","label.to")],
+  RES[q<0.05],
+  by.x="from",
+  by.y="hpo_id") |>
+  data.table::setorderv(c("from","fold_change"), c(1,-1))
+
+#### Compute average number of celltypes / phenotype ####
+kg[,list(N=data.table::uniqueN(to)), by="from"]$N|>summary()
+kg_res[,list(N=data.table::uniqueN(CellType)), by="from"]$N|>summary()
+```
+
+
+## Traversing cell ontologies
+
+```r
+map_ontology_ids <- function(ont,
+                             from_ids,
+                             to_ids,
+                             method=c( "getOntoMapping",
+                                       "getOntoMultiMapping"
+                                      )
+                             ){
+  from_name <- to_name <- NULL;
+  
+  method <- method[1]
+  from_ids <- as.character(unique(from_ids))
+  to_ids <- as.character(unique(to_ids))
+  if(method=="getOntoMultiMapping"){
+    mapped <- scOntoMatch::getOntoMultiMapping(
+      ont = ont, 
+      onts = list(from_ids=from_ids,
+                  to_ids=to_ids))
+  } else {
+     mapped <- scOntoMatch::getOntoMapping(ont = ont, 
+                                           onts1 = from_ids, 
+                                           onts2 = to_ids)
+  }
+ 
+  map <- data.table::data.table(from=names(mapped),
+                                to=unname(mapped)) 
+  map[,from_name:=scOntoMatch::getOntologyName(ont, from)[from]]
+  map[,to_name:=scOntoMatch::getOntologyName(ont, to)[to]]
+  return(map)
+} 
+```
+
+```{r}
+compare_results <- function(obj_list,
+                            RES,
+                            datasets=NULL){
+  
+  kg <- data.table::fread("~/Downloads/monarch_kg_cells.csv")
+  obj <- SeuratObject::pbmc_small[,seq(nrow(kg))]
+  obj@meta.data <- kg[,cell_type:=label.to][,cell_type_ontology_term_id:=to]
+  obj_list[["Monarch_KG"]] <- obj
+  
+  #### Subset datasets ####
+  if(!is.null(datasets)){
+    obj_list <- obj_list[datasets]
+    RES <- RES[ctd %in% datasets]
+  }
+  #### Map ####
+  obj_list_matched <- scOntoMatch::ontoMultiMatch(obj_list = obj_list,
+                                                 ont = ont,
+                                                 anno_col = 'cell_type',
+                                                 onto_id_col = "cell_type_ontology_term_id")
+  report_matches(obj_list_matched, col="cell_ontology_mapped")
+  
+  map <- lapply(obj_list_matched, function(x)x@meta.data) |> 
+    data.table::rbindlist(idcol = "dataset", fill=TRUE) |>
+    dplyr::select(cell_type,cell_type_ontology_term_id,cell_ontology_mapped) |>
+    unique() 
+  kg_mapped <- (
+    data.table::merge.data.table(
+      kg,
+      map,
+      by.x="to",
+      by.y="cell_type_ontology_term_id")
+  )[,cell_type_ontology_term_id:=to]
+  kg_mapped[,pheno_celltype:=paste(from,cell_ontology_mapped,sep="_")]
+  RES_MAPPED <- data.table::merge.data.table(
+      RES,
+      map,
+      by.x="cell_type_ontology_term_id",
+      by.y="cell_type_ontology_term_id")
+  RES_MAPPED[,pheno_celltype:=paste(hpo_id,cell_ontology_mapped,sep="_")]
+  pc_intersect <- intersect(unique(kg_mapped[cell_ontology_mapped!="cell"]$pheno_celltype), 
+                            unique(RES_MAPPED$pheno_celltype))
+  kg_mapped <- kg_mapped[pheno_celltype %in% pc_intersect]
+  RES_MAPPED <- RES_MAPPED[pheno_celltype %in% pc_intersect]
+  #### What proportion of the Monarch KG is covered by the MultiEWCE results? ####
+  RES_MAPPED[pheno_celltype %in% kg_mapped$pheno_celltype][,list(
+    TP=sum(unique(pheno_celltype) %in% unique(kg_mapped$pheno_celltype)),
+    n_res_kg=length(unique(kg_mapped$pheno_celltype)),
+    n_res=length(unique(pheno_celltype)),
+    n_res_sig=length(unique(pheno_celltype[q<.05])),
+    n_res_sig_p=length(unique(pheno_celltype[p<.05]))
+    ), by=c("ctd","stage")]
+}
+
+
+
+reports <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
+  compare_results(obj_list,
+                  RES,
+                  datasets=x)
+})
+
+compare_results(obj_list,
+                  RES)
+
+```
+# Session info
+
+<details>
+
+```{r}
+utils::sessionInfo()
+```
+
+</details>
+<hr>
