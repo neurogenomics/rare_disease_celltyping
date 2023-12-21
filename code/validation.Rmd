@@ -18,8 +18,8 @@ output: html_document
 
 ```{r setup}
 library(MultiEWCE)
+library(ggplot2)
 ```
-
 
 # Import data
 ## MultiEWCE results
@@ -27,8 +27,7 @@ library(MultiEWCE)
 ctd_names <- c("DescartesHuman","HumanCellLandscape")
 res <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
   readRDS(paste0("/Volumes/bms20/projects/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/",x,"/rare_disease_min_genes4.rds"))
-}) #|> data.table::rbindlist(idcol="ctd")
-# ctd_lvls <- res[,unique(annotLevel),keyby="ctd"]
+}) 
 ```
 
 ## scRNAseq
@@ -38,7 +37,7 @@ obj_list[["DescartesHuman"]] <- readRDS("~/Downloads/db4d63ab-0ca3-4fa5-b0cf-349
 obj_list[["HumanCellLandscape"]] <- readRDS("~/Downloads/1b7484e3-83a0-47fe-847e-54d811a2adae.rds")
 ```
 
-## Map CellOntology IDs onto original names in results files.
+## Map CellOntology IDs onto original names in results files
 
 ```{r}
 map_celltypes <- function(dat,
@@ -109,8 +108,8 @@ Merge all results into a single data.table.
 ```{r}
 RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
 RES[,pheno_celltype:=paste(hpo_id,cell_type_ontology_term_id,sep="_")]
-### Count number of unique celltypes per dataset ###
-RES[,length(unique(CellType)), by=c("ctd","stage")]
+### Count number of unique celltypes per CTD/stage ###
+RES[,list(N=length(unique(CellType))), by=c("ctd","stage")]
 ```
 
 
@@ -125,7 +124,7 @@ Xctd <- lapply(ctd_names, function(x){
 }) |> do.call(what = Seurat::RowMergeSparseMatrices)
 ```
 
-# Harmonise celltypes
+## Harmonise celltypes
 
 Only 13 celltype IDs are shared between the two datasets, partly due to differing ontology level annotations. 
 
@@ -162,12 +161,35 @@ ont <- ontologyIndex::get_OBO(
 #                                                  onto_id_col = "cell_type_ontology_term_id")
 # report_matches(obj_list, col="cell_ontology_base")
 
-obj_list_matched <- scOntoMatch::ontoMultiMatch(obj_list = obj_list,
-                                               ont = ont,
-                                               anno_col = 'cell_type',
-                                               onto_id_col = "cell_type_ontology_term_id")
-report_matches(obj_list, col="cell_ontology_mapped")
+obj_list$DescartesHuman$CellType <- EWCE::fix_celltype_names(obj_list$DescartesHuman$Main_cluster_name, make_unique = FALSE)
+obj_list$HumanCellLandscape$CellType <- EWCE::fix_celltype_names(obj_list$HumanCellLandscape$author_cell_type,
+                                                                 make_unique = FALSE)
+
+obj_list_matched <- scOntoMatch::ontoMultiMatch(
+  obj_list = obj_list,
+  ont = ont,
+  anno_col = 'cell_type',
+  onto_id_col = "cell_type_ontology_term_id")
+report_matches(obj_list_matched, col="cell_ontology_mapped")
+
+map <- lapply(obj_list_matched, function(x){
+  x@meta.data |>
+    dplyr::select(CellType, 
+                  # cell_type,
+                  # cell_type_ontology_term_id,
+                  cell_ontology_mapped) |>
+    unique()
+}) |>
+  data.table::rbindlist(idcol = "ctd", fill = TRUE) 
+RES_MAPPED <- data.table::merge.data.table(
+  RES,
+  map,
+  by= c("ctd","CellType"),
+  allow.cartesian = TRUE
+) 
+
 ```
+
 
 
 # Compare results
@@ -176,22 +198,22 @@ report_matches(obj_list, col="cell_ontology_mapped")
 
 Within the fetal data, is there a correlation beteween phenotype-celltype enrichment statistics (p-value, q-value, fold-change) across CTD references?
 ```{r}
-RES2 <- RES|> 
+RES2 <- RES_MAPPED|> 
   # subset(stage=="Fetus") |>
   # subset(q<0.05)|>
   data.table::dcast.data.table(
-  formula = hpo_id+stage+CellType_mapped ~ ctd,
+  formula = hpo_id+stage+cell_ontology_mapped ~ ctd,
   fun.aggregate = mean,
   drop = TRUE,
   value.var = c("p","q","fold_change"))
 RES2 <- RES2[complete.cases(RES2)][,test_id:=.I]
 ### All results
-message(length(unique(RES2$CellType_mapped))," comparable celltypes.")
+message(length(unique(RES2$cell_ontology_mapped))," comparable celltypes.")
 message(length(unique(RES2$hpo_id))," comparable phenotypes.")
 
 ### Significant results in both CTDs
 RES_SIG <- RES2[q_HumanCellLandscape<.05 & q_DescartesHuman<.05]
-message(length(unique(RES_SIG$CellType_mapped))," comparable celltypes (FDR<0.05).")
+message(length(unique(RES_SIG$cell_ontology_mapped))," comparable celltypes (FDR<0.05).")
 message(length(unique(RES_SIG$hpo_id))," comparable phenotypes (FDR<0.05).")
 ```
 
@@ -204,7 +226,7 @@ RES2 |>
   ggstatsplot::ggscatterstats(x="p_HumanCellLandscape", 
                               y="p_DescartesHuman",
                               point.args = list(alpha=.01)) +
-    geom_density_2d_filled(alpha=.85) 
+    ggplot2::geom_density_2d_filled(alpha=.85) 
 
 ```
 ### Signficant results (q<0.05)
@@ -276,7 +298,6 @@ compute_pr <- function(dt,
 
 
 ```{r}
-
 pr <- lapply(c(0.01,0.05,seq(0,1,.1)), function(ref_qcut){
   compute_pr(RES2, ref_qcut=ref_qcut)
 })|> data.table::rbindlist()
@@ -305,22 +326,21 @@ pr |>
 ## Within datasets: HumanCellLandscape
 
 ```{r}
-
-RES_HCL <- res$HumanCellLandscape |>
+RES_HCL <- RES_MAPPED[ctd=="HumanCellLandscape"] |>
   subset(stage!="HESC")|>
   data.table::dcast.data.table(
-  formula = hpo_id+CellType_mapped ~ stage,
+  formula = hpo_id+cell_ontology_mapped ~ stage,
   fun.aggregate = mean,
   drop = TRUE,
   value.var = c("p","q","fold_change"))
 RES_HCL <- RES_HCL[complete.cases(RES_HCL)][,test_id:=.I]
 ### All results
-message(length(unique(RES_HCL$CellType_mapped))," comparable celltypes.")
+message(length(unique(RES_HCL$cell_ontology_mapped))," comparable celltypes.")
 message(length(unique(RES_HCL$hpo_id))," comparable phenotypes.")
 
 ### Significant results in both CTDs
 RES_SIG <- RES_HCL[q_Adult<.05 & q_Fetus<.05]
-message(length(unique(RES_SIG$CellType_mapped))," comparable celltypes (FDR<0.05).")
+message(length(unique(RES_SIG$cell_ontology_mapped))," comparable celltypes (FDR<0.05).")
 message(length(unique(RES_SIG$hpo_id))," comparable phenotypes (FDR<0.05).")
 ```
 
@@ -331,7 +351,7 @@ RES_HCL |>
   ggstatsplot::ggscatterstats(x="p_Adult", 
                               y="p_Fetus",
                               point.args = list(alpha=.01)) +
-    geom_density_2d_filled(alpha=.85) 
+    ggplot2::geom_density_2d_filled(alpha=.85) 
 ```
 
 ## Signficant results (q<0.05)
@@ -344,7 +364,7 @@ plot_cor(RES_SIG,
 
 ```
 
-### Significant in only Adult OR Fetus
+## Significant in only Adult OR Fetus
 
 ```{r}
 adult_only <- RES_HCL[q_Adult<.05 & q_Fetus>=.05] 
@@ -420,7 +440,7 @@ map_ontology_ids <- function(ont,
 } 
 ```
 
-```{r}
+```r
 compare_results <- function(obj_list,
                             RES,
                             datasets=NULL){
@@ -483,7 +503,7 @@ reports <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
 })
 
 compare_results(obj_list,
-                  RES)
+                RES)
 
 ```
 # Session info
