@@ -10,12 +10,6 @@ output: html_document
 - [metacells](https://github.com/tanaylab/metacells)
 - [SATURN](https://github.com/snap-stanford/SATURN)
 
-**Datasets**
-- [HumanCellLandscape](https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1)
-- [DescartesHuman](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
-  - [1 million-cell subset](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
-
-
 ```{r setup}
 library(MultiEWCE)
 library(ggplot2)
@@ -28,9 +22,14 @@ ctd_names <- c("DescartesHuman","HumanCellLandscape")
 res <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
   readRDS(paste0("/Volumes/bms20/projects/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/",x,"/rare_disease_min_genes4.rds"))
 }) 
+res_old <- MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
 ```
 
 ## scRNAseq
+
+- [HumanCellLandscape](https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1)
+- [DescartesHuman](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
+  - [1 million-cell subset](https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c)
 ```{r}
 obj_list <- list()
 obj_list[["DescartesHuman"]] <- readRDS("~/Downloads/db4d63ab-0ca3-4fa5-b0cf-34955227912d.rds")
@@ -131,11 +130,14 @@ Only 13 celltype IDs are shared between the two datasets, partly due to differin
 ```{r}
 report_matches <- function(obj_list,
                            col="cell_type"){
-  lapply(obj_list, function(x){
+  inter <- lapply(names(obj_list), function(nm){
+    x <- obj_list[[nm]]
     ct <- unique(x@meta.data[[col]])
-    message(col,": ",length(ct))
+    message(nm,":: ",col,": ",length(ct))
     return(ct)
   }) |> Reduce(f=intersect)
+  message("Intersection: ",length(inter))
+  inter
 }
 report_matches(obj_list, col="cell_type")
 ```
@@ -357,7 +359,6 @@ RES_HCL |>
 ## Signficant results (q<0.05)
 
 ```{r}
-
 plot_cor(RES_SIG, 
          x="fold_change_Adult",
          y="fold_change_Fetus")
@@ -366,10 +367,18 @@ plot_cor(RES_SIG,
 
 ## Significant in only Adult OR Fetus
 
+### Adult-only
 ```{r}
 adult_only <- RES_HCL[q_Adult<.05 & q_Fetus>=.05] 
-fetus_only <- RES_HCL[q_Adult>=.05 & q_Fetus<.05] 
+MultiEWCE::create_dt(adult_only)
 ```
+
+### Fetus-only
+```{r}
+fetus_only <- RES_HCL[q_Adult>=.05 & q_Fetus<.05] 
+MultiEWCE::create_dt(fetus_only)
+```
+
 
 
 
@@ -380,19 +389,22 @@ Monarch Knowledge Graph.
 
 ## Manual inspection
 
-After manual inspection it was found that 100% of known causal cell types (and/or their immediate precursors) were recapitulated by our MultiEWCE results. In many instances, our results further resolved the specific cell subtype(s) underlying the phenotype (e.g. "neuron" to "visceromotor neuron", or "muscle cell" to "ventricular cardiac muscle cell").
+After manual inspection it was found that 65.6% of known causal cell types (and/or their immediate precursors) were recapitulated by our MultiEWCE results. In many instances, our results further resolved the specific cell subtype(s) underlying the phenotype (e.g. "neuron" to "visceromotor neuron", or "muscle cell" to "ventricular cardiac muscle cell").
 
-Sperm and other germ cells could not be assessed due to their absence in both transcriptomic reference datasets.
+Sperm cells could not be assessed due to their absence in both transcriptomic reference datasets.
+
+The old results (using the non-standardised version of the DescartesHuman CTD) 
+had 69.5% recovery of known phenotype-celltype links, whereas the new results (DescartesHuman + HumanCellLandscape) had 65.6% recovery.
 ```{r}
 RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
-
+# RES <- res_old
 kg <- data.table::fread("~/Downloads/monarch_kg_cells.csv")
-kg <- kg[from %in% unique(RES$hpo_id)]
+kg <- kg[grepl("HP:",from)][from %in% unique(RES$hpo_id)]
 message(paste(
   "Remaining:",length(unique(kg$from)),
   "phenotypes across",length(unique(kg$to)),"celltypes."
 ))
-
+#### Merge results with Knowledge Graph ####
 kg_res <- data.table::merge.data.table(
   kg[,c("from","to","label.to")],
   RES[q<0.05],
@@ -403,10 +415,84 @@ kg_res <- data.table::merge.data.table(
 #### Compute average number of celltypes / phenotype ####
 kg[,list(N=data.table::uniqueN(to)), by="from"]$N|>summary()
 kg_res[,list(N=data.table::uniqueN(CellType)), by="from"]$N|>summary()
+
+
+missing_phenos <- setdiff(kg$from, kg_res$from)
+message((1-(length(missing_phenos) / length(unique(kg$from))))*100,
+        "% phenotypes recovered.")
+
+kg_missing <- kg[from%in% missing_phenos]
+res_missing <- RES[hpo_id%in% missing_phenos]
+# data.table::fwrite(kg_missing, "~/Downloads/kg_missing.csv")
+```
+
+### Traverse HP ontology
+
+```R
+hpo <- ontologyIndex::get_OBO("https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2023-10-09/hp-base.obo")
+hp <- KGExplorer::get_ontology("hp")
+g <- KGExplorer::ontology_to(hp,"igraph")
+terms <- c("HP:0000001", "HP:0000002","HP:0002493", "HP:0002450",
+           "HP:0001257","HP:0012210")
+simona::shortest_distances_directed(hp, terms=terms)
+simona::shortest_distances_via_NCA(hp, terms=terms)
+simona::term_sim(hp, terms=terms)
+igraph::are.connected(g, v1="HP:0002493", v2="HP:0002450")
+
+
+make_pseudo_seurat <- function(dt,
+                               col,
+                               new_col=col,
+                               unique_only = TRUE){
+  vals <- dt[[col]]
+  if(unique_only){
+    vals <- unique(vals) 
+  } 
+  X <- Matrix::Matrix(ncol = length(vals))
+  colnames(X) <- vals
+  rownames(X) <- paste0("gene-",seq_len(nrow(X)))
+  SeuratObject::CreateSeuratObject(
+    count=SeuratObject::CreateAssayObject(X), 
+    meta.data = data.frame(vals, row.names = vals) |> `colnames<-`(new_col)
+    )
+}
+obj_list <- list(
+  KG=make_pseudo_seurat(dt = kg, col = "from", new_col = "hpo_id"),
+  MultiEWCE=make_pseudo_seurat(dt = RES[q<0.05], col = "hpo_id")
+)  
+obj_list_matched <- scOntoMatch::ontoMultiMatch(
+  obj_list = obj_list,
+  ont = hpo,
+  anno_col = NULL,
+  onto_id_col = "hpo_id")
+
+int1 <- report_matches(obj_list = obj_list_matched, col = "hpo_id")
+int2 <- report_matches(obj_list = obj_list_matched, col = "cell_ontology_mapped")
+setdiff(int1, int2)
 ```
 
 
-## Traversing cell ontologies
+### Investigate missing phenotype-celltype associations
+
+Let's dig into why these very obvious associations are not enriched in our results.
+```{r}
+p2g <- HPOExplorer::load_phenotype_to_genes()
+p2g <- p2g[hpo_id%in% missing_phenos]
+p2g[,n_genes:=length(unique(gene_symbol)),by=hpo_id]
+summary(p2g$n_genes)
+
+ctd <- MultiEWCE::load_example_ctd("ctd_DescartesHuman.rds")
+ctd_genes <- rownames(ctd$level_2$specificity_quantiles)
+p2g <- p2g[gene_symbol %in% ctd_genes,]
+p2g[,n_genes_filtered:=length(unique(gene_symbol)),by=hpo_id]
+summary(p2g$n_genes_filtered)
+message(length(p2g$gene_symbol[!p2g$gene_symbol %in% ctd_genes]),
+        " HPO genes missing from CTD.")
+```
+
+
+
+## Traverse cell ontologies
 
 ```r
 map_ontology_ids <- function(ont,
