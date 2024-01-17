@@ -1,0 +1,152 @@
+---
+title: "Congenital"
+author: "Brian M. Schilder"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=TRUE, message=FALSE}
+library(ggplot2)
+```
+
+
+[Are congenital phenotypes more enriched for fetal cell types?](https://github.com/neurogenomics/rare_disease_celltyping/issues/47)
+
+- Are congenital phenotypes are more strongly enriched for fetal cell types than congenital phenotypes?
+  - **Strategy**: Identify cell types that only occur in fetal samples (and not adult samples)
+- Are congenital phenotypes are more strongly enriched for fetal cell types vs. adult cell types?
+  - **Strategy**: Identify cell types that occur in both fetal and adult samples, and compare their relative enrichment levels in congenital vs. non-congenital disease.
+
+# Import data
+
+## Enrichment results
+```{r}
+res <- MultiEWCE::load_example_results("rare_disease_min_genes4_HumanCellLandscape.rds")
+# split the Celltype columns via the first "_" only
+res <- cbind(res,
+      data.table::data.table(
+        stringr::str_split(res$CellType,"_",n = 2, simplify = TRUE)) |> 
+        `colnames<-`(c("stage","celltype")
+                     )
+      )
+```
+
+## Phenotype annotations
+Use "congenital" column from GPT annotation.
+
+```{r}
+gpt <- HPOExplorer::gpt_annot_codify()
+res_gpt <- data.table::merge.data.table(res, 
+                                        gpt$annot,
+                                        by="hpo_id")
+```
+
+# Analysis 
+
+## Compare by stage
+
+Each sample in the HCL comes from an "Adult", "Fetus", or "HESC" 
+(human embryonic stem cell) stage. Here, we identify cell types that
+are only present in fetal samples (which includes both Fetus or HESC)
+but not adult samples.
+We also identify cell types that are only present in adult samples.
+
+Of the 63 unique cell types in HCL:
+- Only 2 cell types are found only in fetal samples.
+- Only 5 cell types are found only in adult samples.
+
+```{r}
+res_gpt[,list(celltype=unique(celltype)),keyby=stage]
+fetal_stages <- c("Fetus","hESC")
+fetal_only <- setdiff(res_gpt[stage %in% fetal_stages]$celltype,
+                           res_gpt[stage=="Adult"]$celltype)
+adult_only <- setdiff(res_gpt[stage=="Adult"]$celltype,
+                      res_gpt[stage %in% fetal_stages]$celltype)
+res_gpt[,stage_group:=ifelse(celltype %in% fetal_only,
+                                "fetal_only",
+                                ifelse(celltype %in% adult_only,
+                                       "adult_only",
+                                       "both")
+                                )
+        ]
+
+cat("fetal_only:\n")
+fetal_only
+cat("adult_only:\n")
+adult_only
+```
+
+
+Confusingly, these the proportion of "adult only" cell types are
+more frequently associated with phenotypes that are "often" congenital 
+relative to phenotypes that are "rarely" or "never congenital.
+
+```{r}
+ggplot(res_gpt[q<0.05,],
+       aes(x=congenital_onset,
+           fill=stage_group)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y="% of significant results (FDR<=5%)") +
+  theme_bw()  
+
+
+ggplot(res_gpt[q<0.05 & stage_group!="both",],
+       aes(x=congenital_onset,
+           fill=stage_group)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y="% of significant results (FDR<=5%)",
+       title="'both' removed") +
+  theme_bw()  
+
+```
+
+
+ 
+
+## Compare by substrings
+
+
+Strangely, some cell types with the substrings "fetal"/"primordial"/"hESC" in them are found in the 
+"Adult" samples as well. It's unclear whether this is:
+- a mistake in the annotation
+- a mistake during CTD processing
+- a true biological phenomenon (e.g. circulating fetal cells in adult blood)
+
+*NOTE*: I also tried using the substring "blast" but this only returned 1 cell type
+("fibroblast") which is not a fetal cell type.
+
+```{r}
+fetal_keywords <- c("fetal","primordial","hESC")
+res_gpt[,fetal_celltype:=grepl(paste(fetal_keywords,collapse="|"),
+                               celltype,
+                               ignore.case = TRUE)]
+res_gpt[stage=="Adult" & fetal_celltype==TRUE,]$celltype |>
+  unique()
+```
+
+If we compare only by celltype subtrings (regardless of sample stage), 
+we find the expected relationship of a decreasing proportion of these "fetal" 
+cell types with decreasing probability of the phenotype being congenital.
+
+```{r}
+ggplot(res_gpt[q<0.05,],
+       aes(x=congenital_onset,
+           fill=fetal_celltype)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y="% of significant results (FDR<=5%)") +
+  theme_bw()   
+
+```
+
+
+
+# Session Info
+
+<details>
+```{r}
+sessionInfo()
+```
+</details>

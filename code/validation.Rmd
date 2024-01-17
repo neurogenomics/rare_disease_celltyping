@@ -1,7 +1,7 @@
 ---
 title: "Validation"
 author: "Brian M. Schilder"
-date: "2023-12-21"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -20,9 +20,9 @@ library(ggplot2)
 ```{r}
 ctd_names <- c("DescartesHuman","HumanCellLandscape")
 res <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
-  readRDS(paste0("/Volumes/bms20/projects/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/",x,"/rare_disease_min_genes4.rds"))
-}) 
-res_old <- MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
+  MultiEWCE::load_example_results(paste0("rare_disease_min_genes4_",x,".rds"))
+})  
+# res_old <- MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
 ```
 
 ## scRNAseq
