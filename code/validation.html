@@ -363,7 +363,7 @@ display: none;
 - <a href="https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c">DescartesHuman</a>
 - <a href="https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c">1
 million-cell subset</a></p>
-<pre class="r"><code>library(MultiEWCE)</code></pre>
+<pre class="r"><code>library(MSTExplorer)</code></pre>
 <pre><code>## Registered S3 method overwritten by &#39;ggnetwork&#39;:
 ##   method         from  
 ##   fortify.igraph ggtree</code></pre>
@@ -371,7 +371,7 @@ million-cell subset</a></p>
 <div id="import-data" class="section level1">
 <h1>Import data</h1>
 <div id="multiewce-results" class="section level2">
-<h2>MultiEWCE results</h2>
+<h2>MSTExplorer results</h2>
 <pre class="r"><code>ctd_names &lt;- c(&quot;DescartesHuman&quot;,&quot;HumanCellLandscape&quot;)
 res &lt;- lapply(stats::setNames(ctd_names,ctd_names), function(x){
   readRDS(paste0(&quot;/Volumes/bms20/projects/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/&quot;,x,&quot;/rare_disease_min_genes4.rds&quot;))
@@ -462,7 +462,7 @@ RES[,list(N=length(unique(CellType))), by=c(&quot;ctd&quot;,&quot;stage&quot;)]<
 <div id="celltypedatasets" class="section level2">
 <h2>CellTypeDatasets</h2>
 <pre class="r"><code>ctd &lt;- lapply(stats::setNames(ctd_names,ctd_names), function(x){
-  MultiEWCE::load_example_ctd(paste0(&quot;ctd_&quot;,x,&quot;.rds&quot;))
+  MSTExplorer::load_example_ctd(paste0(&quot;ctd_&quot;,x,&quot;.rds&quot;))
 }) 
 Xctd &lt;- lapply(ctd_names, function(x){
   lvl &lt;- ctd_lvls[&quot;DescartesHuman&quot;][[2]]
@@ -901,7 +901,7 @@ Knowledge Graph.</p>
 <h2>Manual inspection</h2>
 <p>After manual inspection it was found that 100% of known causal cell
 types (and/or their immediate precursors) were recapitulated by our
-MultiEWCE results. In many instances, our results further resolved the
+MSTExplorer results. In many instances, our results further resolved the
 specific cell subtype(s) underlying the phenotype (e.g. “neuron” to
 “visceromotor neuron”, or “muscle cell” to “ventricular cardiac muscle
 cell”).</p>
@@ -1005,7 +1005,7 @@ kg[,list(N=data.table::uniqueN(to)), by=&quot;from&quot;]$N|&gt;summary()</code>
                             unique(RES_MAPPED$pheno_celltype))
   kg_mapped &lt;- kg_mapped[pheno_celltype %in% pc_intersect]
   RES_MAPPED &lt;- RES_MAPPED[pheno_celltype %in% pc_intersect]
-  #### What proportion of the Monarch KG is covered by the MultiEWCE results? ####
+  #### What proportion of the Monarch KG is covered by the MSTExplorer results? ####
   RES_MAPPED[pheno_celltype %in% kg_mapped$pheno_celltype][,list(
     TP=sum(unique(pheno_celltype) %in% unique(kg_mapped$pheno_celltype)),
     n_res_kg=length(unique(kg_mapped$pheno_celltype)),
@@ -1050,7 +1050,7 @@ compare_results(obj_list,
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] SeuratObject_5.0.1 sp_2.1-2           ggplot2_3.4.4      MultiEWCE_0.1.10  
+## [1] SeuratObject_5.0.1 sp_2.1-2           ggplot2_3.4.4      MSTExplorer_0.1.10  
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] fs_1.6.3                      matrixStats_1.2.0            

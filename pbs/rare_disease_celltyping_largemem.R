@@ -14,12 +14,12 @@ opt <- optparse::parse_args(opt_parser)
 root <- "/rds/general/project/neurogenomics-lab/ephemeral/rare_disease_largemem"
 
 
-library(MultiEWCE)
+library(MSTExplorer)
 library(data.table)
 data.table::setDTthreads(threads = opt$ncpus)
 
 #### Load CTD ####
-ctd <- MultiEWCE::load_example_ctd(file = "ctd_DescartesHuman.rds")
+ctd <- MSTExplorer::load_example_ctd(file = "ctd_DescartesHuman.rds")
 annotLevel <- 2 
 #### Get phenotype gene lists ####
 gene_data <- readRDS("/rds/general/project/neurogenomics-lab/live/Projects/rare_disease_ewce/pbs/missing_dat.rds")
@@ -49,7 +49,7 @@ gc()
 
 
 #### Run enrichment analyses ##### 
-all_results <- MultiEWCE::gen_results(
+all_results <- MSTExplorer::gen_results(
   ctd = ctd,
   list_name_column = "hpo_id",
   list_names = list_names,

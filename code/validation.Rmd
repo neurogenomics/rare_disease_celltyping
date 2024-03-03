@@ -11,18 +11,21 @@ output: html_document
 - [SATURN](https://github.com/snap-stanford/SATURN)
 
 ```{r setup}
-library(MultiEWCE)
+library(MSTExplorer)
 library(ggplot2)
 ```
 
 # Import data
-## MultiEWCE results
+## MSTExplorer results
 ```{r}
-ctd_names <- c("DescartesHuman","HumanCellLandscape")
-res <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
-  MultiEWCE::load_example_results(paste0("rare_disease_min_genes4_",x,".rds"))
-})  
-# res_old <- MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
+res <- MSTExplorer::load_example_results(multi_dataset=TRUE)  
+## Map CellOntology IDs onto original names in results files
+res <- MSTExplorer::map_celltype(res)
+### Count number of unique celltypes per CTD/stage ###
+# res[,list(N=length(unique(CellType))), by=c("ctd","stage")]
+
+ctd_names <- unique(res$ctd)
+# res_old <- MSTExplorer::load_example_results("Descartes_All_Results_extras.rds")
 ```
 
 ## scRNAseq
@@ -36,89 +39,12 @@ obj_list[["DescartesHuman"]] <- readRDS("~/Downloads/db4d63ab-0ca3-4fa5-b0cf-349
 obj_list[["HumanCellLandscape"]] <- readRDS("~/Downloads/1b7484e3-83a0-47fe-847e-54d811a2adae.rds")
 ```
 
-## Map CellOntology IDs onto original names in results files
-
-```{r}
-map_celltypes <- function(dat,
-                          map,
-                          celltype_col = list(
-                            dat="CellType",
-                            map=c("Main_cluster_name",
-                                  "author_cell_type")
-                          ),
-                          cellontology_id_col=list(
-                            map=c("cell_type_ontology_term_id",
-                                  "cell_type")
-                          ),
-                          rm_prefixes=c("Adult","Fetus","HESC")
-                          ){
-  #### Ensure both inputs are data.tables ####
-  map <- data.table::as.data.table(map)
-  celltype_col$map <- celltype_col$map[
-    celltype_col$map %in% names(map)
-  ]
-  cellontology_id_col$map <- cellontology_id_col$map[
-    cellontology_id_col$map %in% names(map)
-  ]
-  map <- map[,c(celltype_col$map, cellontology_id_col$map), with=FALSE] |>
-    unique()
-  map <- map[,.SD[1], by=c(celltype_col$map)]
-  dat <- data.table::as.data.table(dat)
-  #### Map original cell annotation to EWCE standardised version ####
-  map[,(celltype_col$dat):=EWCE::fix_celltype_names(get(celltype_col$map), 
-                                                    make_unique = FALSE)]
-  if(!is.null(rm_prefixes)){
-    dat[,(celltype_col$dat):=gsub(
-      pattern=paste0(paste0("^",rm_prefixes,"_"),collapse="|"),
-      replacement="",
-      x=get(celltype_col$dat), ignore.case = TRUE)]
-  }
-  #### Merge ####
-  dat_mapped <- data.table::merge.data.table(x = dat,
-                                             y = map,
-                                             by = celltype_col$dat,
-                                             all.x = TRUE,
-                                             all.y = FALSE) 
-  data.table::setnames(dat_mapped, 
-                       c(celltype_col$map,"cell_type"),
-                       c("CellType_original","cell_type_ontology"),
-                       skip_absent = TRUE)
-  return(dat_mapped)
-}
-
-res_mapped <- lapply(stats::setNames(names(res),
-                                     names(res)),
-                     function(x){
-  dat <- res[[x]]
-   if(x=="DescartesHuman"){
-    dat[,stage:="Fetus"]
-  }
-  if(x=="HumanCellLandscape"){
-    dat[,stage:=data.table::tstrsplit(CellType,"_",keep=1)]
-  }
-  map_celltypes(dat = dat,
-                map = obj_list[[x]]@meta.data)
-})
-```
-
-### Merge all results
-
-Merge all results into a single data.table.
-```{r}
-RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
-RES[,pheno_celltype:=paste(hpo_id,cell_type_ontology_term_id,sep="_")]
-### Count number of unique celltypes per CTD/stage ###
-RES[,list(N=length(unique(CellType))), by=c("ctd","stage")]
-```
-
-
 ## CellTypeDatasets
-```r
-ctd <- lapply(stats::setNames(ctd_names,ctd_names), function(x){
-  MultiEWCE::load_example_ctd(paste0("ctd_",x,".rds"))
-}) 
+```R
+ctd <- MSTExplorer::load_example_ctd(c("ctd_DescartesHuman.rds",
+                                     "ctd_HumanCellLandscape.rds")) 
 Xctd <- lapply(ctd_names, function(x){
-  lvl <- ctd_lvls["DescartesHuman"][[2]]
+  lvl <- res[ctd==x]$annotLevel[1]
   ctd[[x]][[lvl]]$specificity
 }) |> do.call(what = Seurat::RowMergeSparseMatrices)
 ```
@@ -154,9 +80,7 @@ Thus, we must traverse the ontology to find the last common ancestor of each cel
 We use `scOntoMatch` to do this.
 
 ```{r}
-ont <- ontologyIndex::get_OBO(
-  file = "https://github.com/obophenotype/cell-ontology/releases/download/v2023-10-19/cl-basic.obo")
-
+ont <- KGExplorer::get_ontology("cl", remove_rings = TRUE)
 # obj_list_minimal = scOntoMatch::ontoMultiMinimal(obj_list = obj_list, 
 #                                                  ont = ont,
 #                                                  anno_col = "cell_type",
@@ -198,9 +122,10 @@ RES_MAPPED <- data.table::merge.data.table(
 
 ## Across datasets: DescartesHuman vs HumanCellLandscape
 
-Within the fetal data, is there a correlation beteween phenotype-celltype enrichment statistics (p-value, q-value, fold-change) across CTD references?
+Within the fetal data, is there a correlation between phenotype-celltype enrichment statistics (p-value, q-value, fold-change) across CTD references?
 ```{r}
-RES2 <- RES_MAPPED|> 
+# res <- lm_res
+res2 <- res|> 
   # subset(stage=="Fetus") |>
   # subset(q<0.05)|>
   data.table::dcast.data.table(
@@ -370,13 +295,13 @@ plot_cor(RES_SIG,
 ### Adult-only
 ```{r}
 adult_only <- RES_HCL[q_Adult<.05 & q_Fetus>=.05] 
-MultiEWCE::create_dt(adult_only)
+MSTExplorer::create_dt(adult_only)
 ```
 
 ### Fetus-only
 ```{r}
 fetus_only <- RES_HCL[q_Adult>=.05 & q_Fetus<.05] 
-MultiEWCE::create_dt(fetus_only)
+MSTExplorer::create_dt(fetus_only)
 ```
 
 
@@ -389,17 +314,19 @@ Monarch Knowledge Graph.
 
 ## Manual inspection
 
-After manual inspection it was found that 65.6% of known causal cell types (and/or their immediate precursors) were recapitulated by our MultiEWCE results. In many instances, our results further resolved the specific cell subtype(s) underlying the phenotype (e.g. "neuron" to "visceromotor neuron", or "muscle cell" to "ventricular cardiac muscle cell").
+After manual inspection it was found that 65.6% of known causal cell types (and/or their immediate precursors) were recapitulated by our MSTExplorer results. In many instances, our results further resolved the specific cell subtype(s) underlying the phenotype (e.g. "neuron" to "visceromotor neuron", or "muscle cell" to "ventricular cardiac muscle cell").
 
 Sperm cells could not be assessed due to their absence in both transcriptomic reference datasets.
 
 The old results (using the non-standardised version of the DescartesHuman CTD) 
 had 69.5% recovery of known phenotype-celltype links, whereas the new results (DescartesHuman + HumanCellLandscape) had 65.6% recovery.
 ```{r}
-RES <- data.table::rbindlist(res_mapped, idcol = "ctd")
+# lm_res[,ctd:="DescartesHuman"]
+# RES <- MSTExplorer::map_celltype(lm_res)
+ 
 # RES <- res_old
-kg <- data.table::fread("~/Downloads/monarch_kg_cells.csv")
-kg <- kg[grepl("HP:",from)][from %in% unique(RES$hpo_id)]
+kg <- data.table::fread(here::here("data/monarch_kg_cells.csv"))
+kg <- kg[grepl("HP:",from)][from %in% unique(res$hpo_id)]
 message(paste(
   "Remaining:",length(unique(kg$from)),
   "phenotypes across",length(unique(kg$to)),"celltypes."
@@ -407,7 +334,7 @@ message(paste(
 #### Merge results with Knowledge Graph ####
 kg_res <- data.table::merge.data.table(
   kg[,c("from","to","label.to")],
-  RES[q<0.05],
+  res[q<0.05],
   by.x="from",
   by.y="hpo_id") |>
   data.table::setorderv(c("from","fold_change"), c(1,-1))
@@ -416,15 +343,26 @@ kg_res <- data.table::merge.data.table(
 kg[,list(N=data.table::uniqueN(to)), by="from"]$N|>summary()
 kg_res[,list(N=data.table::uniqueN(CellType)), by="from"]$N|>summary()
 
-
 missing_phenos <- setdiff(kg$from, kg_res$from)
 message((1-(length(missing_phenos) / length(unique(kg$from))))*100,
         "% phenotypes recovered.")
 
 kg_missing <- kg[from%in% missing_phenos]
-res_missing <- RES[hpo_id%in% missing_phenos]
-# data.table::fwrite(kg_missing, "~/Downloads/kg_missing.csv")
+res_missing <- res[hpo_id%in% missing_phenos]
+
+#### Compute increased knowledge ####
+n_before <- kg$from|>unique()|>length()
+n_after <- res[q<0.05]$hpo_id|>unique()|>length()
+n_before <- nrow(kg)
+n_after <- nrow(res[q<0.05])
+n_after/n_before
 ```
+
+```{r}
+
+```
+
+
 
 ### Traverse HP ontology
 
@@ -458,7 +396,7 @@ make_pseudo_seurat <- function(dt,
 }
 obj_list <- list(
   KG=make_pseudo_seurat(dt = kg, col = "from", new_col = "hpo_id"),
-  MultiEWCE=make_pseudo_seurat(dt = RES[q<0.05], col = "hpo_id")
+  MSTExplorer=make_pseudo_seurat(dt = RES[q<0.05], col = "hpo_id")
 )  
 obj_list_matched <- scOntoMatch::ontoMultiMatch(
   obj_list = obj_list,
@@ -481,7 +419,7 @@ p2g <- p2g[hpo_id%in% missing_phenos]
 p2g[,n_genes:=length(unique(gene_symbol)),by=hpo_id]
 summary(p2g$n_genes)
 
-ctd <- MultiEWCE::load_example_ctd("ctd_DescartesHuman.rds")
+ctd <- MSTExplorer::load_example_ctd("ctd_DescartesHuman.rds")
 ctd_genes <- rownames(ctd$level_2$specificity_quantiles)
 p2g <- p2g[gene_symbol %in% ctd_genes,]
 p2g[,n_genes_filtered:=length(unique(gene_symbol)),by=hpo_id]
@@ -570,7 +508,7 @@ compare_results <- function(obj_list,
                             unique(RES_MAPPED$pheno_celltype))
   kg_mapped <- kg_mapped[pheno_celltype %in% pc_intersect]
   RES_MAPPED <- RES_MAPPED[pheno_celltype %in% pc_intersect]
-  #### What proportion of the Monarch KG is covered by the MultiEWCE results? ####
+  #### What proportion of the Monarch KG is covered by the MSTExplorer results? ####
   RES_MAPPED[pheno_celltype %in% kg_mapped$pheno_celltype][,list(
     TP=sum(unique(pheno_celltype) %in% unique(kg_mapped$pheno_celltype)),
     n_res_kg=length(unique(kg_mapped$pheno_celltype)),

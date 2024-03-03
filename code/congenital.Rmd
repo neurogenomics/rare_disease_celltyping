@@ -21,14 +21,14 @@ library(ggplot2)
 
 ## Enrichment results
 ```{r}
-res <- MultiEWCE::load_example_results("rare_disease_min_genes4_HumanCellLandscape.rds")
+res <- MSTExplorer::load_example_results()
 # split the Celltype columns via the first "_" only
-res <- cbind(res,
-      data.table::data.table(
-        stringr::str_split(res$CellType,"_",n = 2, simplify = TRUE)) |> 
-        `colnames<-`(c("stage","celltype")
-                     )
-      )
+# res <- cbind(res,
+#       data.table::data.table(
+#         stringr::str_split(res$CellType,"_",n = 2, simplify = TRUE)) |> 
+#         `colnames<-`(c("stage","celltype")
+#                      )
+#       )
 ```
 
 ## Phenotype annotations
@@ -56,15 +56,15 @@ Of the 63 unique cell types in HCL:
 - Only 5 cell types are found only in adult samples.
 
 ```{r}
-res_gpt[,list(celltype=unique(celltype)),keyby=stage]
+res_gpt[,list(CellType=unique(CellType)),keyby=stage]
 fetal_stages <- c("Fetus","hESC")
-fetal_only <- setdiff(res_gpt[stage %in% fetal_stages]$celltype,
-                           res_gpt[stage=="Adult"]$celltype)
-adult_only <- setdiff(res_gpt[stage=="Adult"]$celltype,
-                      res_gpt[stage %in% fetal_stages]$celltype)
-res_gpt[,stage_group:=ifelse(celltype %in% fetal_only,
+fetal_only <- setdiff(res_gpt[stage %in% fetal_stages]$CellType,
+                           res_gpt[stage=="Adult"]$CellType)
+adult_only <- setdiff(res_gpt[stage=="Adult"]$CellType,
+                      res_gpt[stage %in% fetal_stages]$CellType)
+res_gpt[,stage_group:=ifelse(CellType %in% fetal_only,
                                 "fetal_only",
-                                ifelse(celltype %in% adult_only,
+                                ifelse(CellType %in% adult_only,
                                        "adult_only",
                                        "both")
                                 )
@@ -103,7 +103,6 @@ ggplot(res_gpt[q<0.05 & stage_group!="both",],
 ```
 
 
- 
 
 ## Compare by substrings
 
@@ -118,29 +117,31 @@ Strangely, some cell types with the substrings "fetal"/"primordial"/"hESC" in th
 ("fibroblast") which is not a fetal cell type.
 
 ```{r}
-fetal_keywords <- c("fetal","primordial","hESC")
+fetal_keywords <- c("fetal","fetus","primordial","hESC","embryonic")
 res_gpt[,fetal_celltype:=grepl(paste(fetal_keywords,collapse="|"),
-                               celltype,
+                               author_celltype,
                                ignore.case = TRUE)]
-res_gpt[stage=="Adult" & fetal_celltype==TRUE,]$celltype |>
+res_gpt[stage=="Adult" & fetal_celltype==TRUE,]$CellType |>
   unique()
 ```
 
-If we compare only by celltype subtrings (regardless of sample stage), 
+If we compare only by celltype substrings (regardless of sample stage), 
 we find the expected relationship of a decreasing proportion of these "fetal" 
 cell types with decreasing probability of the phenotype being congenital.
 
 ```{r}
-ggplot(res_gpt[q<0.05,],
-       aes(x=congenital_onset,
-           fill=fetal_celltype)) +
-  geom_bar(position="fill") +
-  scale_y_continuous(labels = scales::percent_format()) +
-  labs(y="% of significant results (FDR<=5%)") +
-  theme_bw()   
-
+# res_gpt[congenital_onset=="varies",]$congenital_onset <- "rarely"
+ggbar <- ggstatsplot::ggbarstats(res_gpt[q<0.05 & 
+                                         # log(fold_change)>5 & 
+                                         congenital_onset!="varies",],
+                        x="fetal_celltype",
+                        y="congenital_onset",
+                        package="palettetown",
+                        palette="mewtwo",
+                        proportion.test	= TRUE
+                        ) 
+ggbar
 ```
-
 
 
 # Session Info

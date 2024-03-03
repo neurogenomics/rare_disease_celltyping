@@ -9,80 +9,121 @@ output: html_document
 # Phenotype x celltype enrichment tests
 
 ```{r} 
-id_types = c("hpo_id")
-xmat <- phenomix:::prepare_hpo_matrix(value.var = "evidence_score_mean",
-                           id_types = id_types,
-                           fill = 0)
-ctd <- MultiEWCE::load_example_ctd(file = "ctd_DescartesHuman.rds")
-ymat <- ctd$level_2$specificity 
-
-{
-    t1 <- Sys.time()
-    lm_res <- iterate_lm(xmat = xmat, 
-                         ymat = ymat, 
-                         workers = NULL)
-    t2 <- Sys.time()
-    print(t2-t1)
+ymat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
+run_phenomix <- function(ctd_name,
+                         annotLevel,
+                         ymat,
+                         save_path = here::here(
+                           "results",
+                           paste0("phenomix_",ctd_name,"_results.tsv.gz")
+                           ),
+                         metric="specificity_quantiles",
+                         workers = NULL,
+                         force_new = FALSE,
+                         ...
+                         ){
+  if(file.exists(save_path) && isFALSE(force_new)){
+    message("Loading existing results from ",save_path)
+    return(data.table::fread(save_path))
+  }
+  ctd <- MSTExplorer::load_example_ctd(file = paste0("ctd_",ctd_name,".rds"))
+  xmat <- ctd[[annotLevel]][[metric]] 
+  lm_res <- phenomix::iterate_lm(xmat = xmat, 
+                                 ymat = ymat, 
+                                 method="glm",
+                                 correction_method = "fdr",
+                                 workers = workers,
+                                 ...)
+  lm_res[,annotLevel:=annotLevel]
+  data.table::fwrite(lm_res,save_path)
+  return(lm_res)
 }
-top_res <- lm_res[q<0.05]|> 
-    dplyr::group_by(xvar) |> 
-    dplyr::slice_max(order_by = F, n = 1) |>
-    dplyr::arrange(desc(F))  |>
-    dplyr::mutate(hpo_id = xvar,
-                  CellType = yvar) |>
-    data.table::data.table()
-top_res$hpo_name <- HPOExplorer::harmonise_phenotypes(top_res$xvar, as_hpo_ids = FALSE)
-View(top_res)
 
-res=MultiEWCE::load_example_results("Descartes_All_Results_extras.rds")
+
+
+lm_res1 <- run_phenomix(ctd_name = "DescartesHuman",
+                        annotLevel = 2,
+                        force_new = TRUE,
+                        ymat = ymat) 
+lm_res2 <- run_phenomix(ctd_name = "HumanCellLandscape",
+                        annotLevel = 3,
+                        force_new = TRUE,
+                        ymat = ymat)
+lm_res <- data.table::rbindlist(list(DescartesHuman=lm_res1,
+                                     HumanCellLandscape=lm_res2),
+                                idcol = "ctd")
+## Only applicable for method="anova"
+# lm_res[,q:=stats::p.adjust(p,method="fdr")]
+
+
+data.table::setnames(lm_res,
+                     c("xvar","yvar","F"),
+                     c("hpo_id","CellType","fold_change"))
+# f <- here::here("results/phenomix_results.tsv.gz")
+# data.table::fwrite(lm_res,f)
+# piggyback::pb_upload(file = f, repo = "neurogenomics/MSTExplorer")
+
+lm_res <- HPOExplorer::add_hpo_name(lm_res)
+lm_res <- MSTExplorer::map_celltype(lm_res)
+
+top_res <- lm_res[q<0.05]|> 
+    dplyr::group_by(hpo_id) |> 
+    dplyr::slice_max(order_by = fold_change, n = 1) |>
+    dplyr::arrange(dplyr::desc(fold_change))  |>
+    data.table::data.table()
+
+View(top_res)
+```
+
+### Compare MultiECWE vs. phenomix results
+
+```{r}
+res <- MSTExplorer::load_example_results("rare_disease_min_genes4_DescartesHuman.rds")
 res_merged <- merge(
     (lm_res|> 
          data.table::setnames(c("xvar","yvar","F"),c("hpo_id","CellType","fold_change"),
                               skip_absent = TRUE))[,c("hpo_id","CellType","p","q","fold_change")],
     res[,c("hpo_id","CellType","p","q","fold_change")],
     by=c("hpo_id","CellType"),
-    suffixes = c("_phenomix","_MultiEWCE")
-)[,cs_MultiEWCE:=(1-q_MultiEWCE)*fold_change_MultiEWCE][,cs_phenomix:=(1-q_phenomix)*fold_change_phenomix]
+    suffixes = c("_phenomix","_MSTExplorer")
+)[,cs_MSTExplorer:=(1-q_MSTExplorer)*fold_change_MSTExplorer][,cs_phenomix:=(1-q_phenomix)*fold_change_phenomix]
 
-ct_p <- cor.test(res_merged$p_MultiEWCE,res_merged$p_phenomix)
-ct_q <- cor.test(res_merged$q_MultiEWCE,res_merged$q_phenomix)
-ct_fc <- cor.test(res_merged$fold_change_MultiEWCE,res_merged$fold_change_phenomix)
-ct_cs <- cor.test(res_merged$cs_MultiEWCE,res_merged$cs_phenomix)
-# lm(res_merged$fold_change_MultiEWCE~res_merged$fold_change_phenomix) |> summary()
+ct_p <- cor.test(res_merged$p_MSTExplorer,res_merged$p_phenomix)
+ct_q <- cor.test(res_merged$q_MSTExplorer,res_merged$q_phenomix)
+ct_fc <- cor.test(res_merged$fold_change_MSTExplorer,res_merged$fold_change_phenomix)
+ct_cs <- cor.test(res_merged$cs_MSTExplorer,res_merged$cs_phenomix)
+# lm(res_merged$fold_change_MSTExplorer~res_merged$fold_change_phenomix) |> summary()
 
 ## Compare overlap in top CellType per hpo_id via each method
-res_top <- res_merged[q_MultiEWCE<.05,.(CellType_phenomix=CellType[which.max(fold_change_phenomix)],
-              CellType_MultiEWCE=CellType[which.max(fold_change_MultiEWCE)]),
-           by=hpo_id][,matched:=CellType_phenomix==CellType_MultiEWCE]
-res_top <- res_merged[q_MultiEWCE<.05,.(CellType_phenomix=CellType[which.min(p_phenomix)],
-                                        CellType_MultiEWCE=CellType[which.min(p_MultiEWCE)]),
-                      by=hpo_id][,matched:=CellType_phenomix==CellType_MultiEWCE]
+res_top <- res_merged[q_MSTExplorer<.05,.(CellType_phenomix=CellType[which.max(fold_change_phenomix)],
+              CellType_MSTExplorer=CellType[which.max(fold_change_MSTExplorer)]),
+           by=hpo_id][,matched:=CellType_phenomix==CellType_MSTExplorer]
+res_top <- res_merged[q_MSTExplorer<.05,.(CellType_phenomix=CellType[which.min(p_phenomix)],
+                                        CellType_MSTExplorer=CellType[which.min(p_MSTExplorer)]),
+                      by=hpo_id][,matched:=CellType_phenomix==CellType_MSTExplorer]
 sum(res_top$matched)/nrow(res_top)*100
 
 
 library(ggplot2)
 ggplot(res_merged,
-       aes(x=-log10(q_MultiEWCE+1e-100),
+       aes(x=-log10(q_MSTExplorer+1e-100),
            y=-log10(q_phenomix+1e-100),
-           color=.[q_phenomix<0.05]))+
+           color=q_phenomix))+
     geom_point(show.legend = FALSE)+
     # facet_wrap(~CellType,scales = "free")+
     theme_bw()
 ggplot(res_merged,
-       aes(x=log10(scales::rescale(fold_change_MultiEWCE)),
+       aes(x=log10(scales::rescale(fold_change_MSTExplorer)),
            y=log10(scales::rescale(fold_change_phenomix)),
            color=CellType))+
     geom_point(show.legend = FALSE)+
     # facet_wrap(~CellType,scales = "free")+
     theme_bw()
-
 ```
 
+ 
 
-
-# Seurat processing
-
-## 
+# Seurat processing 
 
 ```{r}
 id_types = c("disease_id","hpo_id")
@@ -131,3 +172,11 @@ scnlp_res <- scNLP::plot_tfidf(
 #                        n=1)
 ```
 
+# Session info
+
+<details>
+```{r}
+utils::sessionInfo()
+
+```
+</details>

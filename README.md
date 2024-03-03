@@ -9,4 +9,4 @@ This repository contains the data and code needed to replicate the analyses in o
 
 - [HPOExplorer](https://github.com/neurogenomics/HPOExplorer): contains useful functions for working with the Human Phenotype Ontology (HPO). It allows you to create interactive phenotype network plots, as well as many other useful functions.
 
-- [MultiEWCE](https://github.com/neurogenomics/MultiEWCE): allows you to run [EWCE](https://github.com/NathanSkene/EWCE) on multiple gene lists in parallel. 
+- [MSTExplorer](https://github.com/neurogenomics/MSTExplorer): allows you to run [EWCE](https://github.com/NathanSkene/EWCE) on multiple gene lists in parallel. 
