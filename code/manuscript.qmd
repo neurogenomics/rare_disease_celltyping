@@ -19,27 +19,25 @@ for(x in pkgs){
 
 ### Create gene x phenotype evidence matrix
 
+Create phenotype-evidence score matrix from the HPO phenotype-gene annotations 
+and GenCC disease-gene evidence scores.
+
 ```{r hpo_to_matrix, eval=FALSE}
-## Create phenotype-evidence score matrix 
-xmat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
+ymat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
 ```
 
 ### Run tests
 
-```{r run_phenomix}
+```{r run_phenomix, eval=FALSE}
 ## Run phenomix on DescartesHuman CTD
 lm_res1 <- MSTExplorer::run_phenomix(ctd_name = "DescartesHuman",
                                      annotLevel = 2,
-                                     xmat = xmat)
+                                     ymat = ymat)
 ## Run phenomix on HumanCellLandscape CTD
 lm_res2 <- MSTExplorer::run_phenomix(ctd_name = "HumanCellLandscape",
                                      annotLevel = 3,
-                                     xmat = xmat)
-```
-
-### Merge results
-
-```{r Merge results}
+                                     ymat = ymat)
+#### Merge results ####
 results <- data.table::rbindlist(list(DescartesHuman=lm_res1,
                                       HumanCellLandscape=lm_res2),
                                 idcol = "ctd")
@@ -51,6 +49,13 @@ remove(lm_res1,lm_res2)
 data.table::setnames(results,
                      c("xvar","yvar","F"),
                      c("hpo_id","CellType","fold_change"))
+```
+
+### Load results
+
+Precomputed phenotype-cell type associations results can also be loaded like so.
+```{r Load results}
+results <- MSTExplorer::load_example_results()
 ```
 
 ### Upload results
@@ -178,12 +183,15 @@ ggbar
 
 ```{r predict_celltypes}
 ## Define input phenotypes/genes
-phenotypes <- c("Scrotal hypospadias","Increased circulating progesterone")
-genes_include <- c("MAGEL2","HERC2")
+phenotypes <- c("Generalized neonatal hypotonia",
+                "Scrotal hypospadias",
+                "Increased circulating progesterone")
+genes_include <- c("HSD3B2","HERC2")
 genes_exclude <- c("SNORD115-1")
 ## Predict cell types
 ct <- MSTExplorer::predict_celltypes(phenotypes = phenotypes,
                                      genes_include = genes_include, 
+                                     genes_exclude = genes_exclude,
                                      save_path = here::here("figures/figure5.pdf"))
 ```
 
@@ -199,24 +207,32 @@ results <- HPOExplorer::add_death(results,
 
 ## Plot differential outcomes
 
+"HP:0001252" is the HPO term for hypotonia. We will plot the differential outcomes for this phenotype and its descendants. 
+
 ```{r plot_differential_outcomes_heatmap}
 ## Count number of diseases associated with these phenotypes
-phenotypes <- c("Hypotonia",
-                "Neonatal hypotonia",
-                "Generalized neonatal hypotonia")
-phenotypes_ids <- HPOExplorer::map_phenotypes(phenotypes, to="id")
-annot <- HPOExplorer::load_phenotype_to_genes(3)
-
-diseases <- annot[hpo_id %in% phenotypes_ids]$disease_id|>unique()
-message(length(diseases)," unique diseases are associated with: ",paste(phenotypes,collapse = "; "))
+keep_descendants <- "Hypotonia" # HP:0001252
+hypotonia_results <- HPOExplorer::filter_descendants(results, 
+                                                     keep_descendants = keep_descendants) 
+hypotonia_results <- MSTExplorer::map_celltype(hypotonia_results)
+phenotypes_ids <- unique(hypotonia_results$hpo_id) 
+message(length(phenotypes_ids)," unique phenotypes are descendants of ",
+        paste(keep_descendants,collapse = "; "))
+message(length(unique(hypotonia_results$disease_id) ),
+        " unique diseases are associated with: ",
+        paste(keep_descendants,collapse = "; "))
+message(length(unique(hypotonia_results[q<0.05]$cl_name) ),
+        " unique cell types are associated with: ",
+        paste(keep_descendants,collapse = "; "))
 
 ## Generate plot
-differential_outcomes <- MSTExplorer::plot_differential_outcomes_heatmap(
-  phenotypes = phenotypes,
-  results = results,
+differential_outcomes <- MSTExplorer::plot_differential_outcomes_heatmap( 
+  results = hypotonia_results, 
+  print_phenotypes = TRUE,
+  fill_limits = c(1,8),
   save_path = here::here("figures/figure6.pdf"),
-  height=7, 
-  width=15
+  height=8, 
+  width=12
 )
 differential_outcomes$plot
 ```
@@ -297,6 +313,16 @@ ttd_all_targets <- MSTExplorer::ttd_check(top_targets=targets$top_targets,
                                           save_path = here::here("figures/figureS3.pdf"))
 
 ```
+
+#  Identification of translatable experimental models
+
+Fig S4.
+
+```{r plot_upheno}
+pheno_map_genes_match <- KGExplorer::map_upheno_data()
+upheno_plots <- KGExplorer::plot_upheno(pheno_map_genes_match = pheno_map_genes_match)
+```
+
 
 # Session info
 
