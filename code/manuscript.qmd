@@ -1,7 +1,12 @@
 ---
 title: "Rare Disease Celltyping: reproducible manuscript"
-format: html
-editor: visual
+author: Brian M. Schilder
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+editor: visual 
 ---
 
 ```{r setup}
@@ -41,14 +46,19 @@ lm_res2 <- MSTExplorer::run_phenomix(ctd_name = "HumanCellLandscape",
 results <- data.table::rbindlist(list(DescartesHuman=lm_res1,
                                       HumanCellLandscape=lm_res2),
                                 idcol = "ctd")
-## Apply multiple testing correction
-results[,q:=stats::p.adjust(p,method="fdr")]
-## Remove extra columns
-results <- results[,-c("Effect","DFn","p<.05")]
+#### Multiple-testing correction ####
+## For GLM (all celltypes/model)
+lm_res[,q:=ifelse(model_q<0.05,p,min(1,model_q+p)), by=.I]  
+data.table::setnames(lm_res,
+                     c("xvar","yvar","estimate"),
+                     c("CellType","hpo_id","fold_change"))
+## For ANOVA (1 celltype/model)
+# lm_res[,q:=stats::p.adjust(p,method="fdr")]  
+# results <- results[,-c("Effect","DFn","p<.05")]
+# data.table::setnames(results,
+#                      c("xvar","yvar","F"),
+#                      c("hpo_id","CellType","fold_change"))
 remove(lm_res1,lm_res2)
-data.table::setnames(results,
-                     c("xvar","yvar","F"),
-                     c("hpo_id","CellType","fold_change"))
 ```
 
 ### Load results
@@ -90,29 +100,28 @@ results <- MSTExplorer::map_celltype(results)
 
 ```{r add_symptom_results, eval=FALSE}
 ## Run this after other steps (here for reference only)
-# results <- MSTExplorer::add_symptom_results(results = results)
+results <- MSTExplorer::add_symptom_results(results = results)
 ```
 
 # Validation of expected phenotype-cell type relationships
 
 ## Summary of significant associations between phenotypes and cell types, aggregated by HPO branch
 
-```{r plot_bar_dendro, fig.height=20}
+```{r plot_bar_dendro, fig.height=16, fig.width=13}
 out <- MSTExplorer::plot_bar_dendro(results = results, 
                                     save_path = here::here("figures/figure1.pdf"))
 ```
 
 ### More specific phenotypes are associated with fewer, more specific genes and cell types
 
-```{r plot_ontology_levels}
+```{r plot_ontology_levels, fig.height=7, fig.width=23}
 ont_plots <- MSTExplorer::plot_ontology_levels(results = results, 
                                                save_path = here::here("figures/figure2.pdf"))
-ont_plots$plot
 ```
 
 ### Hepatoblasts have a unique role in recurrent meningococcal disease.
 
-```{r plot_bar_branches}
+```{r plot_bar_branches, fig.height=10, fig.width=10}
 results_tmp <- HPOExplorer::add_ancestor(data.table::copy(results),
                                          lvl = 6,
                                          force_new = TRUE)
@@ -129,6 +138,7 @@ infections_out <- MSTExplorer::plot_bar_branches(
   q_threshold=0.05,
   background_full=FALSE,
   save_path = here::here("figures/figure3.pdf"))
+infections_out
 remove(results_tmp)
 ```
 
@@ -209,7 +219,7 @@ results <- HPOExplorer::add_death(results,
 
 "HP:0001252" is the HPO term for hypotonia. We will plot the differential outcomes for this phenotype and its descendants. 
 
-```{r plot_differential_outcomes_heatmap}
+```{r plot_differential_outcomes_heatmap, fig.height=8, fig.width=12}
 ## Count number of diseases associated with these phenotypes
 keep_descendants <- "Hypotonia" # HP:0001252
 hypotonia_results <- HPOExplorer::filter_descendants(results, 
@@ -234,7 +244,6 @@ differential_outcomes <- MSTExplorer::plot_differential_outcomes_heatmap(
   height=8, 
   width=12
 )
-differential_outcomes$plot
 ```
 
 # Therapeutics: Gene therapy target identification
@@ -247,7 +256,7 @@ targets <- MSTExplorer::prioritise_targets(results = results)
 
 ### Prioritised target filtering steps
 
-```{r plot_report}
+```{r plot_report, fig.height=10, fig.width=10}
 report_plot <- MSTExplorer::plot_report(rep_dt = targets$report, 
                                         results = results, 
                                         save_plot = here::here("figures/figure7.pdf")) 
@@ -257,44 +266,44 @@ report_plot <- MSTExplorer::plot_report(rep_dt = targets$report,
 
 ## Recurrent meningococcal disease
 
-```{r prioritise_targets_network1}
+```{r prioritise_targets_network1, fig.height=10, fig.width=10, results='asis', error=TRUE}
 vn1 <- MSTExplorer::prioritise_targets_network(
   top_targets = targets$top_targets[hpo_name=="Recurrent meningococcal disease"])
-vn1
+vn1$plot
 ```
 
 ## Coma
 
-```{r prioritise_targets_network2}
+```{r prioritise_targets_network2, fig.height=10, fig.width=10, results='asis', error=TRUE}
 vn2 <- MSTExplorer::prioritise_targets_network(
   top_targets = targets$top_targets[hpo_name=="Coma"])
-vn2
+vn2$plot
 ```
 
 ## Neonatal hypotonia
 
-```{r prioritise_targets_network3}
+```{r prioritise_targets_network3, fig.height=10, fig.width=10, results='asis', error=TRUE}
 vn3 <- MSTExplorer::prioritise_targets_network(
   top_targets = targets$top_targets[hpo_name=="Neonatal hypotonia"])
-vn3
+vn3$plot
 ```
 
 ## Alzheimer's Disease
 
-```{r prioritise_targets_network4}
+```{r prioritise_targets_network4, fig.height=10, fig.width=10, results='asis'}
 vn4 <- MSTExplorer::prioritise_targets_network(
   top_targets = targets$top_targets[grepl("Alzheimer",hpo_name, ignore.case = TRUE)|
                                     grepl("Alzheimer",disease_name, ignore.case = TRUE)])
-vn4
+vn4$plot
 ```
 
 ## Parkinson's Disease
 
-```{r prioritise_targets_network5}
+```{r prioritise_targets_network5, fig.height=10, fig.width=10, results='asis'}
 vn5 <- MSTExplorer::prioritise_targets_network(
   top_targets = targets$top_targets[grepl("Parkinson",hpo_name, ignore.case = TRUE)|
                                     grepl("Parkinson",disease_name, ignore.case = TRUE)])
-vn5
+vn5$plot
 ```
 
 # Validate therapeutic targets
@@ -315,21 +324,40 @@ ttd_all_targets <- MSTExplorer::ttd_check(top_targets=targets$top_targets,
 ```
 
 #  Identification of translatable experimental models
-
-Fig S4.
+ 
 
 ```{r plot_upheno}
+library(ggplot2) # <-- Necessary due to bug in one of the plotting dependencies 
+
+top_ids <- unique(targets$top_targets$hpo_id)[1:500]
 pheno_map_genes_match <- KGExplorer::map_upheno_data()
-upheno_plots <- KGExplorer::plot_upheno(pheno_map_genes_match = pheno_map_genes_match)
+upheno_plots <- KGExplorer::plot_upheno(
+  pheno_map_genes_match = pheno_map_genes_match, 
+  filters=list(id1=top_ids)
+  )
 ```
 
+## Rain plot
+
+```{r UPHENO rainplot}
+upheno_plots$rainplot
+```
+
+## Heatmap 
+
+```{r UPHENO heatmap, fig.height=10, fig.width=10}
+KGExplorer::plot_save(path = here::here("figures/figureS4.pdf"),
+                      plt = upheno_plots$heatmap,
+                      width=12, height=9)
+upheno_plots$heatmap
+```
 
 # Session info
 
-\<details\>
+<details>
 
 ```{r sessionInfo}
 utils::sessionInfo()
 ```
 
-\</details\>
+</details>

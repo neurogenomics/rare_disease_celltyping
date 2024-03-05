@@ -52,8 +52,11 @@ lm_res2 <- run_phenomix(ctd_name = "HumanCellLandscape",
 lm_res <- data.table::rbindlist(list(DescartesHuman=lm_res1,
                                      HumanCellLandscape=lm_res2),
                                 idcol = "ctd")
-## Only applicable for method="anova"
-# lm_res[,q:=stats::p.adjust(p,method="fdr")]
+#### Multiple-testing correction ####
+## For GLM (all celltypes/model)
+lm_res[,q:=ifelse(model_q<0.05,p,min(1,model_q+p)), by=.I]  
+## For ANOVA (1 celltype/model)
+# lm_res[,q:=stats::p.adjust(p,method="fdr")] 
 
 
 data.table::setnames(lm_res,
