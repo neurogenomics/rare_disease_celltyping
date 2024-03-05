@@ -7,6 +7,10 @@ Rare diseases (RDs) are uncommon as individual diagnoses, but as a group contrib
 
 This repository contains the data and code needed to replicate the analyses in our preprint [insert link to preprint], as well as links to the R packages required (see below). 
 
-- [HPOExplorer](https://github.com/neurogenomics/HPOExplorer): contains useful functions for working with the Human Phenotype Ontology (HPO). It allows you to create interactive phenotype network plots, as well as many other useful functions.
 
-- [MSTExplorer](https://github.com/neurogenomics/MSTExplorer): allows you to run [EWCE](https://github.com/NathanSkene/EWCE) on multiple gene lists in parallel. 
+- [KGExplorer](https://github.com/neurogenomics/KGExplorer): Imports and analyses large-scale biomedical knowledge graphs and ontologies.
+
+- [HPOExplorer](https://github.com/neurogenomics/HPOExplorer): Contains extensive functions for easily importing, annotating, filtering, and visualising the Human Phenotype Ontology (HPO) at the disease, phenotype, and gene levels.
+
+- [MSTExplorer](https://github.com/neurogenomics/MSTExplorer): Systematically identifies, prioritises, 
+  and visualises cell-type-specific gene therapy targets across the phenome. 
