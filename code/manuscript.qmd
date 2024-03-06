@@ -10,12 +10,12 @@ editor: visual
 ---
 
 ```{r setup}
-pkgs <- c("HPOExplorer","MSTExplorer")
-for(x in pkgs){
+for(x in c("HPOExplorer","MSTExplorer")){
   if(!require(x,character.only = TRUE)){
     BiocManager::install(paste0("neurogenomics/",x), dependencies=TRUE)
   }  
 }
+remove(x)
 ```
 
 # Main analyses
@@ -24,8 +24,7 @@ for(x in pkgs){
 
 ### Create gene x phenotype evidence matrix
 
-Create phenotype-evidence score matrix from the HPO phenotype-gene annotations 
-and GenCC disease-gene evidence scores.
+Create phenotype-evidence score matrix from the HPO phenotype-gene annotations and GenCC disease-gene evidence scores.
 
 ```{r hpo_to_matrix, eval=FALSE}
 ymat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
@@ -37,21 +36,33 @@ ymat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
 ## Run phenomix on DescartesHuman CTD
 lm_res1 <- MSTExplorer::run_phenomix(ctd_name = "DescartesHuman",
                                      annotLevel = 2,
+                                     save_path = file.path(
+  "/Volumes/threadripper/shared/bms20/projects/rare_disease_celltyping/results/",
+  paste0("phenomix_","glm","_","specificity"),
+  paste0("phenomix_","DescartesHuman","_results.tsv.gz")
+  ),
                                      ymat = ymat)
 ## Run phenomix on HumanCellLandscape CTD
 lm_res2 <- MSTExplorer::run_phenomix(ctd_name = "HumanCellLandscape",
                                      annotLevel = 3,
+                                     save_path = file.path(
+  "/Volumes/threadripper/shared/bms20/projects/rare_disease_celltyping/results/",
+  paste0("phenomix_","glm","_","specificity"),
+  paste0("phenomix_","HumanCellLandscape","_results.tsv.gz")
+  ),
                                      ymat = ymat)
 #### Merge results ####
 results <- data.table::rbindlist(list(DescartesHuman=lm_res1,
                                       HumanCellLandscape=lm_res2),
-                                idcol = "ctd")
+                                idcol = "ctd") |>
+  data.table::setnames(c("xvar","yvar"),
+                       c("CellType","hpo_id"))
 #### Multiple-testing correction ####
 ## For GLM (all celltypes/model)
-lm_res[,q:=ifelse(model_q<0.05,p,min(1,model_q+p)), by=.I]  
-data.table::setnames(lm_res,
-                     c("xvar","yvar","estimate"),
-                     c("CellType","hpo_id","fold_change"))
+results[,q:=ifelse(model_q<0.05,p,min(1,model_q+p)), by=.I]  
+results[,q:=(model_q+p)]  
+results[,fold_change:=log(abs(estimate)+abs(model_estimate))][,fold_change:=fold_change+abs(min(fold_change))]
+
 ## For ANOVA (1 celltype/model)
 # lm_res[,q:=stats::p.adjust(p,method="fdr")]  
 # results <- results[,-c("Effect","DFn","p<.05")]
@@ -64,6 +75,7 @@ remove(lm_res1,lm_res2)
 ### Load results
 
 Precomputed phenotype-cell type associations results can also be loaded like so.
+
 ```{r Load results}
 results <- MSTExplorer::load_example_results()
 ```
@@ -217,7 +229,7 @@ results <- HPOExplorer::add_death(results,
 
 ## Plot differential outcomes
 
-"HP:0001252" is the HPO term for hypotonia. We will plot the differential outcomes for this phenotype and its descendants. 
+"HP:0001252" is the HPO term for hypotonia. We will plot the differential outcomes for this phenotype and its descendants.
 
 ```{r plot_differential_outcomes_heatmap, fig.height=8, fig.width=12}
 ## Count number of diseases associated with these phenotypes
@@ -308,7 +320,7 @@ vn5$plot
 
 # Validate therapeutic targets
 
-## Therapeutics Target Database recall 
+## Therapeutics Target Database recall
 
 ```{r ttd_check}
 ## Gene therapy only
@@ -323,8 +335,7 @@ ttd_all_targets <- MSTExplorer::ttd_check(top_targets=targets$top_targets,
 
 ```
 
-#  Identification of translatable experimental models
- 
+# Identification of translatable experimental models
 
 ```{r plot_upheno}
 library(ggplot2) # <-- Necessary due to bug in one of the plotting dependencies 
@@ -343,13 +354,19 @@ upheno_plots <- KGExplorer::plot_upheno(
 upheno_plots$rainplot
 ```
 
-## Heatmap 
+## Heatmap
 
 ```{r UPHENO heatmap, fig.height=10, fig.width=10}
 KGExplorer::plot_save(path = here::here("figures/figureS4.pdf"),
                       plt = upheno_plots$heatmap,
                       width=12, height=9)
 upheno_plots$heatmap
+```
+
+## Correlation
+
+```{r}
+
 ```
 
 # Session info
