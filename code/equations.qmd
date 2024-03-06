@@ -46,15 +46,15 @@ $$
 
 ```{=tex}
 \begin{equation*}
-  \eqnmarkbox[purple]{n1}{M_{g,p}}
+  \eqnmarkbox[NavyBlue]{n1}{M_{g,p}}
   =
   \frac{
-    \eqnmarkbox[red]{n3a}{\sum_{d \in D}}
+    \eqnmarkbox[Cerulean]{n3a}{\sum_{d \in D}}
     \eqnmarkbox[blue]{n4a}{R(g,p,d)} 
     \times 
-    \eqnmarkbox[magenta]{n5}{E(g,d)}  
+    \eqnmarkbox[BlueViolet]{n5}{E(g,d)}  
   }{
-    \eqnmarkbox[red]{n3b}{\sum_{d \in D}}
+    \eqnmarkbox[Cerulean]{n3b}{\sum_{d \in D}}
     \eqnmarkbox[blue]{n4b}{R(g,p,d)}
   }
 \end{equation*}
@@ -72,42 +72,11 @@ Let us denote:\
 - $c$ as a cell type.\
 - $i$ as a single cell.
 
-The gene expression specificity matrix construction can be mathematically described as the following:
-
-$$
-S_{g,c} = \frac{\sum_{i=1}^{|L|}F(g,i,c)/N_c}{\sum_{r=1}^{k}(\sum_{i=1}^{|L|}F(g,i,r)/N_r)}
-$$
-
-\
-
-```{=tex}
-\begin{equation*}
-  \eqnmarkbox[purple]{s1}{S_{g,c}}
-  =
-  \frac{
-    \eqnmarkbox[red]{s3a}{\sum_{i=1}^{|L|}}
-    \eqnmarkbox[blue]{s4a}{F(g,i,c)}/ 
-    \eqnmarkbox[magenta]{s5a}{N_c}  
-  }{
-   \eqnmarkbox[BlueGreen]{s6}{\sum_{r=1}^{k}}(
-     \eqnmarkbox[red]{s3b}{\sum_{i=1}^{|L|}}
-     \eqnmarkbox[blue]{s4b}{F(g,i,r)}/ 
-    \eqnmarkbox[magenta]{s5b}{N_r}  
-   ) 
-  }
-\end{equation*}
-\annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix} 
-\annotate[yshift=2em]{left}{s3a,s3b}{Average gene expression by cell type}
-\annotate[yshift=-4em]{below,left}{s4a,s4b}{Gene-by-cell expression matrix}
-\annotate[yshift=1em]{right}{s5a}{Number of cell types}
-\annotate{below,right}{s5b}{Number of rows}
-\annotate{below,left}{s6}{Row sums}
-```
-\
 
 Genes with very no expression across any cell types were considered to be uninformative and were therefore removed before computing the specificity matrix. 
 
-$$F(g,i,c) = \begin{cases}r_{g,i},\text{ }l_i = c\\0,\text{ }l_i \neq c \end{cases}$$
+$$F(g,i,c) = \begin{cases}r_{g,i},\text{ }l_i = c\\0,\text{ }l_i \neq c \end{cases}
+$$
 
 \
 
@@ -116,13 +85,53 @@ $$F(g,i,c) = \begin{cases}r_{g,i},\text{ }l_i = c\\0,\text{ }l_i \neq c \end{cas
   \eqnmarkbox[purple]{f1}{F(g,i,c)}
   =
   \begin{cases}
-  \eqnmarkbox[BlueGreen]{f2}{r_{g,i}},
+  \eqnmarkbox[WildStrawberry]{f2}{r_{g,i}},
   \text{ }l_i = c\\0,
   \text{ }l_i \neq c 
   \end{cases}
 \end{equation*}
-\annotate[yshift=1em]{left}{f1}{Filtered gene-by-cell type specificity matrix} 
+\annotate[yshift=1em]{left}{f1}{Filtered gene-by-cell expression matrix} 
 \annotate[yshift=2em]{left}{f2}{Expression of gene $g$ in cell $i$} 
+```
+\
+
+The gene expression specificity matrix construction can be defined as the following:
+
+$$
+S_{g,c} = \frac{
+\frac{\sum_{i=1}^{|L|}F(g,i,c)}{N_c}
+}{\sum_{r=1}^{k}(\frac{\sum_{i=1}^{|L|}F(g,i,c)}{N_c})}
+$$
+
+\
+
+```{=tex}
+\begin{equation*}
+  \eqnmarkbox[orange]{s1}{S_{g,c}}
+  =
+  \frac{
+    \eqnmarkbox[purple]{s3a}{
+      \frac{
+        \sum_{i=1}^{|L|} F(g,i,c)
+      }{
+        N_c  
+      }
+    } 
+  }{
+   \eqnmarkbox[OrangeRed]{s6}{\sum_{r=1}^{k}}(
+     \eqnmarkbox[purple]{s3b}{
+      \frac{
+        \sum_{i=1}^{|L|} F(g,i,c)
+      }{
+        N_c  
+      }
+    } 
+   ) 
+  }
+\end{equation*}
+\annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix} 
+\annotate[yshift=2em]{left}{s3a,s3b}{Compute mean expression of each gene per cell type} 
+\annotate{below,left}{s6}{Compute row sums of \\mean gene-by-cell type matrix}
 ```
 \
 
@@ -137,10 +146,10 @@ $$
 ```{=tex}
 \begin{equation*}
   \frac{
-     \eqnmarkbox[BlueGreen]{g1}{|G_{d \cap p \cap c} |}
+     \eqnmarkbox[Chartreuse3]{g1}{|G_{d \cap p \cap c} |}
     }{
-       \eqnmarkbox[blue]{g2}{|G_{d,p}|}} 
-  \geq \eqnmarkbox[purple]{g3}{.25} 
+       \eqnmarkbox[Emerald]{g2}{|G_{d,p}|}} 
+  \geq \eqnmarkbox[SeaGreen]{g3}{.25} 
 \end{equation*}
 \annotate[yshift=1em]{left}{g1}{Intersect between \\symptom genes ($G_{d,p}$) and driver genes ($G_{p,c}$)} 
 \annotate[yshift=-1em]{below,left}{g2}{Symptom genes \\(i.e. genes annotated to a phenotype\\ via a specific disease)} 
@@ -166,17 +175,17 @@ $$
 
 ```{=tex}
 \begin{equation*}
-  \eqnmarkbox[purple]{nss}{NSS_p}
+  \eqnmarkbox[Brown4]{nss}{NSS_p}
   =
   \frac{ 
-    \eqnmarkbox[blue]{nss2}{\sum_{j=1}^{m}} 
+    \eqnmarkbox[Goldenrod]{nss2}{\sum_{j=1}^{m}} 
     (
-      \eqnmarkbox[magenta]{nss3}{F_{pj}}
+      \eqnmarkbox[Goldenrod4]{nss3}{F_{pj}}
       \times 
-      \eqnmarkbox[ForestGreen]{nss4}{W_j}
+      \eqnmarkbox[IndianRed4]{nss4}{W_j}
     )
     }{
-    \eqnmarkbox[red]{nss5}{\sum_{j=1}^{m}(\max\{F_j\} \times W_j)} 
+    \eqnmarkbox[Tan]{nss5}{\sum_{j=1}^{m}(\max\{F_j\} \times W_j)} 
   } \times 100
 \end{equation*}
 \annotate[yshift=1em]{left}{nss}{Normalised Severity Score \\for each phenotype}
