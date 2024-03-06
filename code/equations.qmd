@@ -65,7 +65,7 @@ $$
 ```
 \
 
-# Single-cell transcriptomic atlases
+## Single-cell transcriptomic atlases
 
 Let us denote:\
 - $g$ as a gene.\
@@ -126,7 +126,7 @@ $$F(g,i,c) = \begin{cases}r_{g,i},\text{ }l_i = c\\0,\text{ }l_i \neq c \end{cas
 ```
 \
 
-### Symptom-cell type associations
+## Symptom-cell type associations
 
 $$
 \frac{|G_{d \cap p \cap c} |}{|G_{d,p} |}\geq0.25
@@ -148,7 +148,7 @@ $$
 ```
 \
 
-# Annotation of phenotypes using generative large language models
+## Annotation of phenotypes using generative large language models
 
 \
 
