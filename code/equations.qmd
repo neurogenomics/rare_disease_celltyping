@@ -13,16 +13,22 @@ editor: visual
 
 # Tutorials
 
--   https://lpembleton.rbind.io/posts/annotate-equations/
+-   <https://lpembleton.rbind.io/posts/annotate-equations/>
 -   <https://github.com/st--/annotate-equations/blob/main/annotate-equations.pdf>
 
 # Install latex
 
-Only need to do this once. Instructions using `homebrew`.
+Only need to do this once. 
+Instructions [using `homebrew`](https://formulae.brew.sh/formula/texlive): 
 
 ``` bash
 brew install texlive
 ```
+or [using quarto](https://quarto.org/docs/get-started/authoring/rstudio.html#format-options): 
+```bash
+quarto install tinytex
+```
+
 
 # Methods
 
@@ -58,10 +64,10 @@ $$
     \eqnmarkbox[blue]{n4b}{R(g,p,d)}
   }
 \end{equation*}
-\annotate[yshift=1em]{left}{n1}{Weighted gene-by-phenotype evidence score matrix} 
-\annotate[yshift=-2em]{below,left}{n3a,n3b}{Average across all diseases}
-\annotate[yshift=-2.5em,xshift=2.5em]{below,right}{n4a,n4b}{Binary gene-by-phenotype relationship matrix,\\ (1=relationship, 0=no relationship)}
-\annotate[yshift=2em]{left}{n5}{Weighted gene-by-disease evidence score matrix}
+\annotate[yshift=1em]{left}{n1}{Weighted gene-by-phenotype \\evidence score matrix} 
+\annotate[yshift=-2em]{below,left}{n3a,n3b}{Iterate over all diseases}
+\annotate[yshift=-2.5em,xshift=2.5em]{below,right}{n4a,n4b}{Binary gene-by-phenotype \\relationship matrix,\\ (1=relationship, 0=no relationship)}
+\annotate[yshift=2em]{left}{n5}{Weighted gene-by-disease \\evidence score matrix}
 ```
 \
 
