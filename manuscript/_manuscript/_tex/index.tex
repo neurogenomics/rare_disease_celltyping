@@ -1,0 +1,2716 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+sn-nature
+]{sn-jnl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+%%%% Standard Packages
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+
+%%%%
+
+\raggedbottom
+\usepackage{annotate-equations}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Cell type-specific contextualisation of the phenomic landscape: a comprehensive and scalable approach towards the diagnosis, prognosis and treatment of all rare diseases},
+  pdfauthor={Brian M. Schilder; Kitty B. Murphy; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
+  pdfkeywords={rare disease, phenotype, single-cell, gene therapy},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title[Cell type-specific contextualisation of the phenomic landscape: a
+comprehensive and scalable approach towards the diagnosis, prognosis and
+treatment of all rare diseases]{Cell type-specific contextualisation of
+the phenomic landscape: a comprehensive and scalable approach towards
+the diagnosis, prognosis and treatment of all rare diseases}
+
+% author setup
+\author*[aff-1]{\fnm{Brian M.} \sur{Schilder}}\email{brian\_schilder@alumni.brown.edu}\author[aff-1]{\fnm{Kitty B.} \sur{Murphy}}\author[aff-1]{\fnm{Robert} \sur{Gordon-Smith}}\author[aff-1]{\fnm{Jai} \sur{Chapman}}\author[aff-1]{\fnm{Momoko} \sur{Otani}}\author*[aff-1]{\fnm{Nathan G.} \sur{Skene}}\email{n.skene@imperial.ac.uk}
+% affil setup
+\affil[aff-1]{, \orgname{Imperial College London}}
+
+% abstract 
+
+
+% keywords
+\keywords{rare disease,  phenotype,  single-cell,  gene therapy}
+
+\begin{document}
+\maketitle
+
+\subsection{Abstract}\label{abstract}
+
+Rare diseases (RDs) are an extremely heterogeneous and underserved
+category of medical conditions. While the majority of RDs are strongly
+genetic, it remains largely unknown via which physiological mechanisms
+genetics cause RD. Therefore, we sought to systematically characterise
+the cell type-specific mechanisms underlying all RD phenotypes with a
+known genetic cause by leveraging the Human Phenotype Ontology and
+transcriptomic single-cell atlases of the entire human body from
+embryonic, foetal, and adult samples. In total we identified significant
+associations between 201 cell types and 9,575/11,028 (86.7\%) unique
+phenotypes across 8,628 RDs. We estimate that this represents an over
+500-fold increase in the collective knowledge of RD phenotype-cell type
+mechanisms.
+
+Next, we demonstrated how these results may be used for personalised
+patient diagnosis and prognosis, as well as the development of novel
+therapeutics. Finally, we take a data-driven approach to highlight
+several of the most promising gene/cell therapy candidates with the
+highest probability of animal model-to-human patient translation.
+Furthermore, we have made these results entirely reproducible and freely
+accessible to the global community to maximise their impact. To
+summarise, this work represents a significant step forward in the
+mission to treat patients across an extremely diverse spectrum of
+serious RDs.
+
+\subsection{Introduction}\label{sec-introduction}
+
+While rare diseases (RDs) are individually uncommon, they collectively
+account for an enormous global disease burden with over 10,000
+recognised RDs affecting at least 300-400 million people
+globally\textsuperscript{1} (1 in 10-20 people)\textsuperscript{2} .
+Over 75\% of RDs primarily affect children with a 30\% mortality rate by
+5 years of age\textsuperscript{3}. Despite the prevalence and severity
+of RDs, patients suffering from these conditions are vastly underserved
+due to several contributing factors. First, diagnosis is extremely
+challenging due to the highly variable clinical presentations of many of
+these diseases. The diagnostic odyssey can take patients and their
+families decades, with an average time to diagnosis of 5
+years\textsuperscript{4}. Of those, \textasciitilde46\% receive at least
+one incorrect diagnosis and over 75\% of all patients never receive any
+diagnosis\textsuperscript{5}. Second, prognosis is also made difficult
+by high variability in disease course and outcomes which makes matching
+patients with effective and timely treatment plans even more
+challenging. Finally, even for patients who receive an accurate
+diagnosis/prognosis, treatments are currently only available for less
+than 5\% of all RDs\textsuperscript{6}. In addition to the scientific
+challenges of understanding RDs, there are strong financial
+disincentives for pharmaceutical and biotechnology companies to develop
+expensive therapeutics for exceedingly small RD patient populations with
+little or no return on investment\textsuperscript{7,8}. Those that have
+been produced are amongst the world's most expensive drugs, greatly
+limiting patients' ability to access it\textsuperscript{9,10}, The
+provision of timely, effective and affordable care for RD patients will
+require substantive transformations to our existing scientific,
+clinical, and regulatory frameworks.
+
+A major challenge in both healthcare and scientific research is the
+scalable exchange of information. Even in the age of electronic
+healthcare records (EHR) much of the information about an individual's
+history is currently fractured across healthcare providers, often with
+differing nomenclatures for the same conditions. The Human Phenotype
+Ontology (HPO) is a hierarchically organised set of controlled clinical
+terms that provides a much needed common framework by which clinicians
+and researchers can precisely communicate patient
+conditions\textsuperscript{14}. The HPO spans all domains of human
+physiology and currently describes 18082 phenotypes across 10,300 RDs.
+Each phenotype and disease is assigned its own unique identifier and
+organised as a hierarchical graph, such that higher-level terms describe
+broad phenotypic categories or \emph{branches} (e.g.~\emph{HP:0033127}:
+`Abnormality of the musculoskeletal system' which contains 4495 unique
+phenotypes) and lower-level terms describe increasingly precise
+phenotypes (e.g.~\emph{HP:0030675}: ``Contracture of proximal
+interphalangeal joints of 2nd-5th fingers''). It has already been
+integrated into healthcare systems and clinical diagnostic tools around
+the world, with increasing adoption over time\textsuperscript{11}.
+Common ontology-controlled frameworks like the HPO open a wealth of new
+opportunities, especially when addressing RDs. Services such as the
+Matchmaker Exchange\textsuperscript{15,16} have enabled the discovery of
+hundreds of underlying genetic etiologies, and led to the diagnosis of
+many patients. This also opens the possibility of gathering cohorts of
+geographically dispersed patients to run clinical trials, the only
+viable option for treatment in many individuals. To further increase the
+number of individuals who qualify for these treatments, as well as the
+trial sample size, proposals have been made deviate from the traditional
+single-disease clinical trial model and instead perform basket trials on
+groups of RDs with shared molecular etiologies
+(SaME)\textsuperscript{17}. However this approach, and indeed much of RD
+patient care, hinges upon first characterising the molecular mechanisms
+underlying each RD.
+
+Over 80\% of RDs have a known genetic cause\textsuperscript{18,19}.
+Despite this our knowledge of the physiological mechanisms via which
+genetics cause pathogenesis is lacking for most RDs, severely hindering
+our ability to effectively diagnose, prognose and treat RD patients. The
+availability of standardised, ontology-controlled databases presents
+opportunities to systematically investigate RDs at scale. Since 2008,
+the HPO has been continuously updated using knowledge from the medical
+literature, as well as by integrating databases of expert validated
+gene-phenotype relationships, such as OMIM\textsuperscript{20--22},
+Orphanet\textsuperscript{23,24}, and DECIPHER\textsuperscript{25}. A
+subset of the HPO contains gene annotations for 11,047 phenotypes across
+8,631 diseases. Yet genes alone do not tell the full story of how RDs
+come to be, as their expression and functional relevance varies
+drastically across the multitude of tissues and cell types contained
+within the human body.
+
+Our knowledge of single-cell-resolution biology has exploded over the
+course of the last decade and a half, with numerous applications in both
+scientific and clinical practices\textsuperscript{26--28}. More
+recently, comprehensive single-cell transcriptomic atlases across
+tissues have also emerged\textsuperscript{29,30}. In particular, the
+Descartes Human\textsuperscript{31} and Human Cell
+Landscape\textsuperscript{32} projects provide comprehensive
+multi-system single-cell RNA-seq (scRNA-seq) atlases in embryonic,
+foetal, and adult human samples from across the human body. These
+datasets provide data-driven gene signatures for hundreds of cell
+subtypes. They also allow us to investigate disease mechanisms in the
+context of specific life stages.
+
+Here, we combine and extend several of the most comprehensive genomic
+and transcriptomic resources currently available to systematically
+uncover the cell types underlying granular phenotypes across 8,628
+diseases. We then go on to highlight thousands of novel phenotype-cell
+type associations which collectively expand our knowledge of cell
+type-resolved phenotypes by an estimated 567-fold. Next, we present
+several potential avenues for real world applications of these results
+in the context of RD patient diagnosis, prognosis, treatment, and
+therapeutics development.
+
+\subsection{Results}\label{sec-results}
+
+\subsubsection{Phenotype-cell type
+associations}\label{phenotype-cell-type-associations}
+
+In this study we systematically investigated the cell types underlying
+phenotypes across the HPO. A summary of the phenome-wide results
+stratified by single-cell atlas can be found in \textbf{?@tbl-summary}.
+Within the results using the Descartes Human single-cell atlas, 19,929/
+848,078 (2.35\%) tests across 77/ 77 (100\%) cell types and 7,340/11,047
+(66.4\%) phenotypes revealed significant phenotype-cell type
+associations after multiple-testing correction (\(FDR_{p,c}<0.05\)).
+Using the Human Cell Landscape single-cell atlas, 26,585/1,358,916
+(1.96\%) tests across 124/124 (100\%) cell types and 9,049/11,047
+(81.9\%) phenotypes showed significant phenotype-cell type associations
+(\(FDR_{p,c}<0.05\)). The median number of significantly associated
+phenotypes per cell type was 252 (Descartes Human) and 200 (Human Cell
+Landscape), respectively.
+
+Across both single-cell references, the median number of significantly
+associated cell types per phenotype was 3, suggesting reasonable
+specificity of the testing strategy. 8,628/8,631 (\textasciitilde100\%)
+of diseases within the HPO gene annotations showed significant cell type
+associations for at least one of their respective phenotypes.
+
+\subsubsection{Validation of expected phenotype-cell type
+relationships}\label{validation-of-expected-phenotype-cell-type-relationships}
+
+Within each high-level branch in the HPO shown in
+Fig.~\ref{fig-summary}b, we tested whether each cell type was more often
+associated with phenotypes in that branch relative to those in all other
+branches (including those not shown). We then checked whether each cell
+type was overrepresented (at \(FDR_{b,c}<0.05\)) within its respective
+on-target HPO branch, where the number of phenotypes within that branch
+(\(N_{p}\)). Abnormality of the cardiovascular system: 5/6 types of
+`cardiocyte' were overrepresented (\(N_{p}\)=673). Abnormality of the
+endocrine system: 3/4 types of `endocrine cell' were overrepresented
+(\(N_{p}\)=291). Abnormality of the eye: 5/5 types of `photoreceptor
+cell/retinal cell' were overrepresented (\(N_{p}\)=721). Abnormality of
+the immune system: 4/4 types of `leukocyte' were overrepresented
+(\(N_{p}\)=255). Abnormality of the musculoskeletal system: 4/4 types of
+`cell of skeletal muscle/chondrocyte' were overrepresented
+(\(N_{p}\)=2155). Abnormality of the nervous system: 19/23 types of
+`neural cell' were overrepresented (\(N_{p}\)=1647). Abnormality of the
+respiratory system: 2/2 types of `respiratory epithelial cell/epithelial
+cell of lung' were overrepresented (\(N_{p}\)=292)..
+
+As an additional form of validation (Fig.~\ref{fig-summary}d), we tested
+for a relationship between phenotype-cell type association significance
+(\(-log_{e}(p_{p,c})\) where \(log_{e}\) denotes natural log and and
+\(p_{p,c}\) denotes uncorrected phenotype-cell type association
+p-values) and the proportion of on-target cell types. The list of
+on-target cell types were determined by matching each high-level HPO
+branch to a corresponding CL branch. These cross-ontology mappings can
+be found in \textbf{?@tbl-celltypes}. For this analysis we used raw
+p-values (\(p_{p,c}\)) rather than multiple-testing corrected p-values
+(\(FDR_{p,c}\)) to provide a more dynamic range of values (as the latter
+can drive values to 1). All 7/7 high-level HPO branches showed a
+consistent upwards trend towards greater proportions of on-target cell
+types with increasing degrees of significance. Furthermore, all branches
+also showed a proportion of on-target cell types above that expected by
+chance (baseline = on-target cell types / total cell types) at
+\(-log_{e}(p_{p,c})>1\).
+
+\phantomsection\label{cell-fig-summary}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-summary-1.pdf}
+
+}
+
+\caption{\label{fig-summary}Summary of significant associations between
+phenotypes and cell types, aggregated by HPO branch. Here we show
+\textbf{a}, the total number of significant phenotype enrichments per
+cell type (\(FDR_{p,c}<0.05\)) across all branches of the HPO.
+\textbf{b}, Number of phenotype association related to several
+high-level branches of the HPO. Asterisks above each bar indicate
+whether that cell type was significantly more often enriched in that
+branch relative to all other HPO branches, including those not shown
+here, as a proxy for how specifically that cell type is associated with
+that branch; \(FDR _{b,c}<1e-04\) (****), \(FDR _{b,c}<0.001\) (***),
+\(FDR_{b,c}<0.01\) (**), \(FDR _{b,c}<0.05\) (*). \textbf{c}, Dendrogram
+derived from the Cell Ontology (CL) showing the relatedness of all
+tested cell types to one another. For simplicity, cell type labels shown
+here are aligned to the CL\textsuperscript{33} and can therefore
+encompass one or more cell types annotated by the original authors of
+scRNA-seq datasets\textsuperscript{31,32}. \textbf{d}, Percentage of
+significant phenotype associations with on-target cell types (second row
+of facet labels), respective to the HPO branch. As significance
+increases (\(-log_{10}(p)\) along the \emph{x-axis}) the percentage of
+on-target enriched cell types also increases (\emph{y-axis}).}
+
+\end{figure}%
+
+\subsubsection{Validation of inter- and intra-dataset
+consistency}\label{validation-of-inter--and-intra-dataset-consistency}
+
+Next, we sought to validate the consistency of our results across the
+two single-cell reference datasets (Descartes Human vs.~Human Cell
+Landscape) across the subset of overlapping cell types
+Fig.~\ref{fig-ctd-correlation}. In total there were 142285
+phenotype-cell type associations to compare across the two datasets
+(across 10945 phenotypes and 13 cell types annotated to the exact same
+CL term. We found that the correlation between p-values of the two
+datasets was high (\(rho=0.492, p=1.08e-93\)). Within the subset of
+results that were significant in both single-cell datasets
+(\(FDR_{p,c}<0.05\)), we found that correlation of the association
+effect size were even stronger (\(rho=0.723, p=1.08e-93\)). We also
+checked for the intra-dataset consistency between the p-values of the
+foetal and adult samples in the Human Cell Landscape, showing a very
+similar degree of correlation as the inter-dataset comparison
+(\(rho=0.436, p=2.36e-149\)). Together, these results suggest that our
+approach to identifying phenotype-cell type associations is highly
+replicable and generalisable to new datasets.
+
+\subsubsection{More specific phenotypes are associated with fewer genes
+and cell
+types}\label{more-specific-phenotypes-are-associated-with-fewer-genes-and-cell-types}
+
+First, we found that phenotype ontology showed a significant negative
+correlation with the number of genes annotated to that phenotype in the
+HPO data (Fig.~\ref{fig-ontology-lvl}a;
+\(p=2.23e-308, q=2.23e-308, rho=-0.2634\)). This is expected as broader
+phenotypes tend to have large gene set annotations. Next, we reasoned
+that lower HPO ontology levels representing more specific phenotypes
+were likely to be associated with fewer, more specific subsets of cell
+types. This was indeed the case, as we observed a strongly significant
+negative correlation between the two variables
+(Fig.~\ref{fig-ontology-lvl}b;
+\(p=2.23e-308, q=2.23e-308, rho=-0.2927\)). We also found that the
+effect size of significant phenotype-cell type associations
+(\(FDR_{p,c}<0.05\)) increased with greater phenotype specificity,
+though the relationship was rather weak (Fig.~\ref{fig-ontology-lvl}c;
+\(p=7.30e-97, q=7.30e-97, rho=0.0966\)). Finally, we found that the mean
+expression specificity of phenotype-associated genes (within the cell
+types significantly associated with those respective phenotypes at
+\(FDR_{p,c}<0.05\)) was positively correlated phenotype ontology depth
+(Fig.~\ref{fig-ontology-lvl}d;
+\(p=2.71e-174, q=3.61e-174, rho=0.1398\)).
+
+\phantomsection\label{cell-fig-ontology-lvl}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-ontology-lvl-1.pdf}
+
+}
+
+\caption{\label{fig-ontology-lvl}More specific phenotypes are associated
+with fewer, more specific genes and cell types. Box plots showing
+relationship between HPO phenotype level and \textbf{a}, the number of
+genes annotated to each phenotype, \textbf{b}, the number of
+significantly enriched cell types, \textbf{c}, the effect size of
+phenotype-cell type association tests at \(FDR_{p,c}<0.05\), and
+\textbf{d}, the mean expression specificity of phenotype-associated
+genes in the cell types significantly associated with those respective
+phenotypes (\(FDR_{p,c}<0.05\)). Ontology level 0 represents the most
+inclusive HPO term `All', while higher ontology levels (max=16) indicate
+progressively more specific HPO terms (e.g.~`Contracture of proximal
+interphalangeal joints of 2nd-5th fingers'). Boxes are coloured by the
+mean value (respective to the subplot) within each HPO level.}
+
+\end{figure}%
+
+\subsubsection{Hepatoblasts have a unique role in recurrent Neisserial
+infections}\label{hepatoblasts-have-a-unique-role-in-recurrent-neisserial-infections}
+
+We selected the HPO term `Recurrent bacterial infections' and all of its
+descendants (19 phenotypes) as an example of how investigations at the
+level of granular phenotypes can reveal different cell type-specific
+mechanisms (Fig.~\ref{fig-rni}). As expected, these phenotypes are
+primarily associated with immune cell types (e.g.~macrophages, dendritic
+cells, T cells, monocytes, neutrophils). Some associations confirm
+relationships previously suggested in the literature, such as that
+between `Recurrent staphylococcal infections' and myeloid
+cells\textsuperscript{34--37}. Specifically, our results pinpoint
+monocytes as the most strongly associated cell subtypes
+(\(FDR_{p,c}= 1.03e-30,B= 1.76e-01\)).
+
+In contrast to all other recurrent infection types, `Recurrent
+Neisserial infections' highlighted a novel association with hepatoblasts
+(Descartes Human : \(FDR_{p,c}= 1.13e-06,B= 8.24e-02\)). Whilst
+unexpected, a convincing explanation involves the complement system, a
+key driver of innate immune response to Neisserial infections.
+Hepatocytes, which derive from hepatoblasts, produce the majority of
+complement proteins\textsuperscript{38}, and Kupffer cells express
+complement receptors\textsuperscript{39}. In addition, individuals with
+deficits in complement are at high risk for Neisserial
+infections\textsuperscript{40,41}, and a genome-wide association study
+in those with a Neisserial infection identified risk variants within
+complement proteins\textsuperscript{42} . While the potential of
+therapeutically targeting complement in RDs (including Neisserial
+infections) has been proposed previously\textsuperscript{43,44},
+performing this in a gene- and cell type-specific manner may help to
+improve efficacy and reduce toxicity (e.g.~due to off-target effects).
+Importantly, there are over 56 known genes within the complement
+system\textsuperscript{45}, highlighting the need for a systematic,
+evidence-based approach to identify effective gene targets.
+
+Also of note, despite the fact that our datasets contain both
+hepatoblasts and their mature counterpart, hepatocytes, only the
+hepatoblasts showed this association. This suggests that the genetic
+factors that predispose individuals for risk of Neisserial infections
+are specifically affecting hepatoblasts before they become fully
+differentiated. It is also notable that these phenotypes were the only
+ones within the `Recurrent bacterial infections' branch, or even the
+broader `Recurrent infections' branch, perhaps indicating a unique role
+for hepatoblasts in recurrent infectious disease. The only phenotypes
+within the even broader `Abnormality of the immune system' HPO branch
+that significantly associated with mature hepatocytes were
+`Pancreatitis' (\(FDR_{p,c}= 2.08e-02,B= 5.25e-02\)) and `Susceptibility
+to chickenpox' (\(FDR_{p,c}= 1.20e-02,B= 5.49e-02\)) both of which are
+well-known to involve the liver\textsuperscript{46--48}.
+
+\phantomsection\label{cell-fig-rni}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-rni-1.pdf}
+
+}
+
+\caption{\label{fig-rni}Hepatoblasts have a unique role in recurrent
+Neisserial infections. Significant phenotype-cell type tests for
+phenotypes within the branch `Recurrent bacterial infections'. Amongst
+all different kinds of recurrent bacterial infections, hepatoblasts
+(highlighted by vertical dotted lines) are exclusively enriched in
+`Recurrent gram−negative bacterial infections'. Note that terms from
+multiple levels of the same ontology branch are shown as separate facets
+(e.g.~`Recurrent bacterial infections' and `Recurrent gram−negative
+bacterial infections').}
+
+\end{figure}%
+
+Next, we sought to link multi-scale mechanisms at the levels of disease,
+phenotype, cell type, and gene and visualise these as a network
+(Fig.~\ref{fig-network-rni}). This revealed that genetic deficiencies in
+different complement system genes (\emph{C5}, \emph{C8}, and \emph{C7})
+are primarily mediated by different cell types (hepatoblasts, stratified
+epithelial cells, and stromal cells, respectively). While genes of the
+complement system are expressed throughout many different tissues and
+cell types, these results indicate that different subsets of these genes
+may mediate their effects through different cell types. This finding
+suggests that investigating (during diagnosis) and targeting (during
+treatment) different cell types may be critical for the diagnosis and
+treatment of these closely related, yet mechanistically distinct,
+diseases.
+
+\phantomsection\label{cell-fig-network-rni}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-network-rni-1.pdf}
+
+}
+
+\caption{\label{fig-network-rni}Multi-scale mechanisms of Recurrent
+Neisserial infections. Starting from the bottom of the plot, one can
+trace how causal genes (yellow boxes) mediate their effects through cell
+types (orange circles), phenotypes (pruple cylinders) and ultimately
+diseases (blue cylinders). Cell types are connected to phenotypes via
+association testing (\(FDR_{p,c}<0.05\)), and to diseases when the
+symptom gene set overlap is \textgreater25\%. Nodes were spatially
+arranged using the Sugiyama algorithm\textsuperscript{49}.}
+
+\end{figure}%
+
+\subsubsection{Monarch Knowledge Graph
+recall}\label{monarch-knowledge-graph-recall}
+
+Next, we used the Monarch Knowledge Graph (MKG) as a proxy for the
+field's current state of knowledge of phenotype-cell type associations.
+We evaluated the proportion of MKG associations that were recapitulation
+by our results. In total, our results contained at least one significant
+cell type associations for \textgreater90\% of the phenotypes described
+in the MKG. Of these phenotypes, we captured \textgreater45\% of the MKG
+phenotype-cell associations when only considering exact overlap of
+CL-aligned cell type annotations. This proportion increased with greater
+flexibility in the matching of cell type annotations, reaching a maximum
+of \texttt{**!!RECOMPUTE!!**}\% at a ontology graph distance of
+\texttt{**!!RECOMPUTE!!**} when considering the overlap of cell type
+annotations at the level of cell type ontology terms. This suggests that
+our results are in line with the current state of knowledge, and that
+our approach can be used to identify novel phenotype-cell type
+associations.
+
+\subsubsection{Annotation of phenotypes using generative large language
+models}\label{annotation-of-phenotypes-using-generative-large-language-models}
+
+Severity annotations were gathered from GPT-4 for 16982/18082
+(93.9166\%) HPO phenotypes. In our companion study, benchmarking tests
+of these results using ground-truth HPO branch annotations. For example,
+phenotypes within the `Blindness' HPO branch (\emph{HP:0000618}) were
+correctly annotated as causing blindness by GPT-4. Across all
+annotations, the recall rate of GPT-4 annotations was 91.26\%
+(min=70.1\%, max=100\%, SD=11.84) with a mean consistency score of
+91.21\% (min=80.96\%, max=97.48\%, SD=5.739) for phenotypes whose
+annotation were collected more than once. This clearly demonstrates the
+ability of GPT-4 to accurately annotate phenotypes. This allowed us to
+begin using these annotations to compute systematically collected
+severity scores for all phenotypes in the HPO.
+
+From these annotations we computed a weighted severity score metric for
+each phenotype ranging from 0-100 (100 being the theoretical maximum
+severity of a phenotype that always causes every annotation). Within our
+annotations, the most severe phenotype was `Anencephaly'
+(\emph{HP:0002323}) with a severity score of 58, followed by
+`Atrophy/Degeneration affecting the central nervous system'
+(\emph{HP:0007367}) with a severity score of 58. There were 677
+phenotypes with a severity score of 0 (e.g.~`Thin toenail'). The mean
+severity score across all phenotypes was 14.89 (median=14, standard
+deviation=8.517).
+
+\subsubsection{Enrichment of foetal cell types in congenital
+phenotypes}\label{enrichment-of-foetal-cell-types-in-congenital-phenotypes}
+
+The frequency of congenital onset with each phenotype (as determined by
+GPT-4 annotations) was strongly predictive with the proportion of
+significantly associated foetal cell types in our results
+(\(p=2e-203,\chi^2_{Pearson}=940,\hat{V}_{Cramer}=0.14\)). Furthermore,
+increasing congenital frequency annotation (on an ordinal scale)
+corresponded to an increase in the proportion of foetal cell types:
+`always'=24\% (n=1636 associations), `often'=20\% (n=2979 associations),
+`rarely'=12\% (n=1956 associations), `never'=10\% (n=811 associations).
+This is consistent with the expected role of foetal cell types in
+development and the aetiology of congenital disorders.
+
+\phantomsection\label{cell-fig-congenital}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-congenital-1.pdf}
+
+}
+
+\caption{\label{fig-congenital}Congenital phenotypes are more often
+associated with foetal cell types. As a phenotype is more often
+congenital in nature, the greater proportion of foetal cell types are
+significantly asscoaited with it.}
+
+\end{figure}%
+
+\subsubsection{Diagnosis via cell type-specific disease
+prediction}\label{diagnosis-via-cell-type-specific-disease-prediction}
+
+Using the function \texttt{MSTExplorer::predict\_celltypes} we input 3
+inclusion phenotypes (`Generalized neonatal hypotonia'
+(\emph{HP:0008935}), `Scrotal hypospadias' (\emph{HP:0012853}),
+`Increased circulating progesterone' (\emph{HP:0031216})), 2 genes in
+which the patient is known to have deleterious mutations (\emph{HSD3B2},
+\emph{HERC2}) and 1 gene in which the patient is known not to have any
+deleterious mutations (\emph{SNORD115-1}). This predicted that cortical
+cell of adrenal gland (score sum=1.38, score mean=0.0256, score standard
+deviation=0.137) were the most probable cell types underlying this
+combination of phenotypes and genotypes (Fig.~\ref{fig-diagnosis}),
+which is highly consistent with existing evidence that adrenal
+insufficiency can cause both phenotypes via mutations in these
+genes\textsuperscript{50,51}. This was the only cell type to receive a
+score two standard deviations from the mean score of all cell types
+(mean score: 0.000668).
+
+\phantomsection\label{cell-fig-diagnosis}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-diagnosis-1.pdf}
+
+}
+
+\caption{\label{fig-diagnosis}Diagnosis - Observed phenotypes/genotypes
+can be used to identify causal cell types in individuals. Our
+phenotype-cell type association results can be used to make predictions
+about which cell types are underlying a set of phenotypes observed in a
+given patient. Here we input three inclusion phenotypes, two inclusion
+genes, and one exclusion gene into the function
+\texttt{MSTExplorer::predict\_celltypes}. The output is a ranked list of
+the top 10 most probable cell types (\emph{x-axis}) underlying this
+combination of phenotypes/genotypes (highest to lowest rank from left to
+right). The score on the \emph{y-axis} is computed by aggregating
+phenotype-celltype association summary statistics and evidence-weighted
+phenotype-gene associations. In this simple example, cortical cells of
+the adrenal gland were predicted as the most probable cell type. The
+mean of the score sum is shown as a dashed line, while one standard
+deviation (SD) above this is shown as a dotted line. Each bar is
+coloured by its mean.}
+
+\end{figure}%
+
+\subsubsection{Prognosis via cell type-mediated differential
+outcomes}\label{prognosis-via-cell-type-mediated-differential-outcomes}
+
+Hypotonia (\emph{HP:0001252}) is a very broad phenotype containing 13
+subterms (e.g.~``Generalised neonatal hypotonia'') and is associated
+with 2569 unique diseases in the HPO gene annotations. Together, these
+hypotonia phenotypes were significantly associated with 29/99 (29.29\%)
+unique CL-aligned cell types. This reflects the highly variable set of
+disease etiologies that can cause this broad-level phenotype. Across all
+diseases, hypotonia phenotypes tended to be most consistently severe
+(lower mean age of death score) when associated with the cell type
+inhibitory interneuron. While other cell types were associated with
+lower mean age of death scores (e.g.~stromal cell, astrocyte), the
+severity of the outcomes were more variable.
+
+\phantomsection\label{cell-fig-prognosis}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-prognosis-1.pdf}
+
+}
+
+\caption{\label{fig-prognosis}Prognosis - Cell types predict the
+probability of deadly diseases. The broad phenotype `Hypotonia' and its
+descendants occur in many different diseases (1,832 diseases in the HPO
+annotations).Therefore, it can be difficult to prognose clinical
+outcomes of a newborn individual with hypotonia. With additional
+knowledge of the particular cell types underlying a patient's hypotonia
+phenotype, one can greatly narrow down the range of potential outcomes
+(e.g.~age of death). \textbf{a}, Here, we show the various cell types by
+which hypotonia phenotypes confer disease risk. \textbf{b}, We also
+computed the mean age of death score for each cell type across
+hypotonia-associated diseases, revealing that disrupted inhibitory
+neurons confer the greatest risk of early death. Ordinal age of death
+categories from the HPO disease annotations were encoded numerically and
+averaged (\textbf{?@tbl-death}) to produce mean Age of Death scores for
+each disease (on a scale from 1-8). For example, a score of 1
+corresponds to prenatal death, while a score of 8 corresponds to death
+in late adulthood.}
+
+\end{figure}%
+
+\subsubsection{Therapeutic target
+identification}\label{therapeutic-target-identification}
+
+Next, we identified putative cell type-specific gene targets for several
+severe disease phenotypes. This yielded putative therapeutic targets for
+5287 phenotypes across 4850 diseases in 201 cell types and 3180 genes
+(Fig.~\ref{fig-therapy-filter}). While this constitutes a large number
+of genes in total, each phenotype was assigned a median of 2 gene
+targets (mean=3.29, min=1, max=10). Relative to the number of genes
+annotations per phenotype in the HPO overall (median=7, mean=61.95,
+min=1, max=5003) this represents a substantial decrease in the number of
+candidate target genes, even when excluding high-level phenotypes (HPO
+level\textgreater3). It is also important to note that the phenotypes in
+the prioritised targets list are ranked by their severity, allowing us
+to distinguish between phenotypes with a high medical urgency
+(e.g.~`Hydranencephaly') from those with lower medical urgency
+(e.g.~`Hyperplastic labia majora'). This can be useful for both
+clinicians, biomedical scientists, and pharmaceutical manufacturers who
+wish to focus their research efforts on phenotypes with the greatest
+need for intervention.
+
+Across all phenotypes, epithelial cell were most commonly implicated
+(834 phenotypes), followed by stromal cell (627 phenotypes), stromal
+cell (627 phenotypes), neuron (478 phenotypes), chondrocyte (385
+phenotypes), and endothelial cell (363 phenotypes). Grouped by
+higher-order ontology category, `Abnormality of the musculoskeletal
+system' had the greatest number of enriched phenotypes (961 phenotypes,
+863 genes), followed by `Abnormality of the nervous system' (745
+phenotypes, 1163 genes), `Abnormality of head or neck' (545 phenotypes,
+997 genes), `Abnormality of the genitourinary system' (446 phenotypes,
+710 genes), and `Abnormality of the eye' (379 phenotypes, 572 genes).
+
+\subsubsection{Therapeutic target
+validation}\label{therapeutic-target-validation}
+
+To determine whether the genes prioritised by our therapeutic targets
+pipeline were plausible, we checked what percentage of gene therapy
+targets we recapitulated. Data on therapeutic approval status was
+gathered from the Therapeutic Target Database (TTD; release
+2024-03-22)\textsuperscript{52}. Overall, we prioritised 79\% of all
+non-failed existing gene therapy targets. A hypergeometric test
+confirmed that our prioritised targets were significantly enriched for
+non-failed gene therapy targets (\(p=0.0104\)). Importantly, we did not
+prioritise any of the failed therapeutics (0\%), defined as having been
+terminated or withdrawn from the market. The hypergeometric test for
+depletion of failed targets did not reach significance (\(p=0.365\)),
+but this is to be expected as there was only one failed gene therapy
+target in the TTD database.
+
+Even when considering therapeutics of any kind
+(Fig.~\ref{fig-therapy-validate-all}), not just gene therapies, we
+recapitulated 44\% of the non-failed therapeutic targets and 0\% of the
+terminated/withdrawn therapeutic targets (n=1255). Here we found that
+our prioritised targets were significantly enriched for non-failed
+therapeutics (\(p=3e-19\)), and highly significantly depleted for failed
+therapeutics (\(p=3e-199\)). This suggests that our multi-scale
+evidence-based prioritisation pipeline is capable of selectively
+identifying genes that are likely to be effective therapeutic targets.
+
+\phantomsection\label{cell-fig-therapy-validate}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-validate-1.pdf}
+
+}
+
+\caption{\label{fig-therapy-validate}Therapeutics - Validation of
+prioritised therapeutic targets. The proportion of existing gene therapy
+targets (documented in the Therapeutic Target Database) recapitulated by
+our prioritisation pipeline. Therapetics are stratified by the stage of
+clinical development they were at during the time of writing.}
+
+\end{figure}%
+
+\subsubsection{Selected example targets}\label{selected-example-targets}
+
+\begin{figure}
+
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-1.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-1}Lethal skeletal dysplasia}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-2.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-2}GM2-ganglioside accumulation}
+
+\end{minipage}%
+\newline
+\begin{minipage}{\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-3.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-3}Alzheimer disease}
+
+\end{minipage}%
+\newline
+\begin{minipage}{\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-4.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-4}Parkinson disease}
+
+\end{minipage}%
+
+\caption{\label{fig-therapy-examples}Example cell type-specific gene
+therapy targets for several severe phenotypes and their associated
+diseases. Each disease (blue cylinders) is connected to its phenotype
+(purple cylinders) based on well-established clinical observations
+recorded within the HPO\textsuperscript{11}. Phenotypes are connected to
+cell types (red circles) via association testing between weighted gene
+sets (\(FDR_{p,c}<0.05\)). Each cell type is connected to the
+prioritised gene targets (yellow boxes) based on the driver gene
+analysis.The thickness of the edges connecting the nodes represent the
+(mean) fold-change from the bootstrapped enrichment tests. Nodes were
+spatially arranged using the Sugiyama algorithm\textsuperscript{49}.}
+
+\end{figure}%
+
+From our prioritised targets, we selected the following four sets of
+phenotypes or diseases as examples: `Lethal skeletal dysplasia',
+`GM2-ganglioside accumulation', `Alzheimer disease', `Parkinson
+disease'.
+
+Skeletal dysplasia is a heterogeneous group of over 450 disorders that
+affect the growth and development of bone and cartilage. This phenotype
+can be lethal when deficient bone growth leads to the constriction of
+vital organs such as the lungs. Even after surgical interventions, these
+complications continue to arise as the child develops. Pharmacological
+interventions to treat this condition have largely been ineffective.
+While there are various cell types involved in skeletal system
+development, our pipeline nominated chondrocytes as the causal cell type
+underlying the lethal form of this condition. Assuringly, we found that
+the disease `Achondrogenesis Type 1B' is caused by the genes
+\emph{SLC26A2} and \emph{COL2A1} via chondrocytes. We also found that
+`Platyspondylic lethal skeletal dysplasia, Torrance type'. Thus, in
+cases where surgical intervention is insufficient, targeting these genes
+within chondrocytes may prove a viable long-term solution for children
+suffering from lethal skeletal dysplasia.
+
+Tay-Sachs disease is a devastating disease in which children are born
+appearing healthy, which gradually degrades leading to death after 3-5
+years. The underlying cause is the toxic accumulation of gangliosides in
+the nervous system due to a loss of the enzyme produced by \emph{HEXA}.
+While this could in theory be corrected with gene editing technologies,
+there remain some outstanding challenges. One of which is early
+detection and diagnosis, before irreversible damage has occurred. Our
+pipeline implicated extravillous trophoblasts of the placenta in
+`GM2-ganglioside accumulation'. While not necessarily a target for gene
+therapy, checking these cells \emph{in utero} for an absence of
+\emph{HEXA} may serve as a viable biomarker as these cells normally
+express the gene at high levels. Early detection of Tay-Sachs disease
+may lengthen the window of opportunity for therapeutic intervention,
+especially when genetic sequencing is not available or variants of
+unknown significance are found within \emph{HEXA}.
+
+Alzheimer disease (AD) is the most common neurodegenerative condition.
+It is characterised by a set of variably penetrant phenotypes including
+memory loss, cognitive decline, cerebral proteinopathy. Interestingly,
+we found that different forms of early onset AD (which are defined by
+the presence of a specific disease gene) are each associated with
+different cell types via different phenotypes. For example, AD 3 and AD
+4 are primarily associated with cells of the digestive system
+(`enterocyte', `gastric goblet cell') and are implied to be responsible
+for the phenotypes `Senile plaques', `Alzheimer disease', `Parietal
+hypometabolism in FDG PET', `Cerebral amyloid angiopathy'. Meanwhile,
+early-onset autosomal dominant AD and AD 2 are primarily associated with
+immune cells (`alternatively activated macrophage', `microglial cell')
+and are implied to be responsible for the phenotypes `Neurofibrillary
+tangles', `Long-tract signs', `Finger agnosia', `Semantic dementia'.
+This suggests that different forms of AD may be driven by different cell
+types and phenotypes, which may help explain its variability in onset
+and clinical presentation.
+
+Finally, Parkinson disease (PD) is characterised by motor symptoms such
+as tremor, rigidity, and bradykinesia. However there are a number of
+additional phenotypes associated with the disease that span multiple
+physiological systems. PD 19a and PD 8 seemed to align most closely with
+the canonical understanding of PD as a disease of the central nervous
+system in that they implicated oligodendrocytes and neurons. Though the
+reference datasets being used in this study were not annotated at
+sufficient resolution to distinguish between different subtypes of
+neurons, in particular dopaminergic neurons. PD 19a/8 also suggested
+that risk variants in \emph{LRRK2} mediate their effects on PD through
+both myeloid cells and oligodendrocytes by causing gliosis of the
+substantia nigra. The remaining clusters of PD mechanisms revolved
+around chondrocytes (PD 20), amacrine cells of the eye (hereditary
+late-onset PD), and the respiratory/immune system (PD 14). While the
+diversity in cell type-specific mechanisms is somewhat surprising, it
+may help to explain the wide variety of cross-system phenotypes
+frequently observed in PD.
+
+It should be noted that the HPO only includes gene annotations for the
+monogenic forms of AD and PD. However it has previously been shown that
+there is at least partial overlap in their phenotypic and genetic
+aetiology with respect to their common forms. Thus understanding the
+monogenic forms of these diseases may shed light onto their more common
+counterparts.
+
+\subsubsection{Experimental model
+translatability}\label{experimental-model-translatability}
+
+We computed interspecies translatability scores using a combination of
+both ontological (\(SIM_{o}\)) and genotypic (\(SIM_{g}\)) similarity
+relative to each homologous human phenotype and its associated genes
+Fig.~\ref{fig-animal-models}. In total, we mapped 278 non-human
+phenotypes (in \emph{Caenorhabditis elegans}, \emph{Danio rerio},
+\emph{Mus musculus}, \emph{Rattus norvegicus}) to 849 homologous human
+phenotypes. Amongst the 5287 phenotype within our prioritised therapy
+targets, 356 had viable animal models in at least on non-human species.
+Per species, the number of homologous phenotypes was: \emph{Danio rerio}
+(n=214), \emph{Mus musculus} (n=152), \emph{Caenorhabditis elegans}
+(n=35), \emph{Rattus norvegicus} (n=3). Amongst our prioritised targets
+with a GPT-4 severity score of \textgreater10, the phenotypes with the
+greatest animal model similarity were `Anterior vertebral fusion'
+(\(SIM_{o,g}=0.967\)), `Disc-like vertebral bodies'
+(\(SIM_{o,g}=0.964\)), `Metaphyseal enchondromatosis'
+(\(SIM_{o,g}=0.946\)), `Peripheral retinal avascularization'
+(\(SIM_{o,g}=0.943\)), `Retinal vascular malformation'
+(\(SIM_{o,g}=0.943\)).
+
+\subsection{Discussion}\label{sec-discussion}
+
+Across the 201 cell types and 11,047 RD-associated phenotypes
+investigated, more than 46,514 significant phenotype-cell type
+relationships were discovered. The examples we have highlighted above
+recapitulate well-known relationships, provide additional cellular
+context to many of these known relationships, and discover novel
+relationships at multiple biological scales.
+
+Investigating RDs at the level of phenotypes offers several key
+advantages. First, the vast majority of RDs only have one associated
+gene (7671/8631 diseases = 89\%). Aggregating gene sets across diseases
+into phenotype-centric ``buckets'' permits sufficiently well-powered
+analyses, with an average of \textasciitilde76 genes per phenotype
+(median=7) see Fig.~\ref{fig-diagram}. Second, we hypothesise that these
+phenotype-level gene sets converge on a limited number of molecular and
+cellular pathways. Perturbations to these pathways manifest as one or
+more phenotypes which, when considered together, tend to be clinically
+diagnosed as a certain disease. Third, RDs are often highly
+heterogeneous in their clinical presentation across individuals, leading
+to the creation of an ever increasing number of disease subtypes (some
+of which only have a single documented case). In contrast, a
+phenotype-centric approach enables us to more accurately describe a
+particular individual's version of a disease without relying on the
+generation of additional disease subcategories. By characterising an
+individual's precise phenotypes over time, we may better understand the
+underlying biological mechanisms that have caused their condition.
+However, in order to achieve a truly precision-based approach to
+clinical care, we must first characterise the molecular and cellular
+mechanisms that cause the emergence of each phenotype. Here, we provide
+a highly reproducible framework that enables this at the scale of the
+entire phenome. This presents an opportunity to design basket trials of
+patients with different diseases but overlapping phenotypes and cellular
+mechanisms\textsuperscript{17}. It may be especially helpful for complex
+patients with diagnostically ambiguous sets of phenotypes who would
+otherwise be excluded from traditional clinical
+trials\textsuperscript{53}.
+
+It was paramount to the success of this study to ensure our results were
+anchored in ground-truth benchmarks, generated falsifiable hypotheses,
+and rigorously guarded against false-positive associations. Extensive
+validation using multiple approaches demonstrated that our methodology
+consistently recapitulates expected phenotype-cell type associations
+(Fig.~\ref{fig-summary}-Fig.~\ref{fig-congenital}). This was made
+possible by the existence of comprehensive, structured ontologies for
+all phenotypes (HPO) and cell types (CL), which provide an abundance of
+clear and falsifiable hypotheses for which to test our predictions
+against. Several key examples include 1) strong enrichment of
+associations between cell types and phenotypes within the same
+anatomical systems (Fig.~\ref{fig-summary}b-d), 2) a strong relationship
+between phenotype-specificity and the strength and number of cell type
+associations (Fig.~\ref{fig-ontology-lvl}), 3) identification of the
+precise cell subtypes involved in susceptibility to various subtypes of
+recurrent bacterial infections (Fig.~\ref{fig-rni}), 4) a strong
+positive correlation between the frequency of congenital onset of a
+phenotype and the proportion of developmental cell types associated with
+it (Fig.~\ref{fig-congenital})), and 5) consistent phenotype-cell type
+associations across multiple independent single-cell datasets
+(Fig.~\ref{fig-ctd-correlation}). Having validated our phenotype-cell
+type associations, we then went on to demonstrate how these results may
+be used in each stage of clinical care: diagnosis
+(Fig.~\ref{fig-diagnosis}), prognosis (Fig.~\ref{fig-prognosis}),
+treatment, and therapeutics development
+(Fig.~\ref{fig-therapy-examples}).
+
+Diagnosis is an essential but challenging step in RD patient care.
+Additional phenotypes that emerge over time may assist a clinician to
+reach a more confident disease diagnosis. However many of these
+phenotypes can have a serious impact on patient quality of life or
+survival and avoiding them would be far better for patient outcomes.
+Often times phenotypes alone cannot clearly pinpoint the disease and
+thus a diagnosis is never reached. Having a more complete understanding
+of the mechanisms underlying observed phenotypes allows clinicians to
+far more effectively make predictions about what additional, less
+obvious phenotypes they should search for to confirm or reject their
+hypothesis of disease diagnosis (e.g.~with imaging or biomarker tests).
+
+Consider the following hypothetical scenario. A clinician observes that
+a newborn patient has several phenotypes (`Generalized neonatal
+hypotonia', `Scrotal hypospadias', `Increased circulating
+progesterone'), none of which conclusively point to a single disease
+diagnosis. Under the strong suspicion that the phenotypes are genetic in
+origin, the clinician orders whole-genome sequencing (WGS) on the
+patient as well as the patient's family. The clinician finds that the
+patient has a number of putative causal mutations, narrowing down the
+number of potential diseases from hundreds to just 10. Further narrowing
+down the possibilities at this stage can be extremely challenging even
+for expert clinical geneticists. However, additional knowledge of which
+tissues and cell types are primarily affected allow the clinician to
+make a series of testable hypotheses that they may begin to investigate.
+For example, two of the putative diseases are known to cause aberrant
+splicing events in a gene that is only expressed in adrenocortical cells
+(Fig.~\ref{fig-diagnosis}), providing justification to order a needle
+biopsy of the adrenal gland. RNA sequencing is performed on the tissue
+biopsy and it is discovered that the patient does indeed have high
+expression of the dysfunctional transcript, confirming the disease
+diagnosis\textsuperscript{54}. This opens new avenues for the patient to
+receive timely and effective treatments for their specific condition,
+which is important as their version of the disease tends to lead to
+death in early childhood if left untreated (Fig.~\ref{fig-prognosis}).
+Fortunately, their diagnosis now qualifies them to participate in a
+clinical trial of a novel gene therapy with promising preliminary
+results. Furthermore, it is predicted that this patient would respond
+especially well to this treatment given that the mechanisms of action of
+the gene therapy primarily acts on adrenocortical cells
+(Fig.~\ref{fig-therapy-examples}).
+
+Unfortunately, there are currently only treatments available for less
+than 5\% of RDs\textsuperscript{6}. Novel technologies including CRISPR,
+prime editing, antisense oligonucleotides, viral vectors, and/or lipid
+nanoparticles, have been undergone significant advances in the last
+several years\textsuperscript{55--59} and proven remarkable clinical
+success in an increasing number of clinical
+applications\textsuperscript{60--63}. The U.S. Food and Drug
+Administration (FDA) recently announced an landmark program aimed
+towards improving the international regulatory framework to take
+advantage of the evolving gene/cell therapy
+technologies\textsuperscript{64} with the aim of bringing dozens more
+therapies to patients in a substantially shorter timeframe than
+traditional pharmaceutical product development (typically 5-20 years
+with a median of 8.3 years)\textsuperscript{65}. While these
+technologies have the potential to revolutionise RD medicine, their
+successful application is dependent on first understanding the
+mechanisms causing each disease.
+
+To address this critical gap in knowledge, we used our results to create
+a reproducible and customisable pipeline to nominate cell type-resolved
+therapeutic targets
+(Fig.~\ref{fig-therapy-filter}-Fig.~\ref{fig-therapy-examples}).
+Targeting cell type-specific mechanisms underlying granular RD
+phenotypes can improve therapeutic effectiveness by treating the causal
+root of an individual's conditions\textsuperscript{56,66}. A cell
+type-specific approach also helps to reduce the number of harmful side
+effects caused by unintentionally delivering the therapeutic to
+off-target tissues/cell types (which may induce aberrant gene activity),
+especially when combined with technologies that can target cell surface
+antigens (e.g viral vectors)\textsuperscript{67}. This has the
+additional benefit of reducing the minimal effective dose of a
+therapeutic, which can be both immunogenic and extremely financially
+costly\textsuperscript{9,10,55,58}. Here, we demonstrate the utility of
+a high-throughput evidence-based approach to RD therapeutics discovery
+by highlighting several of the most promising therapeutic candidates.
+Our pipeline takes into account a myriad of factors, including the
+strength of the phenotype-cell type associations, symptom-cell type
+associations, cell type-specificity of causal genes, the severity and
+frequency of the phenotypes, suitability for gene therapy delivery
+systems (e.g.~recombinant adeno-associated viral vectors (rAAV)), as
+well as a quantitative analysis of phenotypic and genetic animal model
+translatability (Fig.~\ref{fig-animal-models}). We validated these
+candidates by comparing the proportional overlap with gene therapies
+that are presently in the market or undergoing clinical trials, in which
+we recovered 79\% of all active gene therapies and 0\% of failed gene
+therapies (Fig.~\ref{fig-therapy-validate},
+Fig.~\ref{fig-therapy-validate-all}). Despite nominating a large number
+of putative targets, hypergeometric tests confirmed that our targets
+were strongly enriched for targets of existing therapies that are either
+approved or currently undergoing clinical trials.
+
+It should be noted that our study has several key limitations. First,
+while our cell type datasets are amongst the most comprehensive human
+scRNA-seq references currently available, they are nevertheless missing
+certain tissues, cell types (e.g.~spermatocytes, oocytes), and life
+stages (post-natal childhood, senility). It is also possible that we
+have not captured certain cell state signatures that only occur in
+disease (e.g.~disease-associated microglia {[}\textbf{CITATION}{]}).
+Though we reasoned that using only control cell type signatures would
+mitigate bias towards any particular disease, and avoid degradation of
+gene signatures due to loss of function mutations. Second, the
+collective knowledge of gene-phenotype and gene-disease associations is
+far from complete and we fully anticipate that these annotations will
+continue to expand and change well into the future. It is for this
+reason we designed this study to be easily reproduced within a single
+containerised script so that we (or others) may rerun it with updated
+datasets at any point. Finally, causality is notoriously difficult to
+prove definitively from associative testing alone, and our study is not
+exempt from this rule. Despite this, there are several reasons to
+believe that our approach is able to better approximate causal
+relationships than traditional approaches. First, we did not
+intentionally preselect any subset of phenotypes or cell types to
+investigate here. Along with a scaling prestep during linear modelling,
+this means that all the results are internally consistent and can be
+directly compared to one another (in stark contrast to literature
+meta-analyses). Furthermore, for the phenotype gene signatures we used
+expert-curated GenCC annotations\textsuperscript{68,69} to weight the
+current strength of evidence supporting a causal relationship between
+each gene and phenotype. This is especially important for phenotypes
+with large genes lists (thousands of annotations) for which some of the
+relationships may be tenuous. Within the cell type references, we
+deliberately chose to use specificity scores (rather than raw gene
+expression) as this normalisation procedure has previously been
+demonstrated to better distinguish between signatures of highly similar
+cell types/subtypes\textsuperscript{70}.
+
+Moving forward, we are now actively seeking industry and academic
+partnerships to begin experimentally validating our multi-scale target
+predictions and exploring their potential for therapeutic translation.
+Nevertheless, there are more promising therapeutic targets here than our
+research group could ever hope to pursue by ourselves. In the interest
+of accelerating research and ensuring RD patients are able to benefit
+from this work as quickly as possible, we have decided to publicly
+release all of the results described in this study. These can be
+accessed in multiple ways, including through a suite of R packages as
+well as a web app, the
+\href{https://neurogenomics.github.io/rare_disease_celltyping_apps/home/}{Rare
+Disease Celltyping Portal}. The latter allows our results to be easily
+queried, filtered, visualised, and downloaded without any knowledge of
+programming. Through these resources we aim to make our findings useful
+to a wide variety of RD stakeholders including subdomain experts,
+clinicians, advocacy groups, and patients.
+
+\subsection{Conclusions}\label{sec-conclusions}
+
+Ultimately, our primary objective was to develop a methodology capable
+of generating high-throughput phenome-wide predictions while preserving
+the accuracy and clinical utility typically associated with more
+narrowly focused studies. With the rapid advancement of gene therapy
+technologies, and a regulatory landscape that is evolving to better meet
+the needs of a large and diverse patient population, there is finally
+momentum to begin to realise the promise of personalised medicine. This
+has especially important implications for the global RD community which
+has remained relatively neglected. Here, we lay out the groundwork
+necessary for this watershed moment by providing a scalable,
+cost-effective, and fully reproducible means of resolving the
+multi-scale, cell-type specific mechanisms of virtually all rare
+diseases.
+
+\subsection{Methods}\label{sec-methods}
+
+\subsubsection{Human Phenotype Ontology}\label{human-phenotype-ontology}
+
+The latest version of the HPO (release 2024-02-08) was downloaded from
+the EMBL-EBI Ontology Lookup Service\textsuperscript{71} and imported
+into R using the \texttt{HPOExplorer} package. This R object was used to
+extract ontological relationships between phenotypes as well as to
+assign absolute and relative ontological levels to each phenotype. The
+latest version of the HPO phenotype-to-gene mappings and phenotype
+annotations were downloaded from the official HPO GitHub repository and
+imported into R using \texttt{HPOExplorer}. This contains lists of genes
+associated with phenotypes via particular diseases, formatted as three
+columns in a table (gene, phenotype, disease).
+
+However, not all genes have equally strong evidence of causality with a
+disease or phenotype, especially when considering that the variety of
+resources used to generate these annotations (OMIM, Orphanet, DECIPHER)
+use variable methodologies (e.g.~expert-curated review of the medical
+literature vs.~automated text mining of the literature). Therefore we
+imported data from the Gene Curation Coalition
+(GenCC)\textsuperscript{68,69}, which (as of 2024-03-01) 21798 evidence
+scores across 7229 diseases and 5142 genes. Evidence scores are defined
+by GenCC using a standardised ordinal rubric which we then encoded as a
+semi-quantitative score ranging from 0 (no evidence of disease-gene
+relationship) to 6 (strongest evidence of disease-gene relationship)
+(see \textbf{?@tbl-gencc}). We then summed evidence scores per disease,
+merged this table with the HPO disease-phenotype-gene annotation table,
+and then cast the data into a gene-by-phenotype matrix filled with the
+aggregated mean evidence score. This can be expressed as the following
+equations.
+
+Let us denote:
+
+\begin{itemize}
+\item
+  \(D\) as the set of \(d\) diseases.
+\item
+  \(p\) as a phenotype.
+\item
+  \(g\) as a gene.
+\end{itemize}
+
+The final evidence-weighted gene-by-phenotype matrix (\(M_{g,p}\)) can
+be expressed as:
+
+\hfill\break
+\hfill\break
+
+\begin{equation*}
+  \eqnmarkbox[NavyBlue]{n1}{M_{g,p}}
+  =
+  \frac{
+    \eqnmarkbox[Cerulean]{n3a}{\sum_{d \in D}}
+    \eqnmarkbox[blue]{n4a}{R(g,p,d)} 
+    \times 
+    \eqnmarkbox[BlueViolet]{n5}{E(g,d)}  
+  }{
+    \eqnmarkbox[Cerulean]{n3b}{\sum_{d \in D}}
+    \eqnmarkbox[blue]{n4b}{R(g,p,d)}
+  }
+\end{equation*}
+\annotate[yshift=1em]{left}{n1}{Weighted gene-by-phenotype \\evidence score matrix} 
+\annotate[yshift=-2em]{below,left}{n3a,n3b}{Iterate over all diseases}
+\annotate[yshift=-2.5em,xshift=2.5em]{below,right}{n4a,n4b}{Binary gene-by-phenotype \\relationship matrix,\\ (1=relationship, 0=no relationship)}
+\annotate[yshift=2em]{left}{n5}{Weighted gene-by-disease \\evidence score matrix}
+
+\hfill\break
+
+Histograms of evidence score distributions at each step in processing
+can be found in Fig.~\ref{fig-evidence-histograms}.
+
+\subsubsection{Single-cell transcriptomic
+atlases}\label{single-cell-transcriptomic-atlases}
+
+In this study, the gene by cell type specificity matrix was constructed
+using the Descartes Human transcriptome atlas of foetal gene expression,
+which contains a mixture of single-nucleus and single-cell RNA-seq data
+(collected with sci-RNA-seq3)\textsuperscript{31}. This dataset contains
+377,456 cells representing 77 distinct cell types across 15 tissues. All
+121 human foetal samples ranged from 72 to 129 days in estimated
+postconceptual age. To independently replicate our findings, we also
+used the Human Cell Landscape which contains single-cell transcriptomic
+data (collected with microwell-seq) from embryonic, foetal, and adult
+human samples across 49 tissues\textsuperscript{32}.
+
+Specificity matrices were generated separately for each transcriptomic
+atlas using the R package \texttt{EWCE} (v1.11.3)\textsuperscript{70}.
+Within each atlas, cell types were defined using the authors' original
+freeform annotations in order to preserve the granularity of cell
+subtypes as well as incorporate expert-identified rare cell types. Cell
+types were only aligned and aggregated to the level of corresponding
+Cell Ontology (CL)\textsuperscript{33} annotations afterwards when
+generating summary figures and performing cross-atlas analyses. Using
+the original gene-by-cell count matrices from each single-cell atlas, we
+computed gene-by-cell type expression specificity matrices as follows.
+
+Let us denote: \(g\) as a gene, \(c\) as a cell type, and \(i\) as a
+single cell. Genes with very no expression across any cell types were
+considered to be uninformative and were therefore removed from the input
+gene-by-cell matrix \(F(g,i,c)\).
+
+\hfill\break
+
+\begin{equation*}
+  \eqnmarkbox[purple]{f1}{F(g,i,c)}
+  =
+  \begin{cases}
+  \eqnmarkbox[WildStrawberry]{f2}{r_{g,i}},
+  \text{ }l_i = c\\0,
+  \text{ }l_i \neq c 
+  \end{cases}
+\end{equation*}
+\annotate[yshift=1em]{left}{f1}{Filtered gene-by-cell expression matrix} 
+\annotate[yshift=2em]{left}{f2}{Expression of gene $g$ in cell $i$} 
+
+\hfill\break
+
+Next, we calculated the mean expression per cell type and normalised the
+resulting matrix to transform it into a gene-by-cell type expression
+specificity matrix (\(S_{g,c}\)). In other words, each gene in each cell
+type had a 0-1 score where 1 indicated the gene was mostly specifically
+expressed in that particular cell type relative to all other cell types.
+This procedure was repeated separately for each of the single-cell
+atlases and can be summarised as:
+
+\hfill\break
+
+\begin{equation*}
+  \eqnmarkbox[orange]{s1}{S_{g,c}}
+  =
+  \frac{
+    \eqnmarkbox[purple]{s3a}{
+      \frac{
+        \sum_{i=1}^{|L|} F(g,i,c)
+      }{
+        N_c  
+      }
+    } 
+  }{
+   \eqnmarkbox[OrangeRed]{s6}{\sum_{r=1}^{k}}(
+     \eqnmarkbox[purple]{s3b}{
+      \frac{
+        \sum_{i=1}^{|L|} F(g,i,c)
+      }{
+        N_c  
+      }
+    } 
+   ) 
+  }
+\end{equation*}
+\annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix} 
+\annotate[yshift=2em]{left}{s3a,s3b}{Compute mean expression of each gene per cell type} 
+\annotate{below,left}{s6}{Compute row sums of \\mean gene-by-cell type matrix}
+
+\hfill\break
+
+\subsubsection{Phenotype-cell type
+associations}\label{phenotype-cell-type-associations-1}
+
+To test for relationships between each pairwise combination of phenotype
+(n=11,047) and cell type (n=201) we ran a series of univariate
+generalised linear models implemented via the \texttt{stats::glm}
+function in R. First, we filtered the gene-by-phenotype evidence score
+matrix (\(M _{g,p}\)) and the gene-by-cell type expression specificity
+matrix (\(S _{g,c}\)) to only include genes present in both matrices
+(n=4,949 genes in the Descartes Human analyses; n=4,653 genes in the
+Human Cell Landscape analyses). Then, within each matrix any rows or
+columns with a sum of 0 were removed as these were uninformative data
+points that did not vary. To improve interpretability of the results
+\(\beta\) coefficient estimates across models (i.e.~effect size), we
+performed a scaling prestep on all dependent and independent variables.
+Initial tests showed that this had virtually no impact on the total
+number of significant results or any of the benchmarking metrics based
+on p-value thresholds Fig.~\ref{fig-summary}. This scaling prestep
+improved our ability to rank cell types by the strength of their
+association with a given phenotype as determined by separate linear
+models.
+
+We repeated the aforementioned procedure separately for each of the
+single-cell references. Once all results were generated using both cell
+type references (2,206,994 association tests total), we applied
+Benjamini-Hochberg false discovery rate\textsuperscript{72} (denoted as
+\(FDR_{p,c}\)) to account for multiple testing. Of note, we applied this
+correction across all results at once (as opposed to each single-cell
+reference separately) to ensure the \(FDR_{p,c}\) was stringently
+controlled for across all tests performed in this study.
+
+\subsubsection{Symptom-cell type
+associations}\label{symptom-cell-type-associations}
+
+Here we define a symptom as a phenotype as it presents within the
+context of the specific disease. The features of a given symptom can be
+described as the subset of genes annotated to phenotype \(p\) via a
+particular disease \(d\), denoted as \(G_{d,p}\) (see
+Fig.~\ref{fig-diagram}). To attribute our phenotype-level cell type
+enrichment signatures to specific diseases, we first identified the gene
+subset that was most strongly driving the phenotype-cell type
+association by computing the intersect of genes that were both in the
+phenotype annotation and within the top 25\% specificity percentile for
+the associated cell type. We then computed the intersect between symptom
+genes (\(G_{d,p}\)) and driver genes (\(G_{p,c}\)), resulting in the
+gene subset \(G_{d \cap p \cap c}\). Only \(G_{d \cap p \cap c}\) gene
+sets with 25\% or greater overlap with the symptom gene subset
+(\(G_{d,p}\)) were kept. This procedure was repeated for all
+phenotype-cell type-disease triads, which can be summarised as follows:
+
+\hfill\break
+
+\begin{equation*}
+  \frac{
+     \eqnmarkbox[Chartreuse3]{g1}{|G_{d \cap p \cap c} |}
+    }{
+       \eqnmarkbox[Emerald]{g2}{|G_{d,p}|}} 
+  \geq \eqnmarkbox[SeaGreen]{g3}{.25} 
+\end{equation*}
+\annotate[yshift=1em]{left}{g1}{Intersect between \\symptom genes ($G_{d,p}$) and driver genes ($G_{p,c}$)} 
+\annotate[yshift=-1em]{below,left}{g2}{Symptom genes \\(i.e. genes annotated to a phenotype\\ via a specific disease)} 
+\annotate[yshift=-1em]{below,right}{g3}{Minimum proportion of overlap \\between $G_{d,p,c}$ and $G_{d,p}$}
+
+\hfill\break
+
+\subsubsection{Validation of expected phenotype-cell type
+relationships}\label{validation-of-expected-phenotype-cell-type-relationships-1}
+
+We first sought to confirm that our tests (across both single-cell
+references) were able to recover expected phenotype-cell type
+relationships across seven high-level branches within the HPO
+(Fig.~\ref{fig-summary}), including abnormalities of the cardiovascular
+system, endocrine system, eye, immune system, musculoskeletal system,
+nervous system, and respiratory system. Within each branch the number of
+significant tests in a given cell type were plotted
+(Fig.~\ref{fig-summary}b). Mappings between freeform annotations (the
+level at which we performed our phenotype- cell type association tests)
+provided by the original atlas authors and their closest CL term
+equivalents were provided by CellxGene\textsuperscript{29}. CL terms
+along the \emph{x-axis} of Fig.~\ref{fig-summary}b were assigned colours
+corresponding to which HPO branch showed the greatest number of
+enrichments (after normalising within each branch to account for
+differences in scale). The normalised colouring allows readers to
+quickly assess which HPO branch was most often associated with each cell
+type, while accounting for differences in the number of phenotypes
+across branches. We then ran a series of Analysis of Variance (ANOVA)
+tests to determine whether (within a given branch) a given cell type was
+more often enriched (\(FDR_{p,c}<0.05\)) within that branch relative to
+all of the other HPO branches of an equivalent level in the ontology
+(including all branches not shown in Fig.~\ref{fig-summary}b). After
+applying Benjamini-Hochberg multiple testing
+correction\textsuperscript{72} (denoted as \(FDR _{b,c}\)), we annotated
+each respective branch-by-cell type bar according to the significance
+(**** : \(FDR _{b,c}<1e-04\), *** : \(FDR _{b,c}<0.001\), ** :
+\(FDR _{b,c}<0.01\), * : \(FDR _{b,c}<0.05\)). Cell types in
+Fig.~\ref{fig-summary}a-b were ordered along the \emph{x-axis} according
+to a dendrogram derived from the CL ontology (Fig.~\ref{fig-summary}c),
+which provides ground-truth semantic relationships between all cell
+types (e.g.~different neuronal subtypes are grouped together).
+
+As an additional measure of the accuracy of our phenotype-cell types
+test results we identified conceptually matched branches across the HPO
+and the CL (Fig.~\ref{fig-summary}d and \textbf{?@tbl-celltypes}). For
+example, `Abnormality of the cardiovascular system' in the HPO was
+matched with `cardiocytes' in the CL which includes all cell types
+specific to the heart. Analogously, `Abnormality of the nervous system'
+in the HPO was matched with `neural cell' in the CL which includes all
+descendant subtypes of neurons and glia. This cross-ontology matching
+was repeated for each HPO branch and can be referred to as on-target
+cell types. Within each branch, the \(-log_{10}(FDR _{p,c})\) values of
+on-target cell types were binned by rounding to the nearest integer
+(\emph{x-axis}) and the percentage of tests for on-target cell types
+relative to all cell types were computed at each bin (\emph{y-axis})
+(Fig.~\ref{fig-summary}d). The baseline level (dotted horizontal line)
+illustrates the percentage of on-target cell types relative to the total
+number of observed cell types. Any percentages above this baseline level
+represent greater than chance representation of the on-target cell types
+in the significant tests.
+
+\subsubsection{Monarch Knowledge Graph
+recall}\label{monarch-knowledge-graph-recall-1}
+
+Finally, we gathered known phenotype-cell type relationships from the
+Monarch Knowledge Graph (MKG), a comprehensive database of links between
+many aspects of disease biology\textsuperscript{73}. This currently
+includes 103 links between HPO phenotypes (n=103) and CL cell types
+(n=79). Of these, we only considered the 82 phenotypes that we were able
+to test given that our approach was reliant on gene annotations. We
+considered instances where we found a significant relationship between
+exactly matching pairs of HPO-CL terms as a hit.
+
+However, as the cell types in MKG were not necessarily annotated at the
+same level as our single-cell references, we also considered instances
+where the MKG cell type was an ancestor term of our cell type
+(e.g.~`myeloid cell' vs.~`monocyte'), or \emph{vice versa}, as hits.
+Using these criteria, we determined our results recapitulated
+\texttt{**!!RECOMPUTE!!**}\% of known phenotype-cell type relationships
+in the MKG. We next computed how far along the CL ontological tree we
+would need to travel in order to reach a common ancestor between the MKG
+cell type and our cell type, for each phenotype-cell type link in the
+MKG. This provides a metric of not just whether we recapitulated the
+exact cell types, but how dissimilar our identified cell types were for
+a given phenotype-cell type association (\textbf{?@fig-monarch-recall}).
+
+\subsubsection{Annotation of phenotypes using generative large language
+models}\label{annotation-of-phenotypes-using-generative-large-language-models-1}
+
+Only a small fraction of the the phenotypes in HPO (\textless1\%) have
+metadata annotations containing information on their time course,
+consequences, and severity. This is due to the time-consuming nature of
+manually annotating thousands of phenotypes. To generate such
+annotations at scale, we used Generative Pre-trained Transformer 4
+(GPT-4), a large language model (LLM) as implemented within OpenAI's
+chatGPT Application Programming Interface (API). After extensive prompt
+engineering and ground-truth benchmarking, we were able to acquire
+annotations on how often each phenotype directly causes intellectual
+disability, death, impaired mobility, physical malformations, blindness,
+sensory impairments, immunodeficiency, cancer, reduced fertility, or is
+associated with a congenital onset. These criteria were previously
+defined in surveys of medical experts as a means of systematically
+assessing phenotype severity\textsuperscript{74}. Responses for each
+metric were provided in a consistent one-word format which could be one
+of: `never', `rarely', `often', `always'. This procedure was repeated in
+batches (to avoid exceeding token limits) until annotations were
+gathered for 16982/18082 HPO phenotypes.
+
+We then encoded these responses into a semi-quantitative scoring system
+(`never'=0, `rarely'=1, `often'=2, `always'=3), which were then weighted
+by multiplying a semi-subjective scoring of the relevance of each metric
+to the concept of severity on a scale from 1-5, with 5 being the most
+severe (`intellectual\_disability'=5, `death'=5, `impaired\_mobility'=4,
+`physical\_malformations'=3, `blindness'=4, `sensory\_impairments'=3,
+`immunodeficiency'=3, `cancer'=3, `reduced\_fertility'=1,
+`congenital\_onset'=4). Finally, the product of the score was normalised
+to a quantitative severity score ranging from 0-100, where 100 is the
+theoretical maximum severity score. This phenotype severity scoring
+procedure can be expressed as follows.
+
+\hfill\break
+\hfill\break
+
+\begin{equation*}
+  \eqnmarkbox[Brown4]{nss}{NSS_p}
+  =
+  \frac{ 
+    \eqnmarkbox[Goldenrod]{nss2}{\sum_{j=1}^{m}} 
+    (
+      \eqnmarkbox[Goldenrod4]{nss3}{F_{pj}}
+      \times 
+      \eqnmarkbox[IndianRed4]{nss4}{W_j}
+    )
+    }{
+    \eqnmarkbox[Tan]{nss5}{\sum_{j=1}^{m}(\max\{F_j\} \times W_j)} 
+  } \times 100
+\end{equation*}
+\annotate[yshift=1em]{left}{nss}{Normalised Severity Score \\for each phenotype}
+\annotate[yshift=3em]{left}{nss2}{Sum of weighted annotation values \\across all metrics}
+\annotate[yshift=3em]{right}{nss3}{Numerically encoded annotation value \\of metric $j$ for phenotype $p$}
+\annotate[yshift=1em]{right}{nss4}{Weight for metric $j$} 
+\annotate[yshift=-1em]{below,right}{nss5}{Theoretical maximum severity score}
+
+\hfill\break
+
+\subsubsection{Enrichment of foetal cell types in congenital
+phenotypes}\label{enrichment-of-foetal-cell-types-in-congenital-phenotypes-1}
+
+The GPT-4 annotations also enabled us to assess whether foetal cell
+types were more often significantly associated with congenital
+phenotypes in our Human Cell Landscape results as this single-cell
+reference contained both adult and foetal versions of cell types
+(Fig.~\ref{fig-congenital}). To do this, we performed a chi-squared
+(\(\chi^2\)) test on the proportion of significantly associated cell
+types containing any of the substrings `fetal', `fetus', `primordial',
+`hESC' or `embryonic' (within cell types annotations from the original
+Human Cell Landscape authors\textsuperscript{32}) vs.~those associated
+without, stratified by how often the corresponding phenotype had a
+congenital onset according to the GPT phenotype annotations (including
+`never', `rarely', `often', `always'). In addition, a series of
+\(\chi^2\) tests were performed within each congenital onset frequency
+strata, to determine whether the observed proportion of foetal cell
+types vs.~non-foetal cell types significantly deviated from the
+proportions expected by chance.
+
+\subsubsection{Diagnosis via cell type-specific disease
+prediction}\label{diagnosis-via-cell-type-specific-disease-prediction-1}
+
+We designed an algorithm that uses our results to predict the most
+likely cell types underlying a set of phenotypic and genotypic traits
+observed in a patient (Fig.~\ref{fig-diagnosis}). This is implemented
+within \texttt{MSTExplorer::predict\_celltypes} and takes HPO phenotypes
+as inputs. It can optionally take included risk genes, excluded risk
+genes, included diseases and/or excluded diseases as additional inputs.
+It then computes the It then outputs a weighted ranking of cell types,
+where higher ranking indicates a higher likelihood of being the
+underlying mechanism of the patient's particular form of disease(s).
+
+\subsubsection{Prognosis via cell type-mediated differential
+outcomes}\label{prognosis-via-cell-type-mediated-differential-outcomes-1}
+
+The phenotype hypotonia is associated with diseases that range in
+severity from benign to debilitating to fatal\textsuperscript{75}. In
+the absence of additional information, making an accurate diagnosis is
+extremely challenging even for experienced physicians. The magnitude of
+this challenge is highlighted by the fact that each disease is
+associated with anywhere between 1-595 unique phenotypes (median=61,
+mean=77.74) within the HPO. Conversely, each phenotype is associated
+with 1-5404 diseases (median=6, mean=60.74). We addressed this challenge
+by applying our phenotype-cell type association results in combination
+with expert-curated HPO annotations of clinical outcomes associated with
+each phenotype-disease pairing (Fig.~\ref{fig-prognosis}). We first
+extracted results for the phenotype `Hypotonia' (\emph{HP:0001252}) and
+its 13 descendant subterms from our phenotype-cell type association
+analyses. Next, we encoded the ``Age of Death'' categories associated
+with each disease in an ordinal scale ranging from 1, corresponding to
+prenatal death, to 8, corresponding to death in late adulthood
+(\textbf{?@tbl-death}). To determine whether cell type identity
+significantly predicted the age of death, we conducted an ANOVA where
+cell type was the predictor and ``Age of Death score'' was the outcome.
+
+\subsubsection{Therapeutic target
+identification}\label{therapeutic-target-identification-1}
+
+We developed a systematic and automated strategy for identifying
+putative cell type-specific gene targets for each phenotype based on a
+series of filters at phenotype, cell type, and gene levels. The entire
+target prioritisation procedure can be replicated with a single
+function: \texttt{MSTExplorer::prioritise\_targets}. This function
+automates all of the reference data gathering (e.g.~phenotype metadata,
+cell type metadata, cell type signature reference, gene lengths,
+severity tiers) and takes a variety of arguments at each step for
+greater customisability.
+
+\subsubsection{Therapeutic target
+validation}\label{therapeutic-target-validation-1}
+
+To assess whether our prioritised therapeutic targets were likely to be
+viable, we computed the overlap between our gene targets and those of
+existing gene therapies at various stages of clinical development
+(Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
+therapy from the Therapeutic Target Database (TTD; release 2024-03-22)
+and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
+gene symbols using the \texttt{orthogene} R package. We stratified our
+overlap metrics according to whether the therapies had failed
+(unsuccessful clinical trials or withdrawn), or were non-failed
+(successful or ongoing clinical trials). We then conducted
+hypergeometric tests to determine whether the observed overlap between
+our prioritised targets and the non-failed therapy targets was
+significantly greater than expected by chance (i.e.~enrichment). We also
+conducted a second hypergeometric test to determine whether the observed
+overlap between our prioritised targets and the failed therapy targets
+was significantly less than expected by chance (i.e.~depletion).
+Finally, we repeated the analysis against all therapeutic targets, not
+just those of gene therapies, to determine whether our prioritised
+targets had relevance to other therapeutic modalities.
+
+\subsubsection{Experimental model
+translatability}\label{experimental-model-translatability-1}
+
+To improve the likelihood of successful translation between preclinical
+animal models and human patients, we created an interspecies
+translatability prediction tool for each phenotype nominated by our gene
+therapy prioritised pipeline (Fig.~\ref{fig-animal-models}). First, we
+extracted ontological similarity scores of homologous phenotypes across
+species from the MKG\textsuperscript{73}. Briefly, the ontological
+similarity scores (\(SIM_o\)) are computed for each homologous pair of
+phenotypes across two ontologies by calculating the overlap in
+homologous phenotypes that are ancestors or descendants of the target
+phenotype. Next, we generated genotypic similarity scores (\(SIM_g\))
+for each homologous phenotype pair by computing the proportion of 1:1
+orthologous genes using gene annotation from their respective
+ontologies. Interspecies orthologs were also obtained from the MKG.
+Finally, both scores are multiplied together to yield a unified
+ontological-genotypic similarity score (\(SIM_{o,g}\)).
+
+\subsubsection{Novel R packages}\label{novel-r-packages}
+
+To facilitate all analyses described in this study and to make them more
+easily reproducible by others, we created several open-source R
+packages.
+\href{https://github.com/neurogenomics/KGExplorer}{\texttt{KGExplorer}}
+imports and analyses large-scale biomedical knowledge graphs and
+ontologies.
+\href{https://github.com/neurogenomics/HPOExplorer}{\texttt{HPOExplorer}}
+aids in managing and querying the directed acyclic ontology graph within
+the HPO.
+\href{https://github.com/neurogenomics/MSTExplorer}{\texttt{MSTExplorer}}
+facilitates the efficient analysis of many thousands of phenotype-cell
+type association tests, and provides a suite of multi-scale therapeutic
+target prioritisation and visualisation functions. These R packages also
+include various functions for distributing the post-processed results
+from this study in an organised, tabular format. Of note,
+\texttt{MSTExplorer::load\_example\_results} loads all summary
+statistics from our phenotype-cell type tests performed here.
+
+\subsubsection{Rare Disease Celltyping
+Portal}\label{rare-disease-celltyping-portal}
+
+To further increase the ease of access for stakeholders in the RD
+community without the need for programmatic experience, we developed a
+series of web apps to interactively explore, visualise, and download the
+results from our study. Collectively, these web apps are called the Rare
+Disease Celltyping Portal. The landing page for the website was made
+using HTML, CSS, and javascript and the web apps were created using the
+Shiny Web application framework for R and deployed on the
+\href{https://www.shinyapps.io}{shinyapps.io} server. The website can be
+accessed
+\href{https://neurogenomics.github.io/rare_disease_celltyping_apps/home}{here}.
+All code used to generate the website can be found
+\href{https://github.com/neurogenomics/rare_disease_celltyping_apps}{here}.
+
+\subsection{Data and Code
+Availability}\label{data-and-code-availability}
+
+All data and code is made freely available through preexisting databases
+and/or GitHub repositories / software associated with this publication.
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://hpo.jax.org}{Human Phenotype Ontology}
+\item
+  \href{https://thegencc.org/}{GenCC}
+\item
+  \href{https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c}{Descartes
+  Human scRNA-seq atlas}
+\item
+  \href{https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1}{Human
+  Cell Landscape scRNA-seq atlas}
+\item
+  \href{https://neurogenomics.github.io/rare_disease_celltyping_apps/home}{Rare
+  Disease Celltyping Portal}
+\item
+  \href{https://github.com/neurogenomics/KGExplorer}{\texttt{KGExplorer}}
+\item
+  \href{https://github.com/neurogenomics/HPOExplorer}{\texttt{HPOExplorer}}
+\item
+  \href{https://github.com/neurogenomics/MSTExplorer}{\texttt{MSTExplorer}}
+\item
+  \href{https://github.com/neurogenomics/rare_disease_celltyping}{Code
+  to replicate analyses}
+\item
+  \href{https://neurogenomics.github.io/RareDiseasePrioritisation/reports/prioritise_targets}{Cell
+  type-specific gene target prioritisation}\\
+\item
+  \href{https://www.genenames.org/data/genegroup/\#!/group/492}{Complement
+  system gene list}
+\end{itemize}
+
+\subsection{Acknowledgements}\label{acknowledgements}
+
+We would like to thank the following individuals for their insightful
+feedback and assistance with data resources: Sarah J. Marzi, Gerton
+Lunter, Peter Robinson, Melissa Haendel, Ben Coleman, Nico Matentzoglu,
+Shawn T. O'Neil, Alan E. Murphy, Sarada Gurung.
+
+\subsubsection{Funding}\label{funding}
+
+This work was supported by a UK Dementia Research Institute (UK DRI)
+Future Leaders Fellowship {[}MR/T04327X/1{]} and the UK DRI which
+receives its funding from UK DRI Ltd, funded by the UK Medical Research
+Council, Alzheimer's Society and Alzheimer's Research UK.
+
+\subsection*{References}\label{references}
+\addcontentsline{toc}{subsection}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{0}{0}
+\bibitem[\citeproctext]{ref-Ferreira2019-jp}
+\CSLLeftMargin{1. }%
+\CSLRightInline{Ferreira, C. R. The burden of rare diseases. \emph{Am.
+J. Med. Genet. A} \textbf{179}, 885--892 (2019).}
+
+\bibitem[\citeproctext]{ref-Zhu2020-vo}
+\CSLLeftMargin{2. }%
+\CSLRightInline{Zhu, Q. \emph{et al.} An integrative knowledge graph for
+rare diseases, derived from the genetic and rare diseases information
+center ({GARD}). \emph{J. Biomed. Semantics} \textbf{11}, 13 (2020).}
+
+\bibitem[\citeproctext]{ref-noauthor_undated-kp}
+\CSLLeftMargin{3. }%
+\CSLRightInline{Rare diseases {BioResource}.}
+
+\bibitem[\citeproctext]{ref-Marwaha2022-uy}
+\CSLLeftMargin{4. }%
+\CSLRightInline{Marwaha, S., Knowles, J. W. \& Ashley, E. A. A guide for
+the diagnosis of rare and undiagnosed disease: Beyond the exome.
+\emph{Genome Med.} \textbf{14}, 23 (2022).}
+
+\bibitem[\citeproctext]{ref-Molster2016-da}
+\CSLLeftMargin{5. }%
+\CSLRightInline{Molster, C. \emph{et al.} Survey of healthcare
+experiences of australian adults living with rare diseases.
+\emph{Orphanet J. Rare Dis.} \textbf{11}, 30 (2016).}
+
+\bibitem[\citeproctext]{ref-Halley2022-pd}
+\CSLLeftMargin{6. }%
+\CSLRightInline{Halley, M. C., Smith, H. S., Ashley, E. A., Goldenberg,
+A. J. \& Tabor, H. K. A call for an integrated approach to improve
+efficiency, equity and sustainability in rare disease research in the
+united states. \emph{Nat. Genet.} \textbf{54}, 219--222 (2022).}
+
+\bibitem[\citeproctext]{ref-Institute_of_Medicine_US_Committee_on_Accelerating_Rare_Diseases_Research_and_Orphan_Product_Development2010-vj}
+\CSLLeftMargin{7. }%
+\CSLRightInline{Institute of Medicine (US) Committee on Accelerating
+Rare Diseases Research and Orphan Product Development, Field, M. J. \&
+Boat, T. F. \emph{Coverage and Reimbursement: Incentives and
+Disincentives for Product Development}. (National Academies Press (US),
+2010).}
+
+\bibitem[\citeproctext]{ref-Yates2022-ra}
+\CSLLeftMargin{8. }%
+\CSLRightInline{Yates, N. \& Hinkel, J. The economics of moonshots:
+Value in rare disease drug development. \emph{Clin. Transl. Sci.}
+\textbf{15}, 809--812 (2022).}
+
+\bibitem[\citeproctext]{ref-Nuijten2022-yc}
+\CSLLeftMargin{9. }%
+\CSLRightInline{Nuijten, M. Pricing zolgensma - the world's most
+expensive drug. \emph{J Mark Access Health Policy} \textbf{10}, 2022353
+(2022).}
+
+\bibitem[\citeproctext]{ref-Thielen2022-ud}
+\CSLLeftMargin{10. }%
+\CSLRightInline{Thielen, F. W., Heine, R. J. S. D., Berg, S. van den,
+Ham, R. M. T. T. \& Groot, C. A. U. Towards sustainability and
+affordability of expensive cell and gene therapies? Applying a
+cost-based pricing model to estimate prices for libmeldy and zolgensma.
+\emph{Cytotherapy} \textbf{24}, 1245--1258 (2022).}
+
+\bibitem[\citeproctext]{ref-Gargano2024-fc}
+\CSLLeftMargin{11. }%
+\CSLRightInline{Gargano, M. A. \emph{et al.} The human phenotype
+ontology in 2024: Phenotypes around the world. \emph{Nucleic Acids Res.}
+\textbf{52}, D1333--D1346 (2024).}
+
+\bibitem[\citeproctext]{ref-Kohler2019-pc}
+\CSLLeftMargin{12. }%
+\CSLRightInline{Köhler, S. \emph{et al.} Expansion of the human
+phenotype ontology ({HPO}) knowledge base and resources. \emph{Nucleic
+Acids Res.} \textbf{47}, D1018--D1027 (2019).}
+
+\bibitem[\citeproctext]{ref-Kohler2021-wk}
+\CSLLeftMargin{13. }%
+\CSLRightInline{Köhler, S. \emph{et al.} The human phenotype ontology in
+2021. \emph{Nucleic Acids Res.} \textbf{49}, D1207--D1217 (2021).}
+
+\bibitem[\citeproctext]{ref-Robinson2008-ys}
+\CSLLeftMargin{14. }%
+\CSLRightInline{Robinson, P. N. \emph{et al.} The human phenotype
+ontology: A tool for annotating and analyzing human hereditary disease.
+\emph{Am. J. Hum. Genet.} \textbf{83}, 610--615 (2008).}
+
+\bibitem[\citeproctext]{ref-Osmond2022-ml}
+\CSLLeftMargin{15. }%
+\CSLRightInline{Osmond, M. \emph{et al.} Outcome of over 1500 matches
+through the matchmaker exchange for rare disease gene discovery: The
+2-year experience of {Care4Rare} canada. \emph{Genet. Med.} \textbf{24},
+100--108 (2022).}
+
+\bibitem[\citeproctext]{ref-Philippakis2015-dq}
+\CSLLeftMargin{16. }%
+\CSLRightInline{Philippakis, A. A. \emph{et al.} The matchmaker
+exchange: A platform for rare disease gene discovery. \emph{Hum. Mutat.}
+\textbf{36}, 915--921 (2015).}
+
+\bibitem[\citeproctext]{ref-Zanello2023-zd}
+\CSLLeftMargin{17. }%
+\CSLRightInline{Zanello, G. \emph{et al.} Targeting shared molecular
+etiologies to accelerate drug development for rare diseases. \emph{EMBO
+Mol. Med.} \textbf{15}, e17159 (2023).}
+
+\bibitem[\citeproctext]{ref-Nguengang_Wakap2020-cz}
+\CSLLeftMargin{18. }%
+\CSLRightInline{Nguengang Wakap, S. \emph{et al.} Estimating cumulative
+point prevalence of rare diseases: Analysis of the orphanet database.
+\emph{Eur. J. Hum. Genet.} \textbf{28}, 165--173 (2020).}
+
+\bibitem[\citeproctext]{ref-noauthor_2022-ok}
+\CSLLeftMargin{19. }%
+\CSLRightInline{Rare diseases, common challenges. \emph{Nat. Genet.}
+\textbf{54}, 215 (2022).}
+
+\bibitem[\citeproctext]{ref-Amberger2019-vl}
+\CSLLeftMargin{20. }%
+\CSLRightInline{Amberger, J. S., Bocchini, C. A., Scott, A. F. \&
+Hamosh, A. {OMIM.org}: Leveraging knowledge across phenotype-gene
+relationships. \emph{Nucleic Acids Res.} \textbf{47}, D1038--D1043
+(2019).}
+
+\bibitem[\citeproctext]{ref-Amberger2017-tg}
+\CSLLeftMargin{21. }%
+\CSLRightInline{Amberger, J. S. \& Hamosh, A. Searching online mendelian
+inheritance in man ({OMIM)}: A knowledgebase of human genes and genetic
+phenotypes. \emph{Curr. Protoc. Bioinformatics} \textbf{58},
+1.2.1--1.2.12 (2017).}
+
+\bibitem[\citeproctext]{ref-McKusick2007-di}
+\CSLLeftMargin{22. }%
+\CSLRightInline{McKusick, V. A. Mendelian inheritance in man and its
+online version, {OMIM}. \emph{Am. J. Hum. Genet.} \textbf{80}, 588--604
+(2007).}
+
+\bibitem[\citeproctext]{ref-Maiella2013-oo}
+\CSLLeftMargin{23. }%
+\CSLRightInline{Maiella, S., Rath, A., Angin, C., Mousson, F. \& Kremp,
+O. {[}Orphanet and its consortium: Where to find expert-validated
+information on rare diseases{]}. \emph{Rev. Neurol.} \textbf{169 Suppl
+1}, S3--8 (2013).}
+
+\bibitem[\citeproctext]{ref-Weinreich2008-wm}
+\CSLLeftMargin{24. }%
+\CSLRightInline{Weinreich, S. S., Mangon, R., Sikkens, J. J., Teeuw, M.
+E. en \& Cornel, M. C. {[}Orphanet: A european database for rare
+diseases{]}. \emph{Ned. Tijdschr. Geneeskd.} \textbf{152}, 518--519
+(2008).}
+
+\bibitem[\citeproctext]{ref-Firth2009-qg}
+\CSLLeftMargin{25. }%
+\CSLRightInline{Firth, H. V. \emph{et al.} {DECIPHER}: Database of
+chromosomal imbalance and phenotype in humans using ensembl resources.
+\emph{Am. J. Hum. Genet.} \textbf{84}, 524--533 (2009).}
+
+\bibitem[\citeproctext]{ref-Baysoy2023-vt}
+\CSLLeftMargin{26. }%
+\CSLRightInline{Baysoy, A., Bai, Z., Satija, R. \& Fan, R. The
+technological landscape and applications of single-cell multi-omics.
+\emph{Nat. Rev. Mol. Cell Biol.} \textbf{24}, 695--713 (2023).}
+
+\bibitem[\citeproctext]{ref-Haque2017-bn}
+\CSLLeftMargin{27. }%
+\CSLRightInline{Haque, A., Engel, J., Teichmann, S. A. \& Lönnberg, T. A
+practical guide to single-cell {RNA-sequencing} for biomedical research
+and clinical applications. \emph{Genome Med.} \textbf{9}, 75 (2017).}
+
+\bibitem[\citeproctext]{ref-Qi2023-ev}
+\CSLLeftMargin{28. }%
+\CSLRightInline{Qi, R. \& Zou, Q. Trends and potential of machine
+learning and deep learning in drug study at {Single-Cell} level.
+\emph{Research} \textbf{6}, 0050 (2023).}
+
+\bibitem[\citeproctext]{ref-CZI_Single-Cell_Biology_Program2023-fs}
+\CSLLeftMargin{29. }%
+\CSLRightInline{CZI Single-Cell Biology Program \emph{et al.} {CZ}
+{CELL\(\times\)GENE} discover: A single-cell data platform for scalable
+exploration, analysis and modeling of aggregated data. \emph{bioRxiv}
+2023.10.30.563174 (2023).}
+
+\bibitem[\citeproctext]{ref-Svensson2020-lg}
+\CSLLeftMargin{30. }%
+\CSLRightInline{Svensson, V., Veiga Beltrame, E. da \& Pachter, L. A
+curated database reveals trends in single-cell transcriptomics.
+\emph{Database} \textbf{2020}, (2020).}
+
+\bibitem[\citeproctext]{ref-Cao2020-qz}
+\CSLLeftMargin{31. }%
+\CSLRightInline{Cao, J. \emph{et al.} A human cell atlas of fetal gene
+expression. \emph{Science} \textbf{370}, (2020).}
+
+\bibitem[\citeproctext]{ref-Han2020-iq}
+\CSLLeftMargin{32. }%
+\CSLRightInline{Han, X. \emph{et al.} Construction of a human cell
+landscape at single-cell level. \emph{Nature} \textbf{581}, 303--309
+(2020).}
+
+\bibitem[\citeproctext]{ref-Diehl2016-gt}
+\CSLLeftMargin{33. }%
+\CSLRightInline{Diehl, A. D. \emph{et al.} The cell ontology 2016:
+Enhanced content, modularization, and ontology interoperability.
+\emph{J. Biomed. Semantics} \textbf{7}, 44 (2016).}
+
+\bibitem[\citeproctext]{ref-Heim2014-du}
+\CSLLeftMargin{34. }%
+\CSLRightInline{Heim, C. E. \emph{et al.} Myeloid-derived suppressor
+cells contribute to staphylococcus aureus orthopedic biofilm infection.
+\emph{J. Immunol.} \textbf{192}, 3778--3792 (2014).}
+
+\bibitem[\citeproctext]{ref-Pidwill2020-le}
+\CSLLeftMargin{35. }%
+\CSLRightInline{Pidwill, G. R., Gibson, J. F., Cole, J., Renshaw, S. A.
+\& Foster, S. J. The role of macrophages in staphylococcus aureus
+infection. \emph{Front. Immunol.} \textbf{11}, 620339 (2020).}
+
+\bibitem[\citeproctext]{ref-Stoll2018-dc}
+\CSLLeftMargin{36. }%
+\CSLRightInline{Stoll, H. \emph{et al.} Staphylococcal enterotoxins
+{Dose-Dependently} modulate the generation of {Myeloid-Derived}
+suppressor cells. \emph{Front. Cell. Infect. Microbiol.} \textbf{8}, 321
+(2018).}
+
+\bibitem[\citeproctext]{ref-Tebartz2015-xs}
+\CSLLeftMargin{37. }%
+\CSLRightInline{Tebartz, C. \emph{et al.} A major role for
+myeloid-derived suppressor cells and a minor role for regulatory {T}
+cells in immunosuppression during staphylococcus aureus infection.
+\emph{J. Immunol.} \textbf{194}, 1100--1111 (2015).}
+
+\bibitem[\citeproctext]{ref-Zhou2016-kq}
+\CSLLeftMargin{38. }%
+\CSLRightInline{Zhou, Z., Xu, M.-J. \& Gao, B. Hepatocytes: A key cell
+type for innate immunity. \emph{Cell. Mol. Immunol.} \textbf{13},
+301--315 (2016).}
+
+\bibitem[\citeproctext]{ref-Dixon2013-ok}
+\CSLLeftMargin{39. }%
+\CSLRightInline{Dixon, L. J., Barnes, M., Tang, H., Pritchard, M. T. \&
+Nagy, L. E. Kupffer cells in the liver. \emph{Compr. Physiol.}
+\textbf{3}, 785--797 (2013).}
+
+\bibitem[\citeproctext]{ref-Ladhani2019-nf}
+\CSLLeftMargin{40. }%
+\CSLRightInline{Ladhani, S. N. \emph{et al.} Invasive meningococcal
+disease in patients with complement deficiencies: A case series
+(2008-2017). \emph{BMC Infect. Dis.} \textbf{19}, 522 (2019).}
+
+\bibitem[\citeproctext]{ref-Rosain2017-ih}
+\CSLLeftMargin{41. }%
+\CSLRightInline{Rosain, J. \emph{et al.} Strains responsible for
+invasive meningococcal disease in patients with terminal complement
+pathway deficiencies. \emph{J. Infect. Dis.} \textbf{215}, 1331--1338
+(2017).}
+
+\bibitem[\citeproctext]{ref-The_International_Meningococcal_Genetics_Consortium2010-if}
+\CSLLeftMargin{42. }%
+\CSLRightInline{The International Meningococcal Genetics Consortium.
+Genome-wide association study identifies variants in the {CFH} region
+associated with host susceptibility to meningococcal disease.
+\emph{Nature Genetics} \textbf{42}, 772--776 (2010).}
+
+\bibitem[\citeproctext]{ref-Lung2019-il}
+\CSLLeftMargin{43. }%
+\CSLRightInline{Lung, T. \emph{et al.} The complement system in liver
+diseases: Evidence-based approach and therapeutic options. \emph{J
+Transl Autoimmun} \textbf{2}, 100017 (2019).}
+
+\bibitem[\citeproctext]{ref-Reis2015-yz}
+\CSLLeftMargin{44. }%
+\CSLRightInline{Reis, E. S. \emph{et al.} Applying complement
+therapeutics to rare diseases. \emph{Clin. Immunol.} \textbf{161},
+225--240 (2015).}
+
+\bibitem[\citeproctext]{ref-Seal2023-pa}
+\CSLLeftMargin{45. }%
+\CSLRightInline{Seal, R. L. \emph{et al.} Genenames.org: The {HGNC}
+resources in 2023. \emph{Nucleic Acids Res.} \textbf{51}, D1003--D1009
+(2023).}
+
+\bibitem[\citeproctext]{ref-Al-Hamoudi2009-le}
+\CSLLeftMargin{46. }%
+\CSLRightInline{Al-Hamoudi, W. K. Severe autoimmune hepatitis triggered
+by varicella zoster infection. \emph{World J. Gastroenterol.}
+\textbf{15}, 1004--1006 (2009).}
+
+\bibitem[\citeproctext]{ref-Brewer2018-dg}
+\CSLLeftMargin{47. }%
+\CSLRightInline{Brewer, E. C. \& Hunter, L. Acute liver failure due to
+disseminated varicella zoster infection. \emph{Case Reports Hepatol}
+\textbf{2018}, 1269340 (2018).}
+
+\bibitem[\citeproctext]{ref-Eshchar1973-tz}
+\CSLLeftMargin{48. }%
+\CSLRightInline{Eshchar, J., Reif, L., Waron, M. \& Alkan, W. J. Hepatic
+lesion in chickenpox. A case report. \emph{Gastroenterology}
+\textbf{64}, 462--466 (1973).}
+
+\bibitem[\citeproctext]{ref-Sugiyama1981-ev}
+\CSLLeftMargin{49. }%
+\CSLRightInline{Sugiyama, K., Tagawa, S. \& Toda, M. Methods for visual
+understanding of hierarchical system structures. \emph{IEEE Trans. Syst.
+Man Cybern.} \textbf{11}, 109--125 (1981).}
+
+\bibitem[\citeproctext]{ref-Srivastava2023-ge}
+\CSLLeftMargin{50. }%
+\CSLRightInline{Srivastava, P., Tenney, J., Lodish, M., Slavotinek, A.
+\& Baskin, L. Utility of genetic work-up for 46, {XY} patients with
+severe hypospadias. \emph{J. Pediatr. Urol.} \textbf{19}, 261--272
+(2023).}
+
+\bibitem[\citeproctext]{ref-Utsch2004-re}
+\CSLLeftMargin{51. }%
+\CSLRightInline{Utsch, B., Albers, N. \& Ludwig, M. Genetic and
+molecular aspects of hypospadias. \emph{Eur. J. Pediatr. Surg.}
+\textbf{14}, 297--302 (2004).}
+
+\bibitem[\citeproctext]{ref-Liu2011-qd}
+\CSLLeftMargin{52. }%
+\CSLRightInline{Liu, X. \emph{et al.} The therapeutic target database:
+An internet resource for the primary targets of approved, clinical trial
+and experimental drugs. \emph{Expert Opin. Ther. Targets} \textbf{15},
+903--912 (2011).}
+
+\bibitem[\citeproctext]{ref-Diaz-Santiago2020-ep}
+\CSLLeftMargin{53. }%
+\CSLRightInline{Dı́az-Santiago, E. \emph{et al.} Phenotype-genotype
+comorbidity analysis of patients with rare disorders provides insight
+into their pathological and molecular bases. \emph{PLoS Genet.}
+\textbf{16}, e1009054 (2020).}
+
+\bibitem[\citeproctext]{ref-Lord2021-rf}
+\CSLLeftMargin{54. }%
+\CSLRightInline{Lord, J. \& Baralle, D. Splicing in the diagnosis of
+rare disease: Advances and challenges. \emph{Front. Genet.} \textbf{12},
+689892 (2021).}
+
+\bibitem[\citeproctext]{ref-Bueren2023-ma}
+\CSLLeftMargin{55. }%
+\CSLRightInline{Bueren, J. A. \& Auricchio, A. Advances and challenges
+in the development of gene therapy medicinal products for rare diseases.
+\emph{Hum. Gene Ther.} \textbf{34}, 763--775 (2023).}
+
+\bibitem[\citeproctext]{ref-Bulaklak2020-ta}
+\CSLLeftMargin{56. }%
+\CSLRightInline{Bulaklak, K. \& Gersbach, C. A. The once and future gene
+therapy. \emph{Nat. Commun.} \textbf{11}, 5820 (2020).}
+
+\bibitem[\citeproctext]{ref-Godbout2023-uo}
+\CSLLeftMargin{57. }%
+\CSLRightInline{Godbout, K. \& Tremblay, J. P. Prime editing for human
+gene therapy: Where are we now? \emph{Cells} \textbf{12}, (2023).}
+
+\bibitem[\citeproctext]{ref-Kohn2023-vh}
+\CSLLeftMargin{58. }%
+\CSLRightInline{Kohn, D. B., Chen, Y. Y. \& Spencer, M. J. Successes and
+challenges in clinical gene therapy. \emph{Gene Ther.} \textbf{30},
+738--746 (2023).}
+
+\bibitem[\citeproctext]{ref-Zhao2023-qy}
+\CSLLeftMargin{59. }%
+\CSLRightInline{Zhao, Z., Shang, P., Mohanraju, P. \& Geijsen, N. Prime
+editing: Advances and therapeutic applications. \emph{Trends
+Biotechnol.} \textbf{41}, 1000--1012 (2023).}
+
+\bibitem[\citeproctext]{ref-Darrow2019-om}
+\CSLLeftMargin{60. }%
+\CSLRightInline{Darrow, J. J. Luxturna: {FDA} documents reveal the value
+of a costly gene therapy. \emph{Drug Discov. Today} \textbf{24},
+949--954 (2019).}
+
+\bibitem[\citeproctext]{ref-Mendell2017-kg}
+\CSLLeftMargin{61. }%
+\CSLRightInline{Mendell, J. R. \emph{et al.} {Single-Dose}
+{Gene-Replacement} therapy for spinal muscular atrophy. \emph{N. Engl.
+J. Med.} \textbf{377}, 1713--1722 (2017).}
+
+\bibitem[\citeproctext]{ref-Mueller2017-fz}
+\CSLLeftMargin{62. }%
+\CSLRightInline{Mueller, C. \emph{et al.} 5 year expression and
+neutrophil defect repair after gene therapy in alpha-1 antitrypsin
+deficiency. \emph{Mol. Ther.} \textbf{25}, 1387--1394 (2017).}
+
+\bibitem[\citeproctext]{ref-Russell2017-dh}
+\CSLLeftMargin{63. }%
+\CSLRightInline{Russell, S. \emph{et al.} Efficacy and safety of
+voretigene neparvovec ({AAV2-hRPE65v2}) in patients with
+{RPE65-mediated} inherited retinal dystrophy: A randomised, controlled,
+open-label, phase 3 trial. \emph{Lancet} \textbf{390}, 849--860 (2017).}
+
+\bibitem[\citeproctext]{ref-Lu2024-kl}
+\CSLLeftMargin{64. }%
+\CSLRightInline{Lu, C.-F. {FDA} takes first step toward international
+regulation of gene therapies to treat rare diseases. (2024).}
+
+\bibitem[\citeproctext]{ref-Brown2022-ye}
+\CSLLeftMargin{65. }%
+\CSLRightInline{Brown, D. G., Wobst, H. J., Kapoor, A., Kenna, L. A. \&
+Southall, N. Clinical development times for innovative drugs. \emph{Nat.
+Rev. Drug Discov.} \textbf{21}, 793--794 (2022).}
+
+\bibitem[\citeproctext]{ref-Moffat2017-al}
+\CSLLeftMargin{66. }%
+\CSLRightInline{Moffat, J. G., Vincent, F., Lee, J. A., Eder, J. \&
+Prunotto, M. Opportunities and challenges in phenotypic drug discovery:
+An industry perspective. \emph{Nat. Rev. Drug Discov.} \textbf{16},
+531--543 (2017).}
+
+\bibitem[\citeproctext]{ref-Zhou2013-wx}
+\CSLLeftMargin{67. }%
+\CSLRightInline{Zhou, Q. \& Buchholz, C. J. Cell type specific gene
+delivery by lentiviral vectors: New options in immunotherapy.
+\emph{Oncoimmunology} \textbf{2}, e22566 (2013).}
+
+\bibitem[\citeproctext]{ref-DiStefano2022-ao}
+\CSLLeftMargin{68. }%
+\CSLRightInline{DiStefano, M. T. \emph{et al.} The gene curation
+coalition: A global effort to harmonize gene-disease evidence resources.
+\emph{Genet. Med.} \textbf{24}, 1732--1742 (2022).}
+
+\bibitem[\citeproctext]{ref-DiStefano2023-np}
+\CSLLeftMargin{69. }%
+\CSLRightInline{DiStefano, M. \emph{et al.} P451: The gene curation
+coalition works to resolve discrepancies in gene-disease validity
+assertions. \emph{Genetics in Medicine Open} \textbf{1}, 100498 (2023).}
+
+\bibitem[\citeproctext]{ref-Skene2016-rb}
+\CSLLeftMargin{70. }%
+\CSLRightInline{Skene, N. G. \& Grant, S. G. N. Identification of
+vulnerable cell types in major brain disorders using single cell
+transcriptomes and expression weighted cell type enrichment.
+\emph{Front. Neurosci.} \textbf{10}, 16 (2016).}
+
+\bibitem[\citeproctext]{ref-Cote2010-gp}
+\CSLLeftMargin{71. }%
+\CSLRightInline{Côté, R. \emph{et al.} The ontology lookup service:
+Bigger and better. \emph{Nucleic Acids Res.} \textbf{38}, W155--60
+(2010).}
+
+\bibitem[\citeproctext]{ref-Benjamini1995-vo}
+\CSLLeftMargin{72. }%
+\CSLRightInline{Benjamini, Y. \& Hochberg, Y. Controlling the false
+discovery rate: A practical and powerful approach to multiple testing.
+\emph{J. R. Stat. Soc.} (1995).}
+
+\bibitem[\citeproctext]{ref-Putman2024-et}
+\CSLLeftMargin{73. }%
+\CSLRightInline{Putman, T. E. \emph{et al.} The monarch initiative in
+2024: An analytic platform integrating phenotypes, genes and diseases
+across species. \emph{Nucleic Acids Res.} \textbf{52}, D938--D949
+(2024).}
+
+\bibitem[\citeproctext]{ref-Lazarin2014-we}
+\CSLLeftMargin{74. }%
+\CSLRightInline{Lazarin, G. A. \emph{et al.} Systematic classification
+of disease severity for evaluation of expanded carrier screening panels.
+\emph{PLoS One} \textbf{9}, e114391 (2014).}
+
+\bibitem[\citeproctext]{ref-Ahmed2016-ag}
+\CSLLeftMargin{75. }%
+\CSLRightInline{Ahmed, M. I., Iqbal, M. \& Hussain, N. A structured
+approach to the assessment of a floppy neonate. \emph{J. Pediatr.
+Neurosci.} \textbf{11}, 2--6 (2016).}
+
+\bibitem[\citeproctext]{ref-Chang2018-qj}
+\CSLLeftMargin{76. }%
+\CSLRightInline{Chang, C.-W., Wakeland, A. K. \& Parast, M. M.
+Trophoblast lineage specification, differentiation and their regulation
+by oxygen tension. \emph{J. Endocrinol.} \textbf{236}, R43--R56 (2018).}
+
+\bibitem[\citeproctext]{ref-Fogarty2011-ph}
+\CSLLeftMargin{77. }%
+\CSLRightInline{Fogarty, N. M. E., Mayhew, T. M., Ferguson-Smith, A. C.
+\& Burton, G. J. A quantitative analysis of transcriptionally active
+syncytiotrophoblast nuclei across human gestation. \emph{J. Anat.}
+\textbf{219}, 601--610 (2011).}
+
+\bibitem[\citeproctext]{ref-Hu2010-eh}
+\CSLLeftMargin{78. }%
+\CSLRightInline{Hu, D. \& Cross, J. C. Development and function of
+trophoblast giant cells in the rodent placenta. \emph{Int. J. Dev.
+Biol.} \textbf{54}, 341--354 (2010).}
+
+\end{CSLReferences}
+
+\hfill\break
+
+\newpage{}
+
+\subsection{Supplementary Materials}\label{supplementary-materials}
+
+\subsubsection{Supplementary Figures}\label{supplementary-figures}
+
+\phantomsection\label{cell-fig-evidence-histograms}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-evidence-histograms-1.pdf}
+
+}
+
+\caption{\label{fig-evidence-histograms}Distribution of evidence scores
+at each processing step.}
+
+\end{figure}%
+
+\begin{figure}
+
+\centering{
+
+\includegraphics{img/fig-diagram.png}
+
+}
+
+\caption{\label{fig-diagram}Diagrammatic overview of multi-scale disease
+investigation strategy. Here we provide an abstract example of
+differential disease aetiology across multiple scales: diseases (\(D\)),
+phenotypes (\(P\)), cell types (\(C\)), genes (\(G\)), and clinical
+outcomes (\(O\)). In the HPO, genes are assigned to phenotypes via
+particular diseases (\(G_{d,p}\)). Therefore, the final gene list for
+each phenotype is aggregated from across multiple diseases (\(G_{p}\)).
+We performed association tests for all pairwise combinations of cell
+types and phenotypes and filtered results after multiple testing
+corrections (\(FDR_{p,c}<0.05\)). Each phenotype in the context of a
+given disease is referred to here as a symptom. Links were established
+between symptoms and cell types through proportional gene set overlap at
+a minimum threshold of 25\%.}
+
+\end{figure}%
+
+\begin{figure}
+
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-ctd-correlation-1.pdf}
+
+}
+
+\subcaption{\label{fig-ctd-correlation-1}Correlation between the
+uncorrected p-values from all phenotype-cell type association tests
+using the Descartes Human vs.~Human Cell Landscape CTDs.}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-ctd-correlation-2.pdf}
+
+}
+
+\subcaption{\label{fig-ctd-correlation-2}Correlation between the
+\(log_{10}(fold-change)\) from significant phenotype-cell type
+association tests (\(FDR_{p,c}<0.05\)) using the Descartes Human
+vs.~Human Cell Landscape CTDs.}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-ctd-correlation-3.pdf}
+
+}
+
+\subcaption{\label{fig-ctd-correlation-3}Correlation between the
+uncorrected p-values from all phenotype-cell type association tests
+using the Human Cell Landscape fetal samples vs.~Human Cell Landscape
+adult samples.}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-ctd-correlation-4.pdf}
+
+}
+
+\subcaption{\label{fig-ctd-correlation-4}Correlation between the
+\(log_{10}(fold-change)\) from significant phenotype-cell type
+association tests (\(FDR_{p,c}<0.05\)) using the Human Cell Landscape
+fetal samples vs.~Human Cell Landscape adult samples.}
+
+\end{minipage}%
+
+\caption{\label{fig-ctd-correlation}Inter- and intra-dataset validation
+across the different CellTypeDataset (CTD) and developmental stages.
+Correlations are computed using Pearson's correlation coefficient. Point
+density is plotted using a 2D kernel density estimate.}
+
+\end{figure}%
+
+\phantomsection\label{cell-fig-therapy-filter}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-filter-1.pdf}
+
+}
+
+\caption{\label{fig-therapy-filter}Therapeutics - Prioritised target
+filtering steps. This plot visualises the number of unique
+phenotype-cell type associations, cell types, genes, and phenotypes
+(\emph{y-axis}) at each filtering step (\emph{x-axis}) within the
+multi-scale therapeutic target prioritisation pipeline. Each step in the
+pipeline can be easily adjusted according to user preference and use
+case. See \textbf{Methods} for descriptions and criterion of each
+filtering step.\textbf{a}, The percentage of phenotypes belonging to
+each severity Tier after each filtering step (Tier 1 being the most
+severe). \textbf{b}, The number of phenotypes, cell types, associated
+diseases and genes remaining after each filtering step during the gene
+prioritisation pipeline.}
+
+\end{figure}%
+
+\phantomsection\label{cell-fig-monarch-recall}
+\begin{verbatim}
+!!!RECOMPUTE!!!
+\end{verbatim}
+
+\phantomsection\label{cell-fig-therapy-validate-all}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-validate-all-1.pdf}
+
+}
+
+\caption{\label{fig-therapy-validate-all}Therapeutics - Validation of
+prioritised therapeutic targets. Proportion of existing all therapy
+targets (documented in the Therapeutic Target Database) recapitulated by
+our prioritisation pipeline.}
+
+\end{figure}%
+
+\phantomsection\label{cell-fig-animal-models}
+\begin{figure}[H]
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-animal-models-1.pdf}
+
+}
+
+\caption{\label{fig-animal-models}Identification of translatable
+experimental models. Interspecies translatability of human phenotypes
+nominated by our gene therapy prioritised pipeline. Above, our combined
+ontological-genotypic similarity score (\(SIM_{o,g}\)) is displayed as
+the heatmap fill colour stratified by the model organism
+(\emph{x-axis}). An additional column (``n\_genes\_db1'' on the far
+left) displays the total number of unique genes annotated to the
+phenotypic within the HPO. Phenotypes are clustered according to their
+ontological similarity in the HPO (\emph{y-axis}).}
+
+\end{figure}%
+
+\begin{figure}
+
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-supp-1.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-supp-1}Respiratory failure}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-supp-2.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-supp-2}Amyotrophic lateral
+sclerosis}
+
+\end{minipage}%
+\newline
+\begin{minipage}{\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-supp-3.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-supp-3}Neurodegeneration}
+
+\end{minipage}%
+\newline
+\begin{minipage}{\linewidth}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-therapy-examples-supp-4.pdf}
+
+}
+
+\subcaption{\label{fig-therapy-examples-supp-4}Small vessel disease}
+
+\end{minipage}%
+
+\caption{\label{fig-therapy-examples-supp}Example cell type-specific
+gene therapy targets for several severe phenotypes and their associated
+diseases. Each disease (blue cylinders) is connected to its phenotype
+(purple cylinders) based on well-established clinical observations
+recorded within the HPO\textsuperscript{11}.Phenotypes are connected to
+cell types (red circles) via association testing between weighted gene
+sets (\(FDR_{p,c}<0.05\)). Each cell type is connected to the
+prioritised gene targets (yellow boxes) based on the driver gene
+analysis.The thickness of the edges connecting the nodes represent the
+(mean) fold-change from the bootstrapped enrichment tests. Nodes were
+spatially arranged using the Sugiyama algorithm\textsuperscript{49}.}
+
+\end{figure}%
+
+\subsubsection{Supplementary Methods}\label{supplementary-methods}
+
+\paragraph{Therapeutics: Gene therapy target
+identification}\label{therapeutics-gene-therapy-target-identification}
+
+Descriptions of each step in the prioritisation pipeline are as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{start}: All phenotype-cell type association results.
+\item
+  \textbf{q\_threshold}: Keep only results that were significant after
+  multiple-testing correction (q\textless0.05).
+\item
+  \textbf{fold\_threshold}: Keep only results with fold
+  change\textgreater=1.
+\item
+  \textbf{keep\_ont\_levels}: Keep only phenotypes at certain absolute
+  ontology levels within the HPO.
+\item
+  \textbf{keep\_onsets}: Keep only phenotypes with postnatal age of
+  onsets to circumvent technical and ethical challenges associated with
+  antenatal gene therapeutics delivery.
+\item
+  \textbf{keep\_tiers}: Keep only phenotypes with high severity Tiers.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \item
+    We used a combination of manual curation and automated text-based
+    substring queries to assign each phenotype a severity Tier as
+    characterised in a survey of healthcare
+    professionals\textsuperscript{74}.
+  \item
+    Tier 1: Diseases that shortened life span in adolescence or earlier
+    or resulted in intellectual disability.
+  \item
+    Tier 2: Diseases that shortened lifespan prematurely in adulthood,
+    or resulted in impaired mobility or internal physical malformation.
+  \item
+    Tier 3: Diseases causing sensory impairments (hearing, vision,
+    touch, pain, or other), immunodeficiency/cancer, mental illness, or
+    dysmorphic features.
+  \item
+    Tier 4: Diseases that reduce fertility. Of the 49 phenotypes that
+    were available in this severity ranking, we selected three that were
+    classified as Tier 1 (the most severe disease category): mental
+    deterioration, coma and respiratory failure.
+  \end{enumerate}
+\item
+  \textbf{severity\_threshold}: Keep only phenotypes with mean severity
+  score equal to or below the threshold.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \item
+    Severity scores were computed by assigning each severity modifier
+    term found in the HPO annotations a numerical value. In order of
+    increasing severity:
+  \item
+    HP:0012825 ``Mild'' (Severity\_score=4)
+  \item
+    HP:0012827 ``Borderline'' (Severity\_score=3)
+  \item
+    HP:0012828 ``Severe'' (Severity\_score=2)
+  \item
+    HP:0012829 ``Profound'' (Severity\_score=1)
+  \end{enumerate}
+\item
+  \textbf{pheno\_frequency\_threshold}: Keep only phenotypes with mean
+  frequency equal to or above the threshold (i.e.~how frequently a
+  phenotype is associated with any diseases in which it occurs).
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Keep phenotypes with a mean frequency ≥10\% or are NA by default.
+  \end{enumerate}
+\item
+  \textbf{keep\_celltypes}: Keep only terminally differentiated cell
+  types.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Of the 77 cell types tested in the Descartes cell type reference,
+    the 40 terminally differentiated cell types were identified through
+    a literature search. Of these, three (extravillous trophoblasts,
+    syncytiotrophoblasts and trophoblast giant cells) were excluded as
+    they only played a role in pregnancy\textsuperscript{76--78}, which
+    would raise additional technical and ethical challenges as rAAV
+    therapy has not yet been used to target foetuses in clinical trials.
+  \end{enumerate}
+\item
+  \textbf{keep\_seqnames}: Remove genes on non-standard chromosomes.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Only keep chromosomes 1-22, X, and Y.
+  \end{enumerate}
+\item
+  \textbf{gene\_size}: Keep only genes \textless4.3kb in length.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Due to limitations in the length of the gene that can be carried by
+    the rAAV vector, genes with a length of \textgreater4.3kb were
+    excluded.
+  \end{enumerate}
+\item
+  \textbf{keep\_biotypes}: Keep only genes belonging to certain biotypes
+  (e.g.~``protein\_coding'', ``processed\_transcript'', ``snRNA'',
+  ``lincRNA'', ``snoRNA'', ``IG\_C\_gene'').
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Keep all biotypes by default.
+  \end{enumerate}
+\item
+  \textbf{gene\_frequency\_threshold}: Keep only genes at or above a
+  certain mean frequency threshold (i.e.~how frequently a gene is
+  associated with a given phenotype when observed within a disease).
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    Keep genes with a mean frequency ≥10\% or are NA by default.
+  \end{enumerate}
+\item
+  \textbf{keep\_specificity\_quantiles}: Keep only genes in top
+  specificity quantiles from the cell type dataset.
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    To further narrow down genes, we extracted relevant metrics from the
+    Descartes reference for each gene in each cell type. These included
+    mean expression, specificity, and specificity quantiles (using 40
+    bins). Only genes with the most specific quantiles (39-40) were
+    included for further analysis, as cell type-specific genes may be
+    less likely to have off-target effects in other cell types.
+  \end{enumerate}
+\item
+  \textbf{keep\_mean\_exp\_quantiles}: Keep only genes in top mean
+  expression quantiles from the cell type dataset
+\item
+  \textbf{end}: Final table of prioritised cell type- /
+  phenotype-specific gene targets.
+\end{enumerate}
+
+Finally, for more comprehensive target search, the we removed the
+filters for onsets (keep\_onsets=NULL), Tier (keep\_tiers=NULL),
+severity (severity\_threshold=NULL), as well as relaxed the filters for
+phenotype frequency threshold (pheno\_frequency\_threshold=c(10,NA)),
+gene frequency threshold (gene\_frequency\_threshold = c(10,NA)), gene
+specificity quantiles (keep\_specificity\_quantiles = seq(20,40)), and
+gene expression quantiles (keep\_mean\_exp\_quantiles = seq(20,40)).
+
+
+
+\end{document}

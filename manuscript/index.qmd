@@ -1147,19 +1147,6 @@ Collectively, these web apps are called the Rare Disease Celltyping Portal.
 The landing page for the website was made using HTML, CSS, and javascript and the web apps were created using the Shiny Web application framework for R and deployed on the [shinyapps.io](https://www.shinyapps.io) server.
 The website can be accessed [here](https://neurogenomics.github.io/rare_disease_celltyping_apps/home). All code used to generate the website can be found [here](https://github.com/neurogenomics/rare_disease_celltyping_apps).
 
-## Tables
-
-```{r tbl-summary}
-#| label: tbl-summary 
-#| tbl-cap: Summary statistics of enrichment results stratified by single-cell atlas.
-#| tbl-subcap: Summary statistics at multiple levels (tests, cell types, phenotypes, diseases, cell types per phenotype, phenotypes per cell type) stratified by the single-cell atlas that was used as a cell type signature reference (Descartes Human or Human Cell Atlas).
-
-data.frame(res_summ$tmerged[,-c("ctd")], 
-             row.names = res_summ$tmerged$ctd,
-             check.names = FALSE) |>
-  t()
-```
-
 ## Data and Code Availability
 
 All data and code is made freely available through preexisting databases and/or GitHub repositories / software associated with this publication.

@@ -9,11 +9,8 @@ format:
     toc: true
     comments:
       hypothesis: true
-  docx: default
-  jats: default
-  agu-pdf:
-    header-includes:
-      - \usepackage{annotate-equations}
+  docx:
+    notebook-links: false
   nature-pdf:
     header-includes:
       - \usepackage{annotate-equations}
