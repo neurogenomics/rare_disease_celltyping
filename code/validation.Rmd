@@ -18,7 +18,7 @@ library(ggplot2)
 # Import data
 ## MSTExplorer results
 ```{r}
-res <- MSTExplorer::load_example_results(multi_dataset=TRUE)  
+res <- MSTExplorer::load_example_results()  
 ## Map CellOntology IDs onto original names in results files
 res <- MSTExplorer::map_celltype(res)
 ### Count number of unique celltypes per CTD/stage ###

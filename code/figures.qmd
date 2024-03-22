@@ -1,0 +1,379 @@
+---
+title: "Rare Disease Celltyping: reproducible manuscript"
+author: Brian M. Schilder
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+editor: visual 
+---
+
+```{r setup}
+for(x in c("HPOExplorer","MSTExplorer")){
+  if(!require(x,character.only = TRUE)){
+    BiocManager::install(paste0("neurogenomics/",x), dependencies=TRUE)
+  }  
+}
+remove(x)
+```
+
+# Main analyses
+
+## Phenotype-cell type associations
+
+### Evidence score distributions
+
+Plot the distribution of GenCC gene association evidence scores at each stage of processing.
+
+```{r plot_evidence,fig.height=6}
+evidence_plot <- HPOExplorer::plot_evidence(save_path = here::here("figures/figureS2.pdf"),
+                                            width=5,
+                                            height=8)
+```
+
+### Create gene x phenotype evidence matrix
+
+Create phenotype-evidence score matrix from the HPO phenotype-gene annotations and GenCC disease-gene evidence scores.
+
+```{r hpo_to_matrix, eval=FALSE}
+ymat <- HPOExplorer::hpo_to_matrix(formula = "gene_symbol ~ hpo_id")
+```
+
+### Run tests
+
+```{r run_phenomix, eval=FALSE}
+## Run phenomix on DescartesHuman CTD
+lm_res1 <- MSTExplorer::run_phenomix(ctd_name = "DescartesHuman",
+                                     annotLevel = 2,
+                                     save_path = file.path(
+                                       # "results",
+  "/Volumes/threadripper/shared/bms20/projects/rare_disease_celltyping/results/",
+                                       
+  paste0("phenomix_","glm_univariate","_","specificity"),
+  paste0("phenomix_","DescartesHuman","_results.tsv.gz")
+  ),
+                                     ymat = ymat)
+## Run phenomix on HumanCellLandscape CTD
+lm_res2 <- MSTExplorer::run_phenomix(ctd_name = "HumanCellLandscape",
+                                     annotLevel = 3,
+                                     save_path = file.path(
+                                       # "results",
+  "/Volumes/threadripper/shared/bms20/projects/rare_disease_celltyping/results/",
+                                       
+  paste0("phenomix_","glm_univariate","_","specificity"),
+  paste0("phenomix_","HumanCellLandscape","_results.tsv.gz")
+  ),
+                                     ymat = ymat)
+#### Merge results ####
+results <- data.table::rbindlist(list(DescartesHuman=lm_res1,
+                                      HumanCellLandscape=lm_res2),
+                                idcol = "ctd")
+
+#### Multiple-testing correction ####
+eff <- intersect(c("ges","F","estimate"),names(results))[1]
+## For GLM (all celltypes/model)
+results[,q:=ifelse(model_q<0.05,p,min(1,model_q+p)), by=.I]  
+results[,q:=(model_q+p)]  
+results[,fold_change:=log(abs(get(eff))+abs(get(paste0("model_",eff))))][,fold_change:=fold_change+abs(min(fold_change))]
+
+## For ANOVA (1 celltype/model)
+results[,q:=stats::p.adjust(p,method="fdr")]
+results <- results[,-c("Effect","DFn","p<.05")] 
+results[,fold_change:=get(eff)]
+remove(lm_res1,lm_res2)
+```
+
+### Load results
+
+Precomputed phenotype-cell type associations results can also be loaded like so.
+
+```{r Load results}
+results <- MSTExplorer::load_example_results()
+```
+
+### Upload results
+
+Upload to `MSTExplorer` Releases on GitHub.
+
+```{r Upload results, eval=FALSE}
+f <- here::here("results/phenomix_results.tsv.gz")
+data.table::fwrite(results,f)
+piggyback::pb_upload(file = f, repo = "neurogenomics/MSTExplorer")
+```
+
+### Summarise results
+
+Generate high-level summary statistics for the results, stratified by single-cell reference dataset.
+
+```{r Summarise results}
+results_summary <- MSTExplorer::summarise_results(results = results, 
+                                                  save_path = here::here("tables/table1.csv"))
+results_summary$tmerged
+```
+
+### Annotate results
+
+```{r Annotate results}
+## Add metadata 
+results <- HPOExplorer::add_hpo_name(results)
+results <- MSTExplorer::map_celltype(results)
+```
+
+## Symptom-cell type associations
+
+```{r add_symptom_results, eval=FALSE}
+## Run this after other steps (here for reference only)
+results <- MSTExplorer::add_symptom_results(results = results)
+```
+
+# Validation of expected phenotype-cell type relationships
+
+## Summary of significant associations between phenotypes and cell types, aggregated by HPO branch
+
+```{r plot_bar_dendro, fig.height=16, fig.width=13}
+out <- MSTExplorer::plot_bar_dendro(results = results, 
+                                    save_path = here::here("figures/figure1.pdf"))
+```
+
+### More specific phenotypes are associated with fewer, more specific genes and cell types
+
+```{r plot_ontology_levels, fig.height=7, fig.width=23}
+ont_plots <- MSTExplorer::plot_ontology_levels(results = results, 
+                                               save_path = here::here("figures/figure2.pdf"))
+```
+
+### Hepatoblasts have a unique role in recurrent meningococcal disease.
+
+```{r plot_bar_branches, fig.height=10, fig.width=10}
+results_tmp <- HPOExplorer::add_ancestor(data.table::copy(results),
+                                         lvl = 7,
+                                         force_new = TRUE)
+target_branches <- list("Recurrent bacterial infections"="leukocyte")
+infections_out <- MSTExplorer::plot_bar_dendro_facets(
+  results=results_tmp,
+  target_branches=target_branches,
+  facets = "hpo_name",
+  legend.position="right",
+  lvl=9,
+  ncol=2,
+  vlines="hepatoblast",
+  fill_var="ancestor_name_original",
+  facets_n=NULL,
+  q_threshold=0.05,
+  background_full=FALSE,
+  save_path = here::here("figures/figure3.pdf"))
+infections_out
+remove(results_tmp)
+```
+
+## Monarch Knowledge Graph recall
+
+```{r}
+
+```
+
+# Annotation of phenotypes using generative large language models
+
+## Import GPT annotations
+
+```{r gpt_annot_codify}
+gpt_annot <- HPOExplorer::gpt_annot_codify()
+head(gpt_annot$annot)
+```
+
+## Add GPT annotations
+
+```{r add_gpt_annotations}
+results <- HPOExplorer::add_gpt_annotations(results, 
+                                            annot = gpt_annot$annot)
+```
+
+## Congenital phenotypes are more often associated with fetal cell types
+ 
+
+### Plot congenital vs. fetal/non-fetal
+
+```{r ggbarstats}
+plot_congenital_annotations_out <- MSTExplorer::plot_congenital_annotations(
+  results = results,                                                                save_path = here::here("figures/figure4.pdf"))
+plot_congenital_annotations_out$plot
+```
+
+# Diagnosis: Observed phenotypes/genotypes can be used to identify cell types in individuals
+
+```{r predict_celltypes}
+## Define input phenotypes/genes
+phenotypes <- c("Generalized neonatal hypotonia",
+                "Scrotal hypospadias",
+                "Increased circulating progesterone")
+genes_include <- c("HSD3B2","HERC2")
+genes_exclude <- c("SNORD115-1")
+## Predict cell types
+ct <- MSTExplorer::predict_celltypes(phenotypes = phenotypes,
+                                     genes_include = genes_include, 
+                                     genes_exclude = genes_exclude,
+                                     save_path = here::here("figures/figure5.pdf"))
+```
+
+# Prognosis: Cell types predict the probability of deadly diseases
+
+## Add disease annotations
+
+```{r add_death}
+results <- HPOExplorer::add_death(results,
+                                  allow.cartesian = TRUE,
+                                  agg_by = c("disease_id","hpo_id"))
+```
+
+## Plot differential outcomes
+
+"HP:0001252" is the HPO term for hypotonia. We will plot the differential outcomes for this phenotype and its descendants.
+
+```{r plot_differential_outcomes_heatmap, fig.height=8, fig.width=12}
+## Count number of diseases associated with these phenotypes
+keep_descendants <- "Hypotonia" # HP:0001252
+hypotonia_results <- HPOExplorer::filter_descendants(results, 
+                                                     keep_descendants = keep_descendants) 
+hypotonia_results <- MSTExplorer::map_celltype(hypotonia_results)
+phenotypes_ids <- unique(hypotonia_results$hpo_id) 
+message(length(phenotypes_ids)," unique phenotypes are descendants of ",
+        paste(keep_descendants,collapse = "; "))
+message(length(unique(hypotonia_results$disease_id) ),
+        " unique diseases are associated with: ",
+        paste(keep_descendants,collapse = "; "))
+message(length(unique(hypotonia_results[q<0.05]$cl_name) ),
+        " unique cell types are associated with: ",
+        paste(keep_descendants,collapse = "; "))
+
+## Generate plot
+differential_outcomes <- MSTExplorer::plot_differential_outcomes_heatmap( 
+  results = hypotonia_results, 
+  print_phenotypes = TRUE,
+  fill_limits = c(1,8),
+  save_path = here::here("figures/figure6.pdf"),
+  height=8, 
+  width=12
+)
+```
+
+# Therapeutics: Gene therapy target identification
+
+## Prioritise therapeutic candidates
+
+```{r prioritise_targets}
+targets <- MSTExplorer::prioritise_targets(results = results) 
+```
+
+### Prioritised target filtering steps
+
+```{r plot_report, fig.height=10, fig.width=10}
+report_plot <- MSTExplorer::plot_report(rep_dt = targets$report, 
+                                        results = results, 
+                                        save_plot = here::here("figures/figure7.pdf")) 
+```
+
+# Networks of prioritised cell type-specific gene targets
+
+## Recurrent meningococcal disease
+
+```{r prioritise_targets_network1, fig.height=10, fig.width=10, results='asis', error=TRUE}
+vn1 <- MSTExplorer::prioritise_targets_network(
+  top_targets = targets$top_targets[hpo_name=="Recurrent meningococcal disease"])
+vn1$plot
+```
+
+## Coma
+
+```{r prioritise_targets_network2, fig.height=10, fig.width=10, results='asis', error=TRUE}
+vn2 <- MSTExplorer::prioritise_targets_network(
+  top_targets = targets$top_targets[hpo_name=="Coma"])
+vn2$plot
+```
+
+## Neonatal hypotonia
+
+```{r prioritise_targets_network3, fig.height=10, fig.width=10, results='asis', error=TRUE}
+vn3 <- MSTExplorer::prioritise_targets_network(
+  top_targets = targets$top_targets[hpo_name=="Neonatal hypotonia"])
+vn3$plot
+```
+
+## Alzheimer's Disease
+
+```{r prioritise_targets_network4, fig.height=10, fig.width=10, results='asis'}
+vn4 <- MSTExplorer::prioritise_targets_network(
+  top_targets = targets$top_targets[grepl("Alzheimer",hpo_name, ignore.case = TRUE)|
+                                    grepl("Alzheimer",disease_name, ignore.case = TRUE)])
+vn4$plot
+```
+
+## Parkinson's Disease
+
+```{r prioritise_targets_network5, fig.height=10, fig.width=10, results='asis'}
+vn5 <- MSTExplorer::prioritise_targets_network(
+  top_targets = targets$top_targets[grepl("Parkinson",hpo_name, ignore.case = TRUE)|
+                                    grepl("Parkinson",disease_name, ignore.case = TRUE)])
+vn5$plot
+```
+
+# Validate therapeutic targets
+
+## Therapeutics Target Database recall
+
+```{r ttd_check}
+## Gene therapy only
+ttd_targets <- MSTExplorer::ttd_check(top_targets=targets$top_targets, 
+                                      drug_types = "Gene therapy",
+                                      allow.cartesian = TRUE,
+                                      save_path = here::here("figures/figure9.pdf"))
+## All therapy types
+ttd_all_targets <- MSTExplorer::ttd_check(top_targets=targets$top_targets,  
+                                          allow.cartesian = TRUE,
+                                          save_path = here::here("figures/figureS4.pdf"))
+
+```
+
+# Identification of translatable experimental models
+
+```{r plot_upheno}
+library(ggplot2) # <-- Necessary due to bug in one of the plotting dependencies 
+
+top_ids <- unique(targets$top_targets$hpo_id)[1:500]
+pheno_map_genes_match <- KGExplorer::map_upheno_data()
+upheno_plots <- KGExplorer::plot_upheno(
+  pheno_map_genes_match = pheno_map_genes_match, 
+  filters=list(id1=top_ids)
+  )
+```
+
+## Rain plot
+
+```{r UPHENO rainplot}
+upheno_plots$rainplot
+```
+
+## Heatmap
+
+```{r UPHENO heatmap, fig.height=10, fig.width=10}
+KGExplorer::plot_save(save_path = here::here("figures/figureS5.pdf"),
+                      plt = upheno_plots$heatmap,
+                      width=12, height=9)
+upheno_plots$heatmap
+```
+
+## Correlation
+
+```{r}
+
+```
+
+# Session info
+
+<details>
+
+```{r sessionInfo}
+utils::sessionInfo()
+```
+
+</details>
