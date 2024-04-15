@@ -9,7 +9,8 @@ contributes:
           echo: false
           message: false
       number-sections: true
-      csl: american-geophysical-union.csl
+      notebook-links: false
+      csl: nature-medicine.csl
       filters:
         - agu.lua
     pdf:

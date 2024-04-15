@@ -358,11 +358,6 @@ n_after <- nrow(res[q<0.05])
 n_after/n_before
 ```
 
-```{r}
-
-```
-
-
 
 ### Traverse HP ontology
 

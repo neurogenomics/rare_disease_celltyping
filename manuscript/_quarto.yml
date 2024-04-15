@@ -1,5 +1,9 @@
+# Specifyig this causes errors with table rendering
 project:
   type: manuscript
+# manuscript:
+#   notebooks:
+#     - notebook: notebooks/equations.qmd
 
 execute:
   freeze: auto
@@ -10,9 +14,22 @@ format:
     comments:
       hypothesis: true
   docx:
+    toc: false
     notebook-links: false
-  nature-pdf:
+  agu-pdf:
+    execute:
+        echo: false
+        message: false
+        warning: false
     header-includes:
       - \usepackage{annotate-equations}
+  nature-pdf:
+    execute:
+      echo: false
+      message: false
+      warning: false
+    header-includes:
+      - \usepackage{annotate-equations}
+  pdf: default
 
 
