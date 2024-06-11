@@ -1,4 +1,3 @@
-# Specifyig this causes errors with table rendering
 project:
   type: manuscript
 # manuscript:
@@ -8,28 +7,28 @@ project:
 execute:
   freeze: auto
 
+csl: _extensions/quarto-journals/agu/nature-medicine.csl
 format:
-  html:
-    toc: true
-    comments:
-      hypothesis: true
-  docx:
-    toc: false
-    notebook-links: false
+  # html:
+  #   toc: true
+  #   comments:
+  #     hypothesis: true
+  # docx:
+  #   toc: false
+  #   notebook-links: false
   agu-pdf:
+    dpi: 200
+    notebook-links: false
     execute:
-        echo: false
         message: false
         warning: false
     header-includes:
       - \usepackage{annotate-equations}
-  nature-pdf:
-    execute:
-      echo: false
-      message: false
-      warning: false
-    header-includes:
-      - \usepackage{annotate-equations}
-  pdf: default
+  # nature-pdf:
+  #   execute:
+  #     message: false
+  #     warning: false
+  #   header-includes:
+  #     - \usepackage{annotate-equations}
 
 

@@ -7,10 +7,8 @@ contributes:
       knitr:
         opts_chunk:
           echo: false
-          message: false
       number-sections: true
-      notebook-links: false
-      csl: nature-medicine.csl
+      csl: american-geophysical-union.csl
       filters:
         - agu.lua
     pdf:
