@@ -104,8 +104,9 @@ library(data.table)
 ```
 
 ```{r load_phenotype_to_genes}
-p2g <- HPOExplorer::load_phenotype_to_genes()
-annot <- HPOExplorer::load_phenotype_to_genes(3)
+tag <- "v2024-02-08" ## For version control
+p2g <- HPOExplorer::load_phenotype_to_genes(tag=tag)
+annot <- HPOExplorer::load_phenotype_to_genes(3, tag=tag)
 per_disease <- p2g[,list(ng=data.table::uniqueN(gene_symbol),
                          np=data.table::uniqueN(hpo_id)),by="disease_id"]
 per_phenotype <- p2g[,list(ng=data.table::uniqueN(gene_symbol),
@@ -113,7 +114,7 @@ per_phenotype <- p2g[,list(ng=data.table::uniqueN(gene_symbol),
 ```
 
 ```{r load_example_results}
-hpo <- HPOExplorer::get_hpo()
+hpo <- HPOExplorer::get_hpo(tag=tag)
 ## Import precomputed results for reporting summaries
 results <- MSTExplorer::load_example_results()
 results <- HPOExplorer::add_hpo_name(results, hpo = hpo)
@@ -275,7 +276,7 @@ plot_ontology_levels_out_stats[,summary:=paste0(
   )][,summary:=gsub("=[ ]","=",summary)]
 ```
 
-First, we found that phenotype ontology showed a significant negative correlation with the number of genes annotated to that phenotype in the HPO data ([Fig. @fig-ontology-lvl]a; `r plot_ontology_levels_out_stats["genes"]$summary`). This is expected as broader phenotypes tend to have large gene set annotations. Next, we reasoned that lower HPO ontology levels representing more specific phenotypes were likely to be associated with fewer, more specific subsets of cell types. This was indeed the case, as we observed a strongly significant negative correlation between the two variables ([Fig. @fig-ontology-lvl]b; `r plot_ontology_levels_out_stats["cell types"]$summary`). We also found that the effect size of significant phenotype-cell type associations ($FDR_{pc}<0.05$) increased with greater phenotype specificity, though the relationship was rather weak ([Fig. @fig-ontology-lvl]c; `r plot_ontology_levels_out_stats["estimate"]$summary`). Finally, we found that the mean expression specificity of phenotype-associated genes (within the cell types significantly associated with those respective phenotypes at $FDR_{pc}<0.05$) was positively correlated phenotype ontology depth ([Fig. @fig-ontology-lvl]d; `r plot_ontology_levels_out_stats["mean_specificity"]$summary`).
+First, we found that phenotype ontology showed a significant negative correlation with the number of genes annotated to that phenotype in the HPO data ([Fig. @fig-ontology-lvl]a; `r plot_ontology_levels_out_stats["genes"]$summary`). This is expected as broader phenotypes tend to have large gene set annotations. Next, we reasoned that lower HPO ontology levels representing more specific phenotypes were likely to be associated with fewer, more specific subsets of cell types. This was indeed the case, as we observed a strongly significant negative correlation between the two variables ([Fig. @fig-ontology-lvl]b; `r plot_ontology_levels_out_stats["cell types"]$summary`). We also found that the phenotype-cell type association p-values increased with greater phenotype specificity, reflecting the decreasing overall number of associated cell types at each ontological level ([Fig. @fig-ontology-lvl]c; `r plot_ontology_levels_out_stats["p"]$summary`). 
 
 ```{r fig-ontology-lvl}
 #| label: fig-ontology-lvl
@@ -430,7 +431,7 @@ legend_colors <- ggplot2::ggplot_build(
 img_fetus <- magick::image_read(here::here("manuscript/img/fetus.png"))
 img_adult <- magick::image_read(here::here("manuscript/img/adult.png"))
 
-fetus <- magick::image_ggplot(img_fetus) +
+fetus <- magick::image_ggplot(img_fetus, interpolate=TRUE) +
 ggplot2::geom_line(data = data.frame(x = 1:2, y = 1:2),
                    linewidth=20,
                    ggplot2::aes(x, y, 
@@ -438,7 +439,7 @@ ggplot2::geom_line(data = data.frame(x = 1:2, y = 1:2),
 ggplot2::scale_color_manual(NULL, values = legend_colors[1]) +
 ggplot2::theme(legend.position = 'bottom',
                legend.key.width = ggplot2::unit(2.5, 'cm')) 
-adult <- magick::image_ggplot(img_adult) +
+adult <- magick::image_ggplot(img_adult, interpolate=TRUE) +
 ggplot2::geom_line(data = data.frame(x = 0:1, y = 1:2),
                    linewidth=20,
                    ggplot2::aes(x, y, 
@@ -536,26 +537,24 @@ plot_report_out <- MSTExplorer::plot_report(
   save_path = NULL)
 ```
 
-```{r fig-therapy-filter, fig.height=8, fig.width=8}
-#| label: fig-therapy-filter
-#| fig-cap: Therapeutics - Prioritised target filtering steps. This plot visualises the number of unique phenotype-cell type associations, cell types, genes, and phenotypes (*y-axis*) at each filtering step (*x-axis*) within the multi-scale therapeutic target prioritisation pipeline. Each step in the pipeline can be easily adjusted according to user preference and use case. See @tbl-filters for descriptions and criterion of each filtering step.
-
-plot_report_out$plot
-```
-
 ### Therapeutic target validation
 
 ```{r ttd_check}
+remove_status <- c("Application submitted","Patented","Preregistration","Investigative",NA)
 ## Gene therapy only
 ttd_check_out <- MSTExplorer::ttd_check(
   top_targets=prioritise_targets_out$top_targets, 
+  phenotype_to_genes=p2g,
   drug_types = "Gene therapy",
+  # remove_status=remove_status,
   allow.cartesian = TRUE,
   show_plot = FALSE)
 
 ## All therapy types
 ttd_check_all_out <- MSTExplorer::ttd_check(
   top_targets=prioritise_targets_out$top_targets,   
+  phenotype_to_genes=p2g,
+  # remove_status=remove_status,
   allow.cartesian = TRUE,
   show_plot = FALSE)
 ```
@@ -894,6 +893,7 @@ Here we define a symptom as a phenotype as it presents within the context of the
 :::
 
 \
+\
 
 ### Validation of expected phenotype-cell type relationships
 
@@ -982,7 +982,7 @@ We next tested whether the proportion of tests with significant associations wit
 
 ### Therapeutic target identification
 
-We developed a systematic and automated strategy for identifying putative cell type-specific gene targets for each phenotype based on a series of filters at phenotype, cell type, and gene levels. The entire target prioritisation procedure can be replicated with a single function: `MSTExplorer::prioritise_targets`. This function automates all of the reference data gathering (e.g. phenotype metadata, cell type metadata, cell type signature reference, gene lengths, severity tiers) and takes a variety of arguments at each step for greater customisability. Each step is described in detail in @tbl-filters.
+We developed a systematic and automated strategy for identifying putative cell type-specific gene targets for each phenotype based on a series of filters at phenotype, cell type, and gene levels. The entire target prioritisation procedure can be replicated with a single function: `MSTExplorer::prioritise_targets`. This function automates all of the reference data gathering (e.g. phenotype metadata, cell type metadata, cell type signature reference, gene lengths, severity tiers) and takes a variety of arguments at each step for greater customisability. Each step is described in detail in @tbl-filters. Phenotypes that often or always caused physical malformations (according to the GPT-4 annotations) were also removed from the final prioritised targets list, as these were unlikely to be amenable to gene therapy interventions. Finally, phenotypes were sorted by their composite severity scores such that the most severe phenotypes were ranked the highest.
 
 ### Therapeutic target validation
 
@@ -1020,6 +1020,7 @@ data.frame(res_summ$tmerged[,-c("ctd")],
 ```{r tbl-filters}
 #| label: tbl-filters
 #| tbl-cap: Description of each filtering step performed in the multi-scale therapeutic target prioritisation pipleline. 'Level' indicates the biological scale at which the step is applied to.
+#| tbl-colwidths: [20,20,60]
 
 tbl_filters <- plot_report_out$data$filters[,.SD[1],by=c("step")][,c("level","step","description")]
 tbl_filters[,step:=gsub("_"," ",step)]
@@ -1110,12 +1111,23 @@ validate_associations_mkg_out$cl_distance_results$plot
 #| label: fig-congenital-branches
 #| fig-cap: The proportion of cell type-phenotype association tests that are enriched for foetal cell types within each HPO branch.
 #| fig-height: 6 
-#| fig-width: 12
+#| fig-width: 20
 
 plot_congenital_annotations_branch_out$plot$labels$caption <- NULL
 plot_congenital_annotations_branch_out$plot$labels$group <- "Foetal\ncell\ntype"
 plot_congenital_annotations_branch_out$plot$labels$x <- "HPO ancestor"
 plot_congenital_annotations_branch_out$plot
+```
+
+{{< pagebreak >}}
+
+```{r fig-therapy-filter}
+#| label: fig-therapy-filter
+#| fig-cap: Prioritised target filtering steps. This plot visualises the number of unique phenotype-cell type associations, cell types, genes, and phenotypes (*y-axis*) at each filtering step (*x-axis*) within the multi-scale therapeutic target prioritisation pipeline. Each step in the pipeline can be easily adjusted according to user preference and use case. See @tbl-filters for descriptions and criterion of each filtering step.
+#| fig-width: 10
+#| fig-height: 8
+
+plot_report_out$plot
 ```
 
 {{< pagebreak >}}
