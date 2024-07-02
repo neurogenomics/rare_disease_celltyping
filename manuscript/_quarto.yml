@@ -16,7 +16,13 @@ format:
   # docx:
   #   toc: false
   #   notebook-links: false
-  agu-pdf:
+  pdf:
+    documentclass: article
+    linestretch: 1.5
+    margin-left: 1in
+    margin-right: 1in
+    margin-top: 1in
+    margin-bottom: 1in
     dpi: 200
     notebook-links: false
     execute:
@@ -24,6 +30,8 @@ format:
         warning: false
     header-includes:
       - \usepackage{annotate-equations}
+      - \usepackage{lineno}
+      - \linenumbers
   # nature-pdf:
   #   execute:
   #     message: false
