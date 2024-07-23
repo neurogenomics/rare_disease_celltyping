@@ -1,12 +1,12 @@
 project:
   type: manuscript
-# manuscript:
-#   notebooks:
-#     - notebook: notebooks/equations.qmd
+manuscript:
+  article: index.qmd
+# notebooks:
+#   - notebook: notebooks/equations.qmd
 
 execute:
   freeze: auto
-
 csl: _extensions/quarto-journals/agu/nature-medicine.csl
 format:
   # html:
@@ -16,17 +16,21 @@ format:
   # docx:
   #   toc: false
   #   notebook-links: false
+  # agu-pdf:
+  #   execute:
+  #       message: false
+  #       warning: false
+  #   header-includes:
+  #     - \usepackage{annotate-equations}
   pdf:
-    documentclass: article
+    documentclass: report
     linestretch: 1.5
     margin-left: 1in
     margin-right: 1in
     margin-top: 1in
     margin-bottom: 1in
     dpi: 200
-    notebook-links: false
     execute:
-        message: false
         warning: false
     header-includes:
       - \usepackage{annotate-equations}

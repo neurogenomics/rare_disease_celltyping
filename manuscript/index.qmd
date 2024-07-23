@@ -101,10 +101,25 @@ bibliography: references.bib
 
 ```{r setup, cache=FALSE, include=TRUE}
 library(data.table)
-options(digits=2) 
-knitr::knit_hooks$set(inline = function(x, options) { 
-  prettyNum(x)
-})
+# ?formatdown::formatdown_options()
+
+options(digits=2)
+formatter <- function(x, ...) {
+  # prettyNum(x, digits=2)
+  # paste0("$",knitr:::format_sci(x),"$")
+  if(is.numeric(x)){
+    if(!is.integer(x)){
+      formatdown::format_sci(x = x, digits = 2)    
+    } else {
+      formatC(x, big.mark = ",", mode = "integer")
+    }
+  } else {
+    x
+  }
+}
+knitr::knit_hooks$set(document = formatter, 
+                      chunk = formatter,
+                      inline = formatter)
 ```
 
 ```{r load_phenotype_to_genes}
@@ -139,7 +154,7 @@ results[,summary:=paste0(
 
 ```{r summarise_results}
 res_summ <- MSTExplorer::summarise_results(results = results)
-res_summ_all <- res_summ$tmerged[ctd=="all"] 
+res_summ_all <- res_summ$tmerged[ctd=="all"]  
 ```
 
 ```{r load_example_ctd, cache=FALSE}
@@ -197,9 +212,11 @@ results <- data.table::rbindlist(list(DescartesHuman=lm_res1,
 results[,q:=stats::p.adjust(p,method="fdr")]
 ```
 
-In this study we systematically investigated the cell types underlying phenotypes across the HPO. For each phenotype we created a list of associated genes weighted by the strength of the evidence supporting those associations, imported from the Gene Curation Coalition (GenCC) [@distefanoGeneCurationCoalition2022]. Analogously, we created gene expression profiles for each cell type in our scRNA-seq atlases and then applied normalisation to compute how specific the expression of each gene is to each cell type. To assess consistency in the phenotype-cell type associations, we used multiple scRNA-seq atlases: Descartes Human (\~4 million single-nuclei and single-cells from `r length(unique(MSTExplorer::tissue_maps[ctd=="DescartesHuman"]$uberon_name))` fetal tissues) [@Cao2020-qz] and Human Cell Landscape (\~703,000 single-cells from `r length(unique(MSTExplorer::tissue_maps[ctd=="HumanCellLandscape"]$uberon_name))` embryonic, fetal and adult tissues) [@Han2020-iq]. To identify phenotype-cell type relationships, we ran a series of linear regression models to test for the relationship between each combination of phenotype and cell type. We applied multiple testing correction to control the false discovery rate (FDR) across all tests.
+In this study we systematically investigated the cell types underlying phenotypes across the HPO. We hypothesised that genes which are specifically expressed in certain cell types will be most relevant for the proper functioning of those cell types. Thus, phenotypes caused by disruptions to specific genes will have greater or lesser effects across different cell types. the specificity of gene expression across cell types could be used to infer the cell types underlying phenotypes.
 
-Within the results using the Descartes Human single-cell atlas, `r res_summ$tmerged[ctd=="DescartesHuman"][["tests significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["tests"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["tests significant (%)"]]`%) tests across `r res_summ$tmerged[ctd=="DescartesHuman"][["cell types significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["cell types"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["cell types significant (%)"]]`%) cell types and `r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes significant (%)"]]`%) phenotypes revealed significant phenotype-cell type associations after multiple-testing correction (FDR<0.05). Using the Human Cell Landscape single-cell atlas, `r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests significant (%)"]]`%) tests across `r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types significant (%)"]]`%) cell types and `r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes significant (%)"]]`%) phenotypes showed significant phenotype-cell type associations (FDR<0.05). The median number of significantly associated phenotypes per cell type was `r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes per cell type (median)"]]` (Descartes Human) and `r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes per cell type (median)"]]` (Human Cell Landscape), respectively.
+For each phenotype we created a list of associated genes weighted by the strength of the evidence supporting those associations, imported from the Gene Curation Coalition (GenCC) [@distefanoGeneCurationCoalition2022]. Analogously, we created gene expression profiles for each cell type in our scRNA-seq atlases and then applied normalisation to compute how specific the expression of each gene is to each cell type. To assess consistency in the phenotype-cell type associations, we used multiple scRNA-seq atlases: Descartes Human (\~4 million single-nuclei and single-cells from `r length(unique(MSTExplorer::tissue_maps[ctd=="DescartesHuman"]$uberon_name))` fetal tissues) [@Cao2020-qz] and Human Cell Landscape (\~703,000 single-cells from `r length(unique(MSTExplorer::tissue_maps[ctd=="HumanCellLandscape"]$uberon_name))` embryonic, fetal and adult tissues) [@Han2020-iq]. We ran a series of linear regression models to test for the relationship between every unique combination of phenotype and cell type. We applied multiple testing correction to control the false discovery rate (FDR) across all tests.
+
+Within the results using the Descartes Human single-cell atlas, `r res_summ$tmerged[ctd=="DescartesHuman"][["tests significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["tests"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["tests significant (%)"]]`%) tests across `r res_summ$tmerged[ctd=="DescartesHuman"][["cell types significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["cell types"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["cell types significant (%)"]]`%) cell types and `r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes significant"]]`/`r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes"]]` (`r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes significant (%)"]]`%) phenotypes revealed significant phenotype-cell type associations after multiple-testing correction (FDR\<0.05). Using the Human Cell Landscape single-cell atlas, `r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["tests significant (%)"]]`%) tests across `r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["cell types significant (%)"]]`%) cell types and `r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes significant"]]`/`r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes"]]` (`r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes significant (%)"]]`%) phenotypes showed significant phenotype-cell type associations (FDR\<0.05). The median number of significantly associated phenotypes per cell type was `r res_summ$tmerged[ctd=="DescartesHuman"][["phenotypes per cell type (median)"]]` (Descartes Human) and `r res_summ$tmerged[ctd=="HumanCellLandscape"][["phenotypes per cell type (median)"]]` (Human Cell Landscape), respectively.
 
 Across both single-cell references, the median number of significantly associated cell types per phenotype was `r res_summ_all[["cell types per phenotype (median)"]]`, suggesting reasonable specificity of the testing strategy. Within the HPO, `r res_summ_all[["diseases significant"]]`/`r res_summ_all[["diseases"]]` (\~`r res_summ_all[["diseases significant (%)"]]`%) of diseases gene annotations showed significant cell type associations for at least one of their respective phenotypes. A summary of the phenome-wide results stratified by single-cell atlas can be found in @tbl-summary.
 
@@ -228,24 +245,24 @@ overrep_df <- overrep_dat[,list("HPO branch"=ancestor_name,
 
 We intuitively expect that abnormalities of an organ system will often be driven by cell types within that system. The HPO has broad categories at the higher level of the ontology, enabling us to systematically test this. For example, phenotypes associated with the heart should generally be caused by cell types of the heart (i.e. cardiocytes), while abnormalities of the nervous system should largely be caused by neural cells. There will of course be exceptions to this. For example, some immune disorders can cause intellectual disability through neurodegeneration. Nevertheless, it is reasonable to expect that abnormalities of the nervous system will be most often associated with neural cells. All cell types in our single-cell reference atlases were mapped onto the Cell Ontology (CL); a controlled vocabulary of cell types organised into hierarchical branches (e.g. neural cell include neurons and glia, which in turn include their respective subtypes).
 
-Here, we consider a cell type to be *on-target* relative to a given HPO branch if it belongs to one of the matched CL branches (see @tbl-ontarget-celltypes). Within each high-level branch in the HPO shown in [Fig. @fig-summary]b, we tested whether each cell type was more often associated with phenotypes in that branch relative to those in all other branches (including those not shown). We then checked whether each cell type was overrepresented (at FDR<0.05) within its respective on-target HPO branch, where the number of phenotypes within that branch. Indeed, we found that all `r length(unique(overrep_df[["HPO branch"]]))` HPO branches were disproportionately associated with on-target cell types from their respective organ systems.
+Here, we consider a cell type to be *on-target* relative to a given HPO branch if it belongs to one of the matched CL branches (see @tbl-ontarget-celltypes). Within each high-level branch in the HPO shown in [Fig. @fig-summary]b, we tested whether each cell type was more often associated with phenotypes in that branch relative to those in all other branches (including those not shown). We then checked whether each cell type was overrepresented (at FDR\<0.05) within its respective on-target HPO branch, where the number of phenotypes within that branch. Indeed, we found that all `r length(unique(overrep_df[["HPO branch"]]))` HPO branches were disproportionately associated with on-target cell types from their respective organ systems.
 
 {{< pagebreak >}}
 
 ```{r tbl-ontarget-celltypes}
 #| label: tbl-ontarget-celltypes
-#| tbl-cap: Cross-ontology mappings between HPO and CL branches. The last two columns represent the number of cell types that were overrpresented in the on-target HPO branch and the total number of cell types in that branch. A disaggregated version of this table with all descendant cell type names is availabe in @tbl-celltypes. 
+#| tbl-cap: Cross-ontology mappings between HPO and CL branches. The last two columns represent the number of cell types that were overrpresented in the on-target HPO branch and the total number of cell types in that branch. A disaggregated version of this table with all descendant cell type names is availabe in @tbl-celltypes.
 
 knitr::kable(overrep_df)
 ```
 
-```{r cor.pct_p}
+```{r cor_pct_p}
 cor.pct_p <- stats::cor.test(plot_bar_dendro_out$ggprop_out$data$pct, 
                              plot_bar_dendro_out$ggprop_out$data$minus_log_p)
 nervous_pct <- plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==6]$pct
 ```
 
-In addition to binary metrics of a cell type being associated with a phenotype or not, we also used association test p-values as a proxy for the strength of the association. We hypothesized that the more significant the association between a phenotype and a cell type, the more likely it is that the cell type is on-target for its respective HPO branch. To evaluate whether this, we grouped the association $-log_{10}(\text{p-values})$ into 6 bins. For each HPO-CL branch pairing, we then calculated the proportion of on-target cell types within each bin. We found that the proportion of on-target cell types increased with increasing significance of the association (rho=`r cor.pct_p$estimate`, p=`r cor.pct_p$p.value`). For example, abnormalities of the nervous system with $-log_{10}(\text{p-values}) = 1$, only `r plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==1]$pct`% of the associated cell types were neural cells. Whereas for those with $-log_{10}(\text{p-values}) = 6$, `r plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==6]$pct`% were neural cells despite the fact that this class of cell types only constituted `r round(plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==6]$pct_celltype)`% of the total cell types tested (i.e. the baseline). This shows that the more significant the association, the more likely it is that the cell type is on-target.
+In addition to binary metrics of a cell type being associated with a phenotype or not, we also used association test p-values as a proxy for the strength of the association. We hypothesized that the more significant the association between a phenotype and a cell type, the more likely it is that the cell type is on-target for its respective HPO branch. To evaluate whether this, we grouped the association $-log_{10}(\text{p-values})$ into 6 bins. For each HPO-CL branch pairing, we then calculated the proportion of on-target cell types within each bin. We found that the proportion of on-target cell types increased with increasing significance of the association ($rho=$`r cor.pct_p$estimate`, $p=$`r cor.pct_p$p.value`). For example, abnormalities of the nervous system with $-log_{10}(\text{p-values}) = 1$, only `r plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==1]$pct`% of the associated cell types were neural cells. Whereas for those with $-log_{10}(\text{p-values}) = 6$, `r plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==6]$pct`% were neural cells despite the fact that this class of cell types only constituted `r round(plot_bar_dendro_out$ggprop_out$data[branch=="Abnormality of the\n nervous system" & minus_log_p==6]$pct_celltype)`% of the total cell types tested (i.e. the baseline). This shows that the more significant the association, the more likely it is that the cell type is on-target.
 
 ```{r fig-summary}
 #| label: fig-summary
@@ -276,7 +293,7 @@ validate_associations_correlate_ctd_out_hcl <- MSTExplorer::validate_association
   group_var="stage")
 ```
 
-Next, we sought to validate the consistency of our results across the two single-cell reference datasets (Descartes Human vs. Human Cell Landscape) across the subset of overlapping cell types [Fig. @fig-ctd-correlation]. In total there were `r nrow(validate_associations_correlate_ctd_out$data$all)` phenotype-cell type associations to compare across the two datasets (across `r length(unique(validate_associations_correlate_ctd_out$data$all$hpo_id))` phenotypes and `r length(unique(validate_associations_correlate_ctd_out$data$all$cl_name))` cell types annotated to the exact same CL term. We found that the correlation between p-values of the two datasets was high (`r paste0("$rho=",validate_associations_correlate_ctd_out$data_stats$p.all$summary_data$estimate,", p=",validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$p.value,"$")`). Within the subset of results that were significant in both single-cell datasets (FDR<0.05), we found that correlation of the association effect size were even stronger (`r paste0("$rho=",validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$estimate,", p=",validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$p.value,"$")`). We also checked for the intra-dataset consistency between the p-values of the foetal and adult samples in the Human Cell Landscape, showing a very similar degree of correlation as the inter-dataset comparison (`r paste0("$rho=",validate_associations_correlate_ctd_out_hcl$data_stats$p.all$summary_data$estimate,", p=",validate_associations_correlate_ctd_out_hcl$data_stats$logFC.significant$summary_data$p.value,"$")`). Together, these results suggest that our approach to identifying phenotype-cell type associations is highly replicable and generalisable to new datasets.
+Next, we sought to validate the consistency of our results across the two single-cell reference datasets (Descartes Human vs. Human Cell Landscape) across the subset of overlapping cell types [Fig. @fig-ctd-correlation]. In total there were `r nrow(validate_associations_correlate_ctd_out$data$all)` phenotype-cell type associations to compare across the two datasets (across `r length(unique(validate_associations_correlate_ctd_out$data$all$hpo_id))` phenotypes and `r length(unique(validate_associations_correlate_ctd_out$data$all$cl_name))` cell types annotated to the exact same CL term. We found that the correlation between p-values of the two datasets was high ($rho$=`r validate_associations_correlate_ctd_out$data_stats$p.all$summary_data$estimate`, $p$=`r validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$p.value`). Within the subset of results that were significant in both single-cell datasets (FDR\<0.05), we found that correlation of the association effect size were even stronger ($rho=$`r validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$estimate`, $p=$`r validate_associations_correlate_ctd_out$data_stats$logFC.significant$summary_data$p.value`). We also checked for the intra-dataset consistency between the p-values of the foetal and adult samples in the Human Cell Landscape, showing a very similar degree of correlation as the inter-dataset comparison ($rho=$`r validate_associations_correlate_ctd_out_hcl$data_stats$p.all$summary_data$estimate`, $p=$`r validate_associations_correlate_ctd_out_hcl$data_stats$logFC.significant$summary_data$p.value`). Together, these results suggest that our approach to identifying phenotype-cell type associations is highly replicable and generalisable to new datasets.
 
 ### More specific phenotypes are associated with fewer genes and cell types
 
@@ -296,18 +313,11 @@ plot_ontology_levels_out_stats <- plot_ontology_levels_out$data_stats$summary_da
 ## This avoids creating -Inf when logging values.
 plot_ontology_levels_out_stats[p.value==0, p.value:=.Machine$double.xmin]
 plot_ontology_levels_out_stats[q.value==0, q.value:=.Machine$double.xmin]
-plot_ontology_levels_out_stats[,summary:=paste0(
-  "$",
-  "p=",p.value,", ", 
-  # "q=",format(q.value,digits=3),", ",
-  "rho=",estimate,
-  "$"
-  )][,summary:=gsub("=[ ]","=",summary)]
 ```
 
-Higher levels of the ontology are broad classes of phenotype (e.g. 'Abnormality of the nervous system') while the lower levels can get very detailed (e.g. 'Spinocerebellar atrophy'). The higher level phenotypes inherit all genes associated with lower level phenotypes, so naturally they have more genes than the lower level phenotypes ([Fig. @fig-ontology-lvl]a; `r plot_ontology_levels_out_stats["genes"]$summary`). 
+Higher levels of the ontology are broad classes of phenotype (e.g. 'Abnormality of the nervous system') while the lower levels can get very detailed (e.g. 'Spinocerebellar atrophy'). The higher level phenotypes inherit all genes associated with lower level phenotypes, so naturally they have more genes than the lower level phenotypes ([Fig. @fig-ontology-lvl]a; $rho=$`r plot_ontology_levels_out_stats["genes"]$estimate`, $p=$`r plot_ontology_levels_out_stats["genes"]$p.value`).
 
-Next, we reasoned that the more detailed and specific a phenotype is, the more likely it is to be driven by one cell type.   For example, while 'Neurodevelopmental abnormality' could plausibly be driven by any/all cell types in the brain, it is more likely that 'Impaired visuospatial constructive cognition' is driven by a single cell type. This was indeed the case, as we observed a strongly significant negative correlation between the two variables ([Fig. @fig-ontology-lvl]b; `r plot_ontology_levels_out_stats["cell types"]$summary`). We also found that the phenotype-cell type association p-values increased with greater phenotype specificity, reflecting the decreasing overall number of associated cell types at each ontological level ([Fig. @fig-ontology-lvl]c; `r plot_ontology_levels_out_stats["p"]$summary`).
+Next, we reasoned that the more detailed and specific a phenotype is, the more likely it is to be driven by one cell type. For example, while 'Neurodevelopmental abnormality' could plausibly be driven by any/all cell types in the brain, it is more likely that 'Impaired visuospatial constructive cognition' is driven by a single cell type. This was indeed the case, as we observed a strongly significant negative correlation between the two variables ([Fig. @fig-ontology-lvl]b; $rho=$`r plot_ontology_levels_out_stats["cell types"]$estimate`, $p=$`r plot_ontology_levels_out_stats["cell types"]$p.value`). We also found that the phenotype-cell type association p-values increased with greater phenotype specificity, reflecting the decreasing overall number of associated cell types at each ontological level ([Fig. @fig-ontology-lvl]c; $rho=$`r plot_ontology_levels_out_stats["p"]$estimate`, $p=$`r plot_ontology_levels_out_stats["p"]$p.value`).
 
 ```{r fig-ontology-lvl}
 #| label: fig-ontology-lvl
@@ -355,17 +365,17 @@ hepatocyte_res <- results[q<0.05 &
 rni_res <- infections_out$data[hpo_name=="Recurrent Neisserial infections" & cl_name!="hepatoblast"]
 ```
 
-We selected the HPO term 'Recurrent bacterial infections' and all of its descendants (`r data.table::uniqueN(infections_out$data$hpo_id)-1` phenotypes) as an example of how investigations at the level of granular phenotypes can reveal different cell type-specific mechanisms ([Fig. @fig-rni]). As expected, these phenotypes are primarily associated with immune cell types (e.g. macrophages, dendritic cells, T cells, monocytes, neutrophils). Some associations confirm relationships previously suggested in the literature, such as that between 'Recurrent staphylococcal infections' and myeloid cells [@Heim2014-du; @Pidwill2020-le; @Stoll2018-dc; @Tebartz2015-xs]. Specifically, our results pinpoint `r staph_res_top$cl_name`s as the most strongly associated cell subtypes (`r staph_res_top$summary`).
+We selected the HPO term 'Recurrent bacterial infections' and all of its descendants (`r data.table::uniqueN(infections_out$data$hpo_id)-1` phenotypes) as an example of how investigations at the level of granular phenotypes can reveal different cell type-specific mechanisms ([Fig. @fig-rni]). As expected, these phenotypes are primarily associated with immune cell types (e.g. macrophages, dendritic cells, T cells, monocytes, neutrophils). Some associations confirm relationships previously suggested in the literature, such as that between 'Recurrent staphylococcal infections' and myeloid cells [@Heim2014-du; @Pidwill2020-le; @Stoll2018-dc; @Tebartz2015-xs]. Specifically, our results pinpoint `r staph_res_top$cl_name`s as the most strongly associated cell subtypes (FDR=`r staph_res_top$q`, $\beta$=`r staph_res_top$effect`).
 
-In contrast to all other recurrent infection types, 'Recurrent Neisserial infections' highlighted a novel association with hepatoblasts (Descartes Human : `r hepatoblast_res[hpo_name=="Recurrent Neisserial infections" & CellType=="Hepatoblasts"]$summary`). Whilst unexpected, a convincing explanation involves the complement system, a key driver of innate immune response to Neisserial infections. Hepatocytes, which derive from hepatoblasts, produce the majority of complement proteins [@Zhou2016-kq], and Kupffer cells express complement receptors @Dixon2013-ok. In addition, individuals with deficits in complement are at high risk for Neisserial infections [@Ladhani2019-nf; @Rosain2017-ih], and a genome-wide association study in those with a Neisserial infection identified risk variants within complement proteins [@The_International_Meningococcal_Genetics_Consortium2010-if] . While the potential of therapeutically targeting complement in RDs (including Neisserial infections) has been proposed previously [@Lung2019-il; @Reis2015-yz], performing this in a gene- and cell type-specific manner may help to improve efficacy and reduce toxicity (e.g. due to off-target effects). Importantly, there are over 56 known genes within the complement system [@Seal2023-pa], highlighting the need for a systematic, evidence-based approach to identify effective gene targets.
+In contrast to all other recurrent infection types, 'Recurrent Neisserial infections' highlighted a novel association with hepatoblasts (Descartes Human : FDR=`r hepatoblast_res[hpo_name=="Recurrent Neisserial infections" & CellType=="Hepatoblasts"]$q`, $\beta$=`r hepatoblast_res[hpo_name=="Recurrent Neisserial infections" & CellType=="Hepatoblasts"]$estimate`). Whilst unexpected, a convincing explanation involves the complement system, a key driver of innate immune response to Neisserial infections. Hepatocytes, which derive from hepatoblasts, produce the majority of complement proteins [@Zhou2016-kq], and Kupffer cells express complement receptors @Dixon2013-ok. In addition, individuals with deficits in complement are at high risk for Neisserial infections [@Ladhani2019-nf; @Rosain2017-ih], and a genome-wide association study in those with a Neisserial infection identified risk variants within complement proteins [@The_International_Meningococcal_Genetics_Consortium2010-if] . While the potential of therapeutically targeting complement in RDs (including Neisserial infections) has been proposed previously [@Lung2019-il; @Reis2015-yz], performing this in a gene- and cell type-specific manner may help to improve efficacy and reduce toxicity (e.g. due to off-target effects). Importantly, there are over 56 known genes within the complement system [@Seal2023-pa], highlighting the need for a systematic, evidence-based approach to identify effective gene targets.
 
-Also of note, despite the fact that our datasets contain both hepatoblasts and their mature counterpart, hepatocytes, only the hepatoblasts showed this association. This suggests that the genetic factors that predispose individuals for risk of Neisserial infections are specifically affecting hepatoblasts before they become fully differentiated. It is also notable that these phenotypes were the only ones within the 'Recurrent bacterial infections' branch, or even the broader 'Recurrent infections' branch, perhaps indicating a unique role for hepatoblasts in recurrent infectious disease. The only phenotypes within the even broader 'Abnormality of the immune system' HPO branch that significantly associated with mature hepatocytes were `r shQuote(hepatocyte_res[1,]$hpo_name)` (`r hepatocyte_res[1,]$summary`) and `r shQuote(hepatocyte_res[2,]$hpo_name)` (`r hepatocyte_res[2,]$summary`) both of which are well-known to involve the liver [@Al-Hamoudi2009-le; @Brewer2018-dg; @Eshchar1973-tz].
+Also of note, despite the fact that our datasets contain both hepatoblasts and their mature counterpart, hepatocytes, only the hepatoblasts showed this association. This suggests that the genetic factors that predispose individuals for risk of Neisserial infections are specifically affecting hepatoblasts before they become fully differentiated. It is also notable that these phenotypes were the only ones within the 'Recurrent bacterial infections' branch, or even the broader 'Recurrent infections' branch, perhaps indicating a unique role for hepatoblasts in recurrent infectious disease. The only phenotypes within the even broader 'Abnormality of the immune system' HPO branch that significantly associated with mature hepatocytes were `r shQuote(hepatocyte_res[1,]$hpo_name)` (FDR=`r hepatocyte_res[1,]$q`, $\beta$=`r hepatocyte_res[1,]$estimate`) and `r shQuote(hepatocyte_res[2,]$hpo_name)` (FDR=`r hepatocyte_res[2,]$q`, $\beta$=`r hepatocyte_res[2,]$estimate`) both of which are well-known to involve the liver [@Al-Hamoudi2009-le; @Brewer2018-dg; @Eshchar1973-tz].
 
 ```{r fig-rni}
 #| label: fig-rni
 #| fig-cap: Hepatoblasts have a unique role in recurrent Neisserial infections. Significant phenotype-cell type tests for phenotypes within the branch 'Recurrent bacterial infections'. Amongst all different kinds of recurrent bacterial infections, hepatoblasts (highlighted by vertical dotted lines) are exclusively enriched in 'Recurrent gram−negative bacterial infections'. Note that terms from multiple levels of the same ontology branch are shown as separate facets (e.g. 'Recurrent bacterial infections' and 'Recurrent gram−negative bacterial infections').
 #| fig-height: 11
-#| fig-width: 11
+#| fig-width: 13
 
 infections_out$plot + 
   ggplot2::guides(fill=ggplot2::guide_legend(ncol=2,
@@ -407,51 +417,39 @@ plot_gene_heat <- ggplot2::ggplot(results_annot_sub,
    ggplot2::labs(x="Gene",y="Cell type",fill="Expression\nspecificity\nquantile") +
    # ggplot2::scale_fill_viridis_c() +
    ggplot2::scale_fill_distiller(palette = "BuGn",direction = 1) +
-   ggplot2::guides(fill = ggplot2::guide_colorbar(barheight = 3))
+   ggplot2::guides(fill = ggplot2::guide_colorbar(barheight = 3)) +
+   ggplot2::theme(text = ggplot2::element_text(size=8))
 ```
 
-Phenotypes can be associated with multiple diseases, cell types and genes. In addition to hepatoblasts, 'Recurrent Neisserial infections' were also associated with `r rni_res[cl_name==unique(rni_res$cl_name)[1]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[1]]$q[1]`, $\beta$=`r rni_res[cl_name==unique(rni_res$cl_name)[1]]$effect[1]`), `r rni_res[cl_name==unique(rni_res$cl_name)[2]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[2]]$q[1]`, $\beta$=`r rni_res[cl_name==unique(rni_res$cl_name)[2]]$effect[1]`), and `r rni_res[cl_name==unique(rni_res$cl_name)[3]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[3]]$q[1]`, $\beta$=`r round(rni_res[cl_name==unique(rni_res$cl_name)[3]]$effect[1],3)`). RNI is a phenotype of `r length(sort(unique(results_annot[hpo_name=="Recurrent Neisserial infections"]$disease_name)))` different diseases (`r paste(shQuote(sort(unique(results_annot[hpo_name=="Recurrent Neisserial infections"]$disease_name))), collapse=", ")`). 
+Phenotypes can be associated with multiple diseases, cell types and genes. In addition to hepatoblasts, 'Recurrent Neisserial infections' were also associated with `r rni_res[cl_name==unique(rni_res$cl_name)[1]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[1]]$q[1]`, $\beta$=`r rni_res[cl_name==unique(rni_res$cl_name)[1]]$effect[1]`), `r rni_res[cl_name==unique(rni_res$cl_name)[2]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[2]]$q[1]`, $\beta$=`r rni_res[cl_name==unique(rni_res$cl_name)[2]]$effect[1]`), and `r rni_res[cl_name==unique(rni_res$cl_name)[3]]$cl_name[1]`s (FDR=`r rni_res[cl_name==unique(rni_res$cl_name)[3]]$q[1]`, $\beta$=`r round(rni_res[cl_name==unique(rni_res$cl_name)[3]]$effect[1],3)`). RNI is a phenotype of `r length(sort(unique(results_annot[hpo_name=="Recurrent Neisserial infections"]$disease_name)))` different diseases (`r paste(shQuote(sort(unique(results_annot[hpo_name=="Recurrent Neisserial infections"]$disease_name))), collapse=", ")`).
 
 Next, we sought to link multi-scale mechanisms at the levels of disease, phenotype, cell type, and gene and visualise these as a network ([Fig. @fig-network-rni]). This revealed that genetic deficiencies in different complement system genes (e.g. *C5*, *C8*, and *C7*) are primarily mediated by different cell types (hepatoblasts, stratified epithelial cells, and stromal cells, respectively). While genes of the complement system are expressed throughout many different tissues and cell types, these results indicate that different subsets of these genes may mediate their effects through different cell types. This finding suggests that investigating (during diagnosis) and targeting (during treatment) different cell types may be critical for the diagnosis and treatment of these closely related, yet mechanistically distinct, diseases.
 
-::: {.content-visible unless-format="html"}
+
 ```{r fig-network-rni}
 #| label: fig-network-rni
 #| fig-cap: Multi-scale mechanisms of Recurrent Neisserial infections. Starting from the bottom of the plot, one can trace how causal genes (yellow boxes) mediate their effects through cell types (orange circles), phenotypes (purple cylinders) and ultimately diseases (blue cylinders). Cell types are connected to phenotypes via association testing (FDR<0.05), and to diseases when the symptom gene set overlap is >25%. Only the top driver genes (specificity quantiles>75%) mediating each phenotype-cell type association are shown. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].  
-#| fig-height: 9
+#| fig-height: 4
 #| fig-width: 7
 
-patchwork::wrap_plots(
-
-  magick::image_read(here::here("manuscript/img/fig-rni.png"), density=300)|>
-                    magick::image_ggplot(interpolate=TRUE),
-  patchwork::plot_spacer(),
-  plot_gene_heat,
-  ncol = 1, 
-  # guides = "collect",
-  heights = c(5,-1.00000001,.2))  +
-  patchwork::plot_annotation(tag_levels = "a") & 
-  ggplot2::theme(plot.margin = ggplot2::margin(0, 0, 0, 0))
+if(knitr::is_html_output()){
+  knitr::opts_current$set(results="asis")
+  vn_rni$plot
+  plot_gene_heat
+} else {
+  fig_network_rni <- patchwork::wrap_plots(
+    magick::image_read(here::here("manuscript/img/fig-rni.png"), density=400)|>
+                      magick::image_ggplot(interpolate=TRUE), 
+    plot_gene_heat,
+    ncol = 1, 
+    # guides = "collect",
+    heights = c(5,1))  +
+    patchwork::plot_annotation(tag_levels = "a") & 
+    ggplot2::theme(plot.margin = ggplot2::margin(0,0,0,0))
+  fig_network_rni
+  # ggplot2::ggsave("~/Downloads/fig_network_rni.png", fig_network_rni, dpi = 400, height = 6, width = 7)
+}
 ```
-
-
-Multi-scale mechanisms of Recurrent Neisserial infections. Starting from the bottom of the plot, one can trace how causal genes (yellow boxes) mediate their effects through cell types (orange circles), phenotypes (purple cylinders) and ultimately diseases (blue cylinders). Cell types are connected to phenotypes via association testing (FDR<0.05), and to diseases when the symptom gene set overlap is \>25%. Only the top driver genes (specificity quantiles>75%) mediating each phenotype-cell type association are shown. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
-:::
-
-::: {.content-hidden unless-format="html"}
-```{r fig-network-rni-html, results='asis'}
-#| label: fig-network-rni-html
-#| fig-cap: Multi-scale mechanisms of Recurrent Neisserial infections. Starting from the bottom of the plot, one can trace how causal genes (yellow boxes) mediate their effects through cell types (orange circles), phenotypes (purple cylinders) and ultimately diseases (blue cylinders). Cell types are connected to phenotypes via association testing (FDR<0.05), and to diseases when the symptom gene set overlap is >25%. Only the top driver genes (specificity quantiles>75%) mediating each phenotype-cell type association are shown. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].  
-#| fig-height: 5
-#| fig-width: 7
-#| fig-subcap:
-#| - 'Inferred causal disease mechanisms'
-
-print("tmp")
-# vn_rni$plot
-# plot_gene_heat
-```
-:::
 
 ### Monarch Knowledge Graph recall
 
@@ -490,15 +488,14 @@ plot_congenital_annotations_out_stats <- data.table::data.table(
   plot_congenital_annotations_out$data_stats$summary_data
   )[,summary:=paste0(
   "$",
-  "p=",p.value,",",
-  "\\chi^2_{Pearson}=",statistic,",",
-  "\\hat{V}_{Cramer}=",estimate,
+  "p=",formatter(p.value),",",
+  "\\chi^2_{Pearson}=",formatter(statistic),",",
+  "\\hat{V}_{Cramer}=",formatter(estimate),
   "$"
 )]
 ```
 
-
-To further verify the biological relevance of our results, we examined the association of foetal cell types with phenotypes annotated as congenital in onset. As expected, the frequency of congenital onset with each phenotype (as determined by GPT-4 annotations) was strongly predictive with the proportion of significantly associated foetal cell types in our results (`r plot_congenital_annotations_out_stats$summary`). Furthermore, increasing congenital frequency annotation (on an ordinal scale) corresponded to an increase in the proportion of foetal cell types: `r paste(plot_congenital_annotations_out_data[fetal_celltype==TRUE]$summary,collapse=", ")`. This is consistent with the expected role of foetal cell types in development and the aetiology of congenital disorders.
+To further verify the biological relevance of our results, we examined the association of foetal cell types with phenotypes annotated as congenital in onset. As expected, the frequency of congenital onset with each phenotype (as determined by GPT-4 annotations) was strongly predictive with the proportion of significantly associated foetal cell types in our results ($p=$`r plot_congenital_annotations_out_stats$p.value`, $\chi^2_{Pearson}=$`r plot_congenital_annotations_out_stats$statistic`, $\hat{V}_{Cramer}=$`r plot_congenital_annotations_out_stats$estimate`). Furthermore, increasing congenital frequency annotation (on an ordinal scale) corresponded to an increase in the proportion of foetal cell types: `r paste(plot_congenital_annotations_out_data[fetal_celltype==TRUE]$summary,collapse=", ")`. This is consistent with the expected role of foetal cell types in development and the aetiology of congenital disorders.
 
 ```{r fig-congenital}
 #| label: fig-congenital
@@ -529,7 +526,7 @@ ggplot2::theme(legend.position = 'top',
                legend.key.width = ggplot2::unit(2.5, 'cm')) 
   
  
-
+plot_congenital_annotations_out$plot$labels$subtitle <- NULL
 plot_congenital_annotations_out$plot$labels$caption <- NULL
 plot_congenital_annotations_out$plot$labels$group <- NULL
 
@@ -620,7 +617,8 @@ plot_report_out <- MSTExplorer::plot_report(
 ### Therapeutic target validation
 
 ```{r ttd_check}
-remove_status <- c("Application submitted","Patented","Preregistration","Investigative",NA)
+remove_status <- c("Application submitted","Patented","Preregistration","Registered","Investigative","Preclinical",
+                   "Clinical trial","Phase 0",NA)
 run_map_genes = FALSE
 ## Gene therapy only
 ttd_check_out <- MSTExplorer::ttd_check(
@@ -637,14 +635,14 @@ ttd_check_all_out <- MSTExplorer::ttd_check(
   top_targets=prioritise_targets_out$top_targets,   
   phenotype_to_genes=p2g,
   run_map_genes = run_map_genes,
-  # remove_status=remove_status,
+  # remove_status=remove_status,  
   allow.cartesian = TRUE,
   show_plot = FALSE)
 ```
 
-To determine whether the genes prioritised by our therapeutic targets pipeline were plausible, we checked what percentage of gene therapy targets we recapitulated. Data on therapeutic approval status was gathered from the Therapeutic Target Database (TTD; release `r Sys.Date()`) [@Liu2011-qd]. Overall, we prioritised `r sum(ttd_check_out$data[failed==FALSE]$prioritised)/nrow(ttd_check_out$data[failed==FALSE])*100`% of all non-failed existing gene therapy targets. A hypergeometric test confirmed that our prioritised targets were significantly enriched for non-failed gene therapy targets (`r paste0("$p=",ttd_check_out$ttd_hypergeo_out$nonfailed_enrichment,"$")`). Importantly, we did not prioritise any of the failed therapeutics (`r sum(ttd_check_out$data[failed==TRUE]$prioritised)/nrow(ttd_check_out$data[failed==TRUE])*100`%), defined as having been terminated or withdrawn from the market. The hypergeometric test for depletion of failed targets did not reach significance (`r paste0("$p=",ttd_check_out$ttd_hypergeo_out$failed_depletion,"$")`), but this is to be expected as there was only one failed gene therapy target in the TTD database.
+To determine whether the genes prioritised by our therapeutic targets pipeline were plausible, we checked what percentage of gene therapy targets we recapitulated. Data on therapeutic approval status was gathered from the Therapeutic Target Database (TTD; release `r Sys.Date()`) [@Liu2011-qd]. Overall, we prioritised `r sum(ttd_check_out$data[failed==FALSE]$prioritised)/nrow(ttd_check_out$data[failed==FALSE])*100`% of all non-failed existing gene therapy targets. A hypergeometric test confirmed that our prioritised targets were significantly enriched for non-failed gene therapy targets ($p=$`r ttd_check_out$ttd_hypergeo_out$nonfailed_enrichment`). Importantly, we did not prioritise any of the failed therapeutics (0%), defined as having been terminated or withdrawn from the market. The hypergeometric test for depletion of failed targets did not reach significance ($p=$`r ttd_check_out$ttd_hypergeo_out$failed_depletion`), but this is to be expected as there was only one failed gene therapy target in the TTD database.
 
-Even when considering therapeutics of any kind ([Fig. @fig-therapy-validate-all]), not just gene therapies, we recapitulated `r sum(ttd_check_all_out$data[failed==FALSE]$prioritised)/nrow(ttd_check_all_out$data[failed==FALSE])*100`% of the non-failed therapeutic targets and `r sum(ttd_check_all_out$data[failed==TRUE]$prioritised)/nrow(ttd_check_all_out$data[failed==TRUE])*100`% of the terminated/withdrawn therapeutic targets (n=`r nrow(ttd_check_all_out$data[failed==TRUE])`). Here we found that our prioritised targets were significantly enriched for non-failed therapeutics (`r paste0("$p=",ttd_check_all_out$ttd_hypergeo_out$nonfailed_enrichment,"$")`), and highly significantly depleted for failed therapeutics (`r paste0("$p=",ttd_check_all_out$ttd_hypergeo_out$failed_depletion,"$")`). This suggests that our multi-scale evidence-based prioritisation pipeline is capable of selectively identifying genes that are likely to be effective therapeutic targets.
+Even when considering therapeutics of any kind ([Fig. @fig-therapy-validate-all]), not just gene therapies, we recapitulated `r sum(ttd_check_all_out$data[failed==FALSE]$prioritised)/nrow(ttd_check_all_out$data[failed==FALSE])*100`% of the non-failed therapeutic targets and 0% of the terminated/withdrawn therapeutic targets (n=`r nrow(ttd_check_all_out$data[failed==TRUE])`). Here we found that our prioritised targets were highly significantly depleted for failed therapeutics ($p=$`r ttd_check_all_out$ttd_hypergeo_out$failed_depletion`). This suggests that our multi-scale evidence-based prioritisation pipeline is capable of selectively identifying genes that are likely to be effective therapeutic targets.
 
 ```{r fig-therapy-validate}
 #| label: fig-therapy-validate
@@ -736,7 +734,7 @@ fig_therapy_examples
 #| - 'Spinocerebellar atrophy'
 #| - 'Neuronal loss in central nervous system'
 
-prioritise_targets_grid_out$plot
+prioritise_targets_grid_out$plot 
 vn_therapy
 ```
 :::
@@ -751,7 +749,7 @@ Another challenge in TSD is early detection and diagnosis, before irreversible d
 sca <- results[q<0.05 & hpo_name=='Spinocerebellar atrophy']
 ```
 
-Spinocerebellar atrophy is a debilitating and lethal phenotype that occurs in diseases such as Spinocerebellar ataxia and Boucher-Nenhauser syndrome. These diseases are characterised by progressive degeneration of the cerebellum and spinal cord, leading to severe motor and cognitive impairments. Our pipeline identified M2 macrophages as the only causal cell type associated with 'Spinocerebellar atrophy'. This strongly suggests that degeneration of cerebellar Purkinje cells are in fact downstream consequences of macrophage dysfunction, rather than being the primary cause themselves. This is consistent with the known role of macrophages, especially microglia, in neuroinflammation and other neurodegenerative conditions such as Alzheimer's and Parkinsons' disease [@ferroRoleMicrogliaAtaxias2019; @holMicroglialTranscriptomicsMeets2022; @lopesAtlasGeneticEffects2020a]. While experimental and postmortem observational studies have implicated microglia in spinocerebellar atrophy previously [@ferroRoleMicrogliaAtaxias2019;], our results provide a statistically-supported and unbiased genetic link between known risk genes and this cell type. Therefore, targeting M2 microglia in the treatment of spinocerebellar atrophy may therefore represent a promising therapeutic strategy. This is aided by the fact that there are mouse models that perturb the ortholog of human spinocerebellar atrophy risk genes (e.g. [*Atxn1*](https://www.informatics.jax.org/marker/MGI:104783), [*Pnpla6*](https://www.informatics.jax.org/marker/MGI:1354723)) and reliably recapitulate the effects of this diseases at the cellular (e.g. loss of Purkinje cells), morphological (e.g. atrophy of the cerebellum, spinal cord, and muscles), and functional (e.g. ataxia) levels.
+Spinocerebellar atrophy is a debilitating and lethal phenotype that occurs in diseases such as Spinocerebellar ataxia and Boucher-Nenhauser syndrome. These diseases are characterised by progressive degeneration of the cerebellum and spinal cord, leading to severe motor and cognitive impairments. Our pipeline identified M2 macrophages as the only causal cell type associated with 'Spinocerebellar atrophy'. This strongly suggests that degeneration of cerebellar Purkinje cells are in fact downstream consequences of macrophage dysfunction, rather than being the primary cause themselves. This is consistent with the known role of macrophages, especially microglia, in neuroinflammation and other neurodegenerative conditions such as Alzheimer's and Parkinsons' disease [@ferroRoleMicrogliaAtaxias2019; @holMicroglialTranscriptomicsMeets2022; @lopesAtlasGeneticEffects2020a]. While experimental and postmortem observational studies have implicated microglia in spinocerebellar atrophy previously [@ferroRoleMicrogliaAtaxias2019], our results provide a statistically-supported and unbiased genetic link between known risk genes and this cell type. Therefore, targeting M2 microglia in the treatment of spinocerebellar atrophy may therefore represent a promising therapeutic strategy. This is aided by the fact that there are mouse models that perturb the ortholog of human spinocerebellar atrophy risk genes (e.g. [*Atxn1*](https://www.informatics.jax.org/marker/MGI:104783), [*Pnpla6*](https://www.informatics.jax.org/marker/MGI:1354723)) and reliably recapitulate the effects of this diseases at the cellular (e.g. loss of Purkinje cells), morphological (e.g. atrophy of the cerebellum, spinal cord, and muscles), and functional (e.g. ataxia) levels.
 
 ```{r neuronal_loss}
 neuronal_loss <- results[q<0.05 & hpo_name=='Neuronal loss in central nervous system']
@@ -782,9 +780,9 @@ pheno_map_targets_severe <- pheno_map_targets[
   ]
 
 pheno_map_targets_severe[,summary:=paste0(
-  shQuote(object_label1), 
-  " ($SIM_{o,g}=",round(phenotype_genotype_score,3),"$)"
-  )]
+  shQuote(object_label1),  
+  " ($SIM_{o,g}=",round(phenotype_genotype_score,options()$digits),"$)"
+  )] 
 ```
 
 We computed interspecies translatability scores using a combination of both ontological ($SIM_{o}$) and genotypic ($SIM_{g}$) similarity relative to each homologous human phenotype and its associated genes [Fig. @fig-animal-models]. In total, we mapped `r length(unique(pheno_map_genes_match$id2))` non-human phenotypes (in `r paste0("*",sort(unique(pheno_map_genes_match$gene_taxon_label2)),"*",collapse=", ")`) to `r length(unique(pheno_map_genes_match$id1))` homologous human phenotypes. Amongst the `r length(unique(prioritise_targets_out$top_targets$hpo_id))` phenotype within our prioritised therapy targets, `r length(intersect(prioritise_targets_out$top_targets$hpo_id, pheno_map_genes_match$id1))` had viable animal models in at least on non-human species. Per species, the number of homologous phenotypes was: `r paste0("*",names(taxa_count),"*"," (n=",taxa_count,")")`. Amongst our prioritised targets with a GPT-4 severity score of \>10, the phenotypes with the greatest animal model similarity were `r paste(pheno_map_targets_severe$summary[1:5],collapse = ", ")`.
@@ -854,8 +852,8 @@ $$
 
 In order to assign evidence scores to each Phenotype-Gene relationship, we combined the aforementioned datasets from GenCC ($M_{ij}$) and HPO ($A_{ijk}$) by merging on the gene and disease ID columns. For each phenotype, we then computed the mean of Disease-Gene scores across all diseases for which that phenotype is a symptom. This resulted in a final 2D tensor of Phenotype-by-Gene evidence scores ($L_{ij}$):
 
-::: {#eq-evidence-scores .content-hidden unless-format="html"}
-![](equations/eq1.png){height="300px"}
+::: {.content-hidden unless-format="html"}
+![](equations/eq1.png){#eq-evidence-scores height="300px"}
 
 \
 
@@ -904,8 +902,8 @@ Specificity matrices were generated separately for each transcriptomic atlas usi
 
 Next, we calculated the mean expression per cell type and normalised the resulting matrix to transform it into a gene-by-cell type expression specificity matrix ($S_{g,c}$). In other words, each gene in each cell type had a 0-1 score where 1 indicated the gene was mostly specifically expressed in that particular cell type relative to all other cell types. This procedure was repeated separately for each of the single-cell atlases and can be summarised as:
 
-::: {#eq-ctd-specificity .content-hidden unless-format="html"}
-![](equations/eq3.png){height="300px"}
+::: {.content-hidden unless-format="html"}
+![](equations/eq3.png){#eq-ctd-specificity height="300px"}
 
 Construction of the gene-by-cell type specificity matrix.
 :::
@@ -955,13 +953,14 @@ We repeated the aforementioned procedure separately for each of the single-cell 
 
 Here we define a symptom as a phenotype as it presents within the context of the specific disease. The features of a given symptom can be described as the subset of genes annotated to phenotype $p$ via a particular disease $d$, denoted as $G_{dp}$ ([see Fig. @fig-diagram]). To attribute our phenotype-level cell type enrichment signatures to specific diseases, we first identified the gene subset that was most strongly driving the phenotype-cell type association by computing the intersect of genes that were both in the phenotype annotation and within the top 25% specificity percentile for the associated cell type. We then computed the intersect between symptom genes ($G_{dp}$) and driver genes ($G_{pc}$), resulting in the gene subset $G_{d \cap p \cap c}$. Only $G_{d \cap p \cap c}$ gene sets with 25% or greater overlap with the symptom gene subset ($G_{dp}$) were kept. This procedure was repeated for all phenotype-cell type-disease triads, which can be summarised as follows:
 
-::: {#eq-symptoms .content-hidden unless-format="html"}
-![](equations/eq4.png){height="300px"}
+::: {.content-hidden unless-format="html"}
+![](equations/eq4.png){#eq-symptoms height="300px"} 
+
 :::
 
 \
 
-::: {.content-visible unless-format="html"}
+::: {.content-visible unless-format="html"} 
 ```{=tex}
 \begin{equation*}
   \frac{
@@ -981,7 +980,7 @@ Here we define a symptom as a phenotype as it presents within the context of the
 
 ### Validation of expected phenotype-cell type relationships
 
-We first sought to confirm that our tests (across both single-cell references) were able to recover expected phenotype-cell type relationships across seven high-level branches within the HPO ([Fig. @fig-summary]), including abnormalities of the cardiovascular system, endocrine system, eye, immune system, musculoskeletal system, nervous system, and respiratory system. Within each branch the number of significant tests in a given cell type were plotted ([Fig. @fig-summary]b). Mappings between freeform annotations (the level at which we performed our phenotype- cell type association tests) provided by the original atlas authors and their closest CL term equivalents were provided by CellxGene [@CZI_Single-Cell_Biology_Program2023-fs]. CL terms along the *x-axis* of [Fig. @fig-summary]b were assigned colours corresponding to which HPO branch showed the greatest number of enrichments (after normalising within each branch to account for differences in scale). The normalised colouring allows readers to quickly assess which HPO branch was most often associated with each cell type, while accounting for differences in the number of phenotypes across branches. We then ran a series of Analysis of Variance (ANOVA) tests to determine whether (within a given branch) a given cell type was more often enriched (FDR<0.05) within that branch relative to all of the other HPO branches of an equivalent level in the ontology (including all branches not shown in [Fig. @fig-summary]b). After applying Benjamini-Hochberg multiple testing correction [@Benjamini1995-vo] (denoted as $FDR _{b,c}$), we annotated each respective branch-by-cell type bar according to the significance (\*\*\*\* : $FDR _{b,c}<1e-04$, \*\*\* : $FDR _{b,c}<0.001$, \*\* : $FDR _{b,c}<0.01$, \* : $FDR _{b,c}<0.05$). Cell types in [Fig. @fig-summary]a-b were ordered along the *x-axis* according to a dendrogram derived from the CL ontology ([Fig. @fig-summary]c), which provides ground-truth semantic relationships between all cell types (e.g. different neuronal subtypes are grouped together).
+We first sought to confirm that our tests (across both single-cell references) were able to recover expected phenotype-cell type relationships across seven high-level branches within the HPO ([Fig. @fig-summary]), including abnormalities of the cardiovascular system, endocrine system, eye, immune system, musculoskeletal system, nervous system, and respiratory system. Within each branch the number of significant tests in a given cell type were plotted ([Fig. @fig-summary]b). Mappings between freeform annotations (the level at which we performed our phenotype- cell type association tests) provided by the original atlas authors and their closest CL term equivalents were provided by CellxGene [@CZI_Single-Cell_Biology_Program2023-fs]. CL terms along the *x-axis* of [Fig. @fig-summary]b were assigned colours corresponding to which HPO branch showed the greatest number of enrichments (after normalising within each branch to account for differences in scale). The normalised colouring allows readers to quickly assess which HPO branch was most often associated with each cell type, while accounting for differences in the number of phenotypes across branches. We then ran a series of Analysis of Variance (ANOVA) tests to determine whether (within a given branch) a given cell type was more often enriched (FDR\<0.05) within that branch relative to all of the other HPO branches of an equivalent level in the ontology (including all branches not shown in [Fig. @fig-summary]b). After applying Benjamini-Hochberg multiple testing correction [@Benjamini1995-vo] (denoted as $FDR _{b,c}$), we annotated each respective branch-by-cell type bar according to the significance (\*\*\*\* : $FDR _{b,c}<1e-04$, \*\*\* : $FDR _{b,c}<0.001$, \*\* : $FDR _{b,c}<0.01$, \* : $FDR _{b,c}<0.05$). Cell types in [Fig. @fig-summary]a-b were ordered along the *x-axis* according to a dendrogram derived from the CL ontology ([Fig. @fig-summary]c), which provides ground-truth semantic relationships between all cell types (e.g. different neuronal subtypes are grouped together).
 
 As an additional measure of the accuracy of our phenotype-cell types test results we identified conceptually matched branches across the HPO and the CL ([Fig. @fig-summary]d and @tbl-celltypes). For example, 'Abnormality of the cardiovascular system' in the HPO was matched with 'cardiocytes' in the CL which includes all cell types specific to the heart. Analogously, 'Abnormality of the nervous system' in the HPO was matched with 'neural cell' in the CL which includes all descendant subtypes of neurons and glia. This cross-ontology matching was repeated for each HPO branch and can be referred to as on-target cell types. Within each branch, the $-log_{10}(FDR _{pc})$ values of on-target cell types were binned by rounding to the nearest integer (*x-axis*) and the percentage of tests for on-target cell types relative to all cell types were computed at each bin (*y-axis*) ([Fig. @fig-summary]d). The baseline level (dotted horizontal line) illustrates the percentage of on-target cell types relative to the total number of observed cell types. Any percentages above this baseline level represent greater than chance representation of the on-target cell types in the significant tests.
 
@@ -1019,8 +1018,8 @@ Let us denote:
 
 -   $NSS_p$: the final composite severity score for phenotype $p$ after applying normalisation to align values to a 0-100 scale and ensure equivalent meaning regardless of which other phenotypes are being analysed in addition to $p$. This allows for direct comparability of severity scores across studies with different sets of phenotypes.
 
-::: {#eq-gpt .content-hidden unless-format="html"}
-![](equations/eq5.png){height="300px"}
+::: {.content-hidden unless-format="html"}
+![](equations/eq5.png){#eq-gpt height="300px"}
 
 Computing normalised severity score from encoded GPT-4 annotations.
 :::
@@ -1082,13 +1081,13 @@ To facilitate all analyses described in this study and to make them more easily 
 
 ### Rare Disease Celltyping Portal
 
-To further increase the ease of access for stakeholders in the RD community without the need for programmatic experience, we developed a series of web apps to interactively explore, visualise, and download the results from our study. Collectively, these web apps are called the Rare Disease Celltyping Portal. The landing page for the website was made using HTML, CSS, and javascript and the web apps were created using the Shiny Web application framework for R and deployed on the shinyapps.io  server. The website can be accessed at <https://neurogenomics.github.io/rare_disease_celltyping_apps/home>. All code used to generate the website can be found at <https://github.com/neurogenomics/rare_disease_celltyping_apps>.
+To further increase the ease of access for stakeholders in the RD community without the need for programmatic experience, we developed a series of web apps to interactively explore, visualise, and download the results from our study. Collectively, these web apps are called the Rare Disease Celltyping Portal. The landing page for the website was made using HTML, CSS, and javascript and the web apps were created using the Shiny Web application framework for R and deployed on the shinyapps.io server. The website can be accessed at <https://neurogenomics.github.io/rare_disease_celltyping_apps/home>. All code used to generate the website can be found at <https://github.com/neurogenomics/rare_disease_celltyping_apps>.
 
 {{< pagebreak >}}
 
 ## Tables
 
-```{r tbl-summary}
+```{r}
 #| label: tbl-summary 
 #| tbl-cap: Summary statistics of enrichment results stratified by single-cell atlas. Summary statistics at multiple levels (tests, cell types, phenotypes, diseases, cell types per phenotype, phenotypes per cell type) stratified by the single-cell atlas that was used as a cell type signature reference (Descartes Human or Human Cell Atlas).
 
@@ -1101,10 +1100,10 @@ data.frame(res_summ$tmerged[,-c("ctd")],
 
 {{< pagebreak >}}
 
-```{r tbl-filters}
+```{r}
 #| label: tbl-filters
 #| tbl-cap: Description of each filtering step performed in the multi-scale therapeutic target prioritisation pipleline. 'Level' indicates the biological scale at which the step is applied to.
-#| tbl-colwidths: [20,20,60]
+#| tbl-colwidths: [40,20,40]
 
 tbl_filters <- plot_report_out$data$filters[,.SD[1],by=c("step")][,c("level","step","description")]
 tbl_filters[,step:=gsub("_"," ",step)]
@@ -1116,14 +1115,18 @@ knitr::kable(as.data.frame(tbl_filters))
 ## Data Availability
 
 All data is publicly available through the following resources:
+
 -   Human Phenotype Ontology (<https://hpo.jax.org>)
 -   GenCC (<https://thegencc.org/>)
 -   Descartes Human scRNA-seq atlas (<https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c>)
 -   Human Cell Landscape scRNA-seq atlas (<https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1>)
+-   Processed Cell Type Datasets (*ctd_DescartesHuman.rds* and *ctd_HumanCellLandscape.rds*; <https://github.com/neurogenomics/MSTExplorer/releases>)
+-   Gene x Phenotype association matrix (*hpo_matrix.rds*; <https://github.com/neurogenomics/MSTExplorer/releases>)
 -   Rare Disease Celltyping Portal (<https://neurogenomics.github.io/rare_disease_celltyping_apps/home>)
 
 ## Code Availability
-All code is made freely available through the following GitHub repositories: 
+
+All code is made freely available through the following GitHub repositories:
 
 -   `KGExplorer` (<https://github.com/neurogenomics/KGExplorer>)
 -   `HPOExplorer` (<https://github.com/neurogenomics/HPOExplorer>)
@@ -1153,7 +1156,7 @@ This work was supported by a UK Dementia Research Institute (UK DRI) Future Lead
 
 ### Supplementary Figures
 
-```{r fig-evidence-histograms}
+```{r fig-evidence-histograms, cache.lazy=FALSE}
 #| label: fig-evidence-histograms
 #| fig-cap: Distribution of evidence scores at each processing step.
 #| fig-height: 6
@@ -1164,17 +1167,19 @@ evidence_plot <- HPOExplorer::plot_evidence(phenotype_to_genes = p2g,
 evidence_plot$plot
 ```
 
-::: {#fig-diagram}
-![](img/fig-diagram.png)
+::: 
+![](img/fig-diagram.png){#fig-diagram}
 
-Diagrammatic overview of multi-scale disease investigation strategy. Here we provide an abstract example of differential disease aetiology across multiple scales: diseases ($D$), phenotypes ($P$), cell types ($C$), genes ($G$), and clinical outcomes ($O$). In the HPO, genes are assigned to phenotypes via particular diseases ($G_{dp}$). Therefore, the final gene list for each phenotype is aggregated from across multiple diseases ($G_{p}$). We performed association tests for all pairwise combinations of cell types and phenotypes and filtered results after multiple testing corrections (FDR<0.05). Each phenotype in the context of a given disease is referred to here as a symptom. Links were established between symptoms and cell types through proportional gene set overlap at a minimum threshold of 25%.
+Diagrammatic overview of multi-scale disease investigation strategy. Here we provide an abstract example of differential disease aetiology across multiple scales: diseases ($D$), phenotypes ($P$), cell types ($C$), genes ($G$), and clinical outcomes ($O$). In the HPO, genes are assigned to phenotypes via particular diseases ($G_{dp}$). Therefore, the final gene list for each phenotype is aggregated from across multiple diseases ($G_{p}$). We performed association tests for all pairwise combinations of cell types and phenotypes and filtered results after multiple testing corrections (FDR\<0.05). Each phenotype in the context of a given disease is referred to here as a symptom. Links were established between symptoms and cell types through proportional gene set overlap at a minimum threshold of 25%.
 :::
 
 {{< pagebreak >}}
 
-```{r fig-ctd-correlation, fig.height=12, fig.width=12}
+```{r fig-ctd-correlation}
 #| label: fig-ctd-correlation
 #| fig-cap: Inter- and intra-dataset validation across the different CellTypeDataset (CTD) and developmental stages. Correlations are computed using Pearson correlation coefficient. Point density is plotted using a 2D kernel density estimate. **a** Correlation between the uncorrected p-values from all phenotype-cell type association tests using the Descartes Human vs. Human Cell Landscape CTDs. **b** Correlation between the $log_{10}(fold-change)$ from significant phenotype-cell type association tests (FDR<0.05) using the Descartes Human vs. Human Cell Landscape CTDs. **c** Correlation between the uncorrected p-values from all phenotype-cell type association tests using the Human Cell Landscape fetal samples vs. Human Cell Landscape adult samples. **d** Correlation between the $log_{10}(fold-change)$ from significant phenotype-cell type association tests (FDR<0.05) using the Human Cell Landscape fetal samples vs. Human Cell Landscape adult samples.
+#| fig-height: 12
+#| fig-width: 12
 
 (
   (validate_associations_correlate_ctd_out$plot$p.all |
@@ -1221,9 +1226,11 @@ plot_report_out$plot
 
 {{< pagebreak >}}
 
-```{r fig-therapy-validate-all, fig.height=5, fig.width=8}
+```{r fig-therapy-validate-all}
 #| label: fig-therapy-validate-all
 #| fig-cap: Therapeutics - Validation of prioritised therapeutic targets. Proportion of existing all therapy targets (documented in the Therapeutic Target Database) recapitulated by our prioritisation pipeline.
+#| fig-height: 5
+#| fig-width: 8
 
 ttd_check_all_out$plot
 ```
@@ -1249,7 +1256,7 @@ plot_upheno_out$heatmap
 
 {{< pagebreak >}}
 
-```{r prioritise_targets_network-supp-1}
+```{r prioritise_targets_network-supp-tmp}
 height <- "100vh"
 severity_score_gpt_threshold <- 15
 top_targets <- prioritise_targets_out$top_targets[severity_score_gpt>severity_score_gpt_threshold]
@@ -1271,37 +1278,41 @@ vn_therapy <- lapply(stats::setNames(phenotypes,phenotypes), function(phenotype)
 }) 
 ```
 
-::: {#fig-therapy-examples-supp .content-visible unless-format="html"}
-![Respiratory failure](img/fig-therapy-examples-supp/respiratory_failure.png)
+::: {.content-visible unless-format="html"}
+![Respiratory failure](img/fig-therapy-examples-supp/respiratory_failure.png){#fig-therapy-examples-supp}
 
 {{< pagebreak >}}
 
-![Amyotrophic lateral sclerosis](img/fig-therapy-examples-supp/als.png)
+![Amyotrophic lateral sclerosis](img/fig-therapy-examples-supp/als.png){#fig-therapy-examples-supp-b}
 
 {{< pagebreak >}}
 
-![Dementia](img/fig-therapy-examples-supp/dementia.png)
-{{< pagebreak >}}
-
-![Lethal skeletal dysplasia](img/fig-therapy-examples-supp/lethal_skeletal_dysplasia.png)
+![Dementia](img/fig-therapy-examples-supp/dementia.png){#fig-therapy-examples-supp-c}
 
 {{< pagebreak >}}
 
-![Small vessel disease](img/fig-therapy-examples-supp/small_vessel_disease.png)
+![Lethal skeletal dysplasia](img/fig-therapy-examples-supp/lethal_skeletal_dysplasia.png){#fig-therapy-examples-supp-d}
 
 {{< pagebreak >}}
 
-![Parkinson's disease](img/fig-therapy-examples-supp/parkinson.png)
+![Small vessel disease](img/fig-therapy-examples-supp/small_vessel_disease.png){#fig-therapy-examples-supp-e}
+
 {{< pagebreak >}}
 
-![Alzheimer's disease](img/fig-therapy-examples-supp/alzheimer.png)
+![Parkinson's disease](img/fig-therapy-examples-supp/parkinson.png){#fig-therapy-examples-supp-f}
 
-Example cell type-specific gene therapy targets for several severe phenotypes and their associated diseases. Each disease (blue cylinders) is connected to its phenotype (purple cylinders) based on well-established clinical observations recorded within the HPO [@Gargano2024-fc].Phenotypes are connected to cell types (red circles) via association testing between weighted gene sets (FDR<0.05). Each cell type is connected to the prioritised gene targets (yellow boxes) based on the driver gene analysis.The thickness of the edges connecting the nodes represent the (mean) fold-change from the bootstrapped enrichment tests. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
+{{< pagebreak >}}
+
+![Alzheimer's disease](img/fig-therapy-examples-supp/alzheimer.png){#fig-therapy-examples-supp-g}
+
+Example cell type-specific gene therapy targets for several severe phenotypes and their associated diseases. Each disease (blue cylinders) is connected to its phenotype (purple cylinders) based on well-established clinical observations recorded within the HPO [@Gargano2024-fc].Phenotypes are connected to cell types (red circles) via association testing between weighted gene sets (FDR\<0.05). Each cell type is connected to the prioritised gene targets (yellow boxes) based on the driver gene analysis.The thickness of the edges connecting the nodes represent the (mean) fold-change from the bootstrapped enrichment tests. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
 :::
 
+
+
 ::: {.content-hidden unless-format="html"}
-```{r fig-therapy-examples-supp, results='asis'}
-#| label: fig-therapy-examples-supp
+```{r fig-therapy-examples-supp-html, results='asis'}
+#| label: fig-therapy-examples-supp-html
 #| fig-cap: Example cell type-specific gene therapy targets for several severe phenotypes and their associated diseases. Each disease (blue cylinders) is connected to its phenotype (purple cylinders) based on well-established clinical observations recorded within the HPO [@Gargano2024-fc].Phenotypes are connected to cell types (red circles) via association testing between weighted gene sets (FDR<0.05). Each cell type is connected to the prioritised gene targets (yellow boxes) based on the driver gene analysis.The thickness of the edges connecting the nodes represent the (mean) fold-change from the bootstrapped enrichment tests. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
 #| fig-height: 7
 #| fig-width: 12
@@ -1320,7 +1331,7 @@ vn_therapy
 
 ### Supplementary Tables
 
-```{r tbl-gencc}
+```{r}
 #| label: tbl-gencc 
 #| tbl-cap: Encodings for GenCC evidence scores. Assigned numeric values for the GenCC evidence levels.
 
@@ -1334,7 +1345,7 @@ knitr::kable(as.data.frame(gencc_tbl))
 
 {{< pagebreak >}}
 
-```{r tbl-celltypes}
+```{r}
 #| label: tbl-celltypes
 #| tbl-cap: On-target cell types for each HPO ancestral branch.
 
@@ -1358,7 +1369,7 @@ knitr::kable(as.data.frame(ct_dt))
 
 {{< pagebreak >}}
 
-```{r tbl-death}
+```{r}
 #| label: tbl-death 
 #| tbl-cap: Encodings for Age of Death scores. Assigned numeric values for the Age of Death scores within the HPO annotations.
 

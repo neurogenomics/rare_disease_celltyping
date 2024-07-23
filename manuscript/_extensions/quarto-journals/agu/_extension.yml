@@ -8,7 +8,7 @@ contributes:
         opts_chunk:
           echo: false
       number-sections: true
-      csl: american-geophysical-union.csl
+      csl: nature-medicine.csl
       filters:
         - agu.lua
     pdf:
