@@ -23,7 +23,7 @@ format:
   #   header-includes:
   #     - \usepackage{annotate-equations}
   pdf:
-    documentclass: report
+    documentclass: article
     linestretch: 1.5
     margin-left: 1in
     margin-right: 1in
