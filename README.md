@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 ## Identification of cell types underlying thousands of rare diseases and subtraits
 
 ### Authors
