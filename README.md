@@ -19,8 +19,8 @@ transcriptomic single-cell atlases of the entire human body from
 embryonic, foetal, and adult samples.
 
 This repository contains the data and code needed to replicate the
-analyses in our preprint [insert link to preprint], as well as links to
-the R packages required (see below).
+analyses in our preprint (https://doi.org/10.1101/2023.02.13.23285820), as well as links to
+the R packages required (see [below](#packages)).
 
 ### Manuscript
 
