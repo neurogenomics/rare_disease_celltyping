@@ -1,13 +1,26 @@
 ## Identification of cell types underlying thousands of rare diseases and subtraits
 
-Kitty B. Murphy, Bobby Gordon-Smith, Jai Chapman, Momoko Otani, Brian M. Schilder, Nathan G. Skene
+Brian M. Schilder, Kitty B. Murphy, Bobby Gordon-Smith, Jai Chapman, Momoko Otani, Nathan G. Skene
 
 ### Introduction
-Rare diseases (RDs) are uncommon as individual diagnoses, but as a group contribute to an enormous disease burden globally. However, partly due the low prevalence and high diversity of individual RDs, this category of diseases is understudied and under-resourced. The advent of large, standardised genetics databases has enabled high-throughput, comprehensive approaches that uncover new insights into the multi-scale aetiology of thousands of diseases. Here, using the Human Phenotype Ontology (9,677 annotated phenotypes) and multiple single-cell transcriptomic atlases (77 human cell types and 38 mouse cell types), we conducted >688,000 enrichment tests (x100,000 bootstrap iterations each) to identify >13,888 genetically supported cell type-phenotype associations. 
+Rare diseases (RDs) are an extremely heterogeneous and underserved category of medical conditions. While the majority of RDs are strongly genetic, it remains largely unknown via which physiological mechanisms genetics cause RD. Therefore, we sought to systematically characterise the cell type-specific mechanisms underlying all RD phenotypes with a known genetic cause by leveraging the Human Phenotype Ontology and transcriptomic single-cell atlases of the entire human body from embryonic, foetal, and adult samples. 
 
 This repository contains the data and code needed to replicate the analyses in our preprint [insert link to preprint], as well as links to the R packages required (see below). 
 
+### Manuscript
 
+To reproduce this entire study, we have provided [a quarto document](https://github.com/neurogenomics/rare_disease_celltyping/blob/master/manuscript/index.qmd) which programmatically recreates all analyses and plots. To use it, follow these steps:
+- Clone this repository: `git clone https://github.com/neurogenomics/rare_disease_celltyping.git`
+- Install the [quarto Command Line Tool](https://quarto.org/docs/get-started/), and the [`quarto` R package](https://cran.r-project.org/web/packages/quarto/index.html).
+- Within the `manuscript` directory of the cloned repository, run `quarto render index.qmd` to generate the manuscript.
+
+A pre-rendered PDF version of the manuscript is available here.
+
+### Datasets
+- https://github.com/neurogenomics/HPOExplorer/releases
+- https://github.com/neurogenomics/MSTExplorer/releases
+
+### Packages
 - [KGExplorer](https://github.com/neurogenomics/KGExplorer): Imports and analyses large-scale biomedical knowledge graphs and ontologies.
 
 - [HPOExplorer](https://github.com/neurogenomics/HPOExplorer): Contains extensive functions for easily importing, annotating, filtering, and visualising the Human Phenotype Ontology (HPO) at the disease, phenotype, and gene levels.
