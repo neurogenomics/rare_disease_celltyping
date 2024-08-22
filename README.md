@@ -14,9 +14,12 @@ To reproduce this entire study, we have provided [a quarto document](https://git
 - Install the [quarto Command Line Tool](https://quarto.org/docs/get-started/), and the [`quarto` R package](https://cran.r-project.org/web/packages/quarto/index.html).
 - Within the `manuscript` directory of the cloned repository, run `quarto render index.qmd` to generate the manuscript.
 
-A pre-rendered PDF version of the manuscript is available here.
+[A pre-rendered PDF version of the manuscript is available here](https://github.com/neurogenomics/rare_disease_celltyping/blob/master/manuscript/_manuscript/index.pdf).
 
-### Datasets
+### Datasets / Results
+
+All of the datasets used in this study can be imported using functions within the `HPOExplorer` and `MSTExplorer` R packages.
+Additional resources, such as phenotype-cell type enrichment results, can be found on the *Releases* pages of `HPOExplorer` and `MSTExplorer`.
 - https://github.com/neurogenomics/HPOExplorer/releases
 - https://github.com/neurogenomics/MSTExplorer/releases
 
