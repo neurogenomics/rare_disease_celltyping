@@ -7,7 +7,7 @@ contributes:
       knitr:
         opts_chunk:
           echo: false
-      number-sections: true
+      # number-sections: true
       csl: nature-medicine.csl
       filters:
         - agu.lua

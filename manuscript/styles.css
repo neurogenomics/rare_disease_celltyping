@@ -1,0 +1,4 @@
+.figure-subcaption,
+.figure-subcaption-label {
+  display: none !important;
+}
