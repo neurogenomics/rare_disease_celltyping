@@ -1019,7 +1019,7 @@ Overall, we prioritised `r sum(ttd_check_out$data[failed==FALSE]$prioritised)/nr
 A hypergeometric test confirmed that our prioritised targets were significantly enriched for non-failed gene therapy targets ($p=$`r ttd_check_out$ttd_hypergeo_out$nonfailed_enrichment`).
 Importantly, we did not prioritise any of the failed therapeutics (0%), defined as having been terminated or withdrawn from the market.
 The hypergeometric test for depletion of failed targets did not reach significance ($p=$`r ttd_check_out$ttd_hypergeo_out$failed_depletion`), but this is to be expected as there was only one failed gene therapy target in the TTD database.
-For these hypergeometric tests, the background gene set was composed of the union of all phenotype-associated genes in the HPO and all gene therapy targets listed in TTD
+For these hypergeometric tests, the background gene set was composed of the union of all phenotype-associated genes in the HPO and all gene therapy targets listed in TTD.
 
 Even when considering therapeutics of any kind ([Fig. @fig-therapy-validate-all]), not just gene therapies, we recapitulated `r sum(ttd_check_all_out$data[failed==FALSE]$prioritised)/nrow(ttd_check_all_out$data[failed==FALSE])*100`% of the non-failed therapeutic targets and 0% of the terminated/withdrawn therapeutic targets (n=`r nrow(ttd_check_all_out$data[failed==TRUE])`).
 Here we found that our prioritised targets were highly significantly depleted for failed therapeutics ($p=$`r ttd_check_all_out$ttd_hypergeo_out$failed_depletion`).
@@ -1723,9 +1723,13 @@ Of note, `MSTExplorer::load_example_results` loads all summary statistics from o
 
 To further increase the ease of access for stakeholders in the RD community without the need for programmatic experience, we developed a series of web apps to interactively explore, visualise, and download the results from our study.
 Collectively, these web apps are called the Rare Disease Celltyping Portal.
-The landing page for the website was made using HTML, CSS, and javascript and the web apps were created using the Shiny Web application framework for R and deployed on the shinyapps.io server.
-The website can be accessed at <https://neurogenomics.github.io/rare_disease_celltyping_apps/home>.
-All code used to generate the website can be found at <https://github.com/neurogenomics/rare_disease_celltyping_apps>.
+The website can be accessed at <https://neurogenomics-ukdri.dsi.ic.ac.uk/>.
+
+The Rare Disease Celltyping Portal integrates diverse datasets, including the HPO, cell types, genes, and phenotype severity, into a unified platform that allows users to perform flexible, bidirectional queries. Users can start from any entry point: either phenotype, cell type, genes, or severity, and seamlessly trace relationships across these dimensions.
+
+The portal provides a dynamic and intuitive exploration experience with its real-time interaction capabilities and responsive interface including network graphs, bar charts, and heat maps. It has the ability to handle large datasets efficiently and offer fast query response by building with FARM stack (FastAPI, React, MongoDB). The portal is designed for a broad audience, including researchers, clinicians, and biologists, by offering user-friendly navigation and interactive visual outputs. By enabling users to intuitively explore complex biological relationships, the portal aims to accelerate rare disease research, enhance diagnostic accuracy, and drive therapeutic innovation. 
+
+All code used to generate the website can be found at <https://github.com/neurogenomics/Rare-Disease-Web-Portal>.
 
 ### Mappings
 
