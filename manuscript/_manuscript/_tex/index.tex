@@ -127,6 +127,20 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{annotate-equations}
 \usepackage{lineno}
 \linenumbers
@@ -178,7 +192,7 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Cell type-specific contextualisation of the human phenome: towards the systematic treatment of all rare diseases},
-  pdfauthor={Brian M. Schilder; Kitty B. Murphy; Yichun Zhang; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
+  pdfauthor={Brian M. Schilder; Kitty B. Murphy; Yichun Zhang; Hiranyamaya Dash; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
   pdfkeywords={rare disease, phenotype, single-cell, gene therapy},
   colorlinks=true,
   linkcolor={blue},
@@ -191,9 +205,9 @@
 \title{Cell type-specific contextualisation of the human phenome:
 towards the systematic treatment of all rare diseases}
 \author{Brian M. Schilder \and Kitty B. Murphy \and Yichun
-Zhang \and Robert Gordon-Smith \and Jai Chapman \and Momoko
-Otani \and Nathan G. Skene}
-\date{2025-01-05}
+Zhang \and Hiranyamaya Dash \and Robert Gordon-Smith \and Jai
+Chapman \and Momoko Otani \and Nathan G. Skene}
+\date{2025-07-27}
 
 \begin{document}
 \maketitle
@@ -679,7 +693,7 @@ these phenotypes, we captured \(57\)\% of the MKG phenotype-cell
 associations at an ontological distance of 0 (i.e.~the closest possible
 Cell Ontology term match). Recall increased with greater flexibility in
 the matching of cell type annotations. At an ontological distance of 1
-(e.g.~`monocyte' vs.~`classical monocyte'), we captured \(78\)\% of the
+(e.g.~`monocyte' vs.~`classical monocyte'), we captured \(77\)\% of the
 MKG phenotype-cell associations. Recall reached a maximum of \(90\)\% at
 a ontological distance of 5. This recall percentage is capped by the
 proportion of phenotypes for which we were able to find at least one
@@ -872,26 +886,25 @@ types.
 
 }
 
-\subcaption{\label{fig-network-rniD08295A6-16DC-499D-85A8-8BA656E013A2}Constructing
-a multi-scale causal network of disease biology for the phenotype
-`Recurrent Neisserial infections' (RNI). RNI is a phenotype in seven
-different monogenic diseases; these are the only seven genes known to be
-associated with RNI. Our analyses found four different cell types were
-significantly associated with RNI. All four of these cell types and all
-seven diseases are shown in this network plot, allowing us to visualise
-which cell types each disease-associated gene is acting through.
-\textbf{a}, Starting from the bottom of the plot, one can trace how
-genes causal for RNI (yellow boxes) mediate their effects through cell
-types (orange circles) and diseases (blue cylinders). Cell types are
-connected to RNI via association testing (FDR\textless0.05). The genes
-shown here have both strong evidence for a causal role in RNI and high
-expression specificity in an associated cell type. The cell types can
-then be linked back to monogenic diseases via the genes specifically
-expressed in those cell types (i.e.~are in the top 1/4 of cell type
-specificity expression quantiles). Nodes were spatially arranged using
+\subcaption{\label{fig-network-rniD08295A6-16DC-499D-85A8-8BA656E013A2}Causal
+network of recurrent Neisserial infections (RNI) reveals multiscale
+disease aetiology. RNI is a phenotype in seven different monogenic
+diseases caused by disruptions to specific complement system genes. Four
+cell types were significantly associated with RNI. \textbf{a}, One can
+trace how genes causal for RNI (yellow boxes, bottom) mediate their
+effects through cell types (orange circles, middle) and diseases (blue
+cylinders, top). Cell types are connected to RNI via association testing
+(FDR\textless0.05). Genes shown here have both strong evidence for a
+causal role in RNI and high expression specificity in the associated
+cell type. Cell types can be linked to monogenic diseases via the genes
+specifically expressed in those cell types (i.e.~are in the top 25\% of
+cell type specificity expression quantiles). Nodes are arranged using
 the Sugiyama algorithm\textsuperscript{56}. \textbf{b} Expression
-specificity quantiles (on a scale from 1-40) of each driver gene in each
-cell type (darker corresponds to greater specificity).}
+specificity quantiles (1-40 scale) of each driver gene in each cell type
+(darker = greater specificity). \textbf{c} GenCC-derived eevidence
+scores between the RNI phenotype and each gene. \textbf{d} Expression
+specificity (0 = least specific, 1 = most specific) of each gene in each
+cell type.}
 
 }
 
@@ -949,25 +962,25 @@ associated with phenotypes that had the lowest average composite
 severity scores, suggesting that disruptions to these cell types can be
 better tolerated than others.
 
-Of course, different aspects of phenotype severity will be more
-associated with some cells than others. Therefore, after encoding the
-GPT annotations numerically (0=``never'', 1=``rarely'', 2=``often'',
-3=``always'') we computed the mean encoded value per cell type within
-each annotation. We then ran a series of one-sided Wilcoxan rank-sum
-tests to objectively determine whether some cell types tended to be
-associated with phenotypes that more frequently caused certain severity
-metrics (death, intellectual disability, impaired mobility, etc.)
-relative to all other cell types Fig.~\ref{fig-celltype-severity-dot}a.
-This consistently yielded expected relationships between cell types
-(e.g.~retinal pigment epithelial cell) and phenotype characteristics
-(e.g.~blindness). Similarly, phenotypes that more commonly cause death
-are most commonly associated with retinal pigment epithelial cell, and
-least commonly associated with squamous epithelial cells and bipolar
-neurons. This pattern is shown consistently across all annotations
-(e.g.~fertility-reducing phenotypes associated with cortical cell of
-adrenal glands, immunodeficiency-causing phenotypes associated with T
-cells, mobility-impairing phenotypes associated with chondrocytes,
-cancer-causing phenotypes associated with T cells, etc.).
+Different aspects of phenotype severity will be more associated with
+some cell types than others. After encoding the GPT annotations
+numerically (0=``never'', 1=``rarely'', 2=``often'', 3=``always'') we
+computed the mean encoded value per cell type within each annotation. We
+then ran a series of one-sided Wilcoxon rank-sum tests to objectively
+determine whether some cell types tended to be associated with
+phenotypes that more frequently caused certain severity metrics (death,
+intellectual disability, impaired mobility, etc.) relative to all other
+cell types (Fig.~\ref{fig-celltype-severity-dot}a). This consistently
+yielded expected relationships between cell types (e.g.~retinal pigment
+epithelial cell) and phenotype characteristics (e.g.~blindness).
+Similarly, phenotypes that more commonly cause death are most commonly
+associated with retinal pigment epithelial cell, and least commonly
+associated with squamous epithelial cells and bipolar neurons. Analagous
+patterns of expected associations are shown consistently across all
+annotations (e.g.~fertility-reducing phenotypes associated with NAs,
+immunodeficiency-causing phenotypes associated with NAs,
+mobility-impairing phenotypes associated with NAs, cancer-causing
+phenotypes associated with T cells, etc.).
 
 We also sought to answer whether the number of phenotypes that a cell
 type is associated with has a relationship with the severity of those
@@ -990,23 +1003,30 @@ severity (p=\(5.0 \times 10^{-3}\), Pearson coefficient=\(0.28\)).
 
 }
 
-\subcaption{\label{fig-celltype-severity-dotD08295A6-16DC-499D-85A8-8BA656E013A2}Cell
-types are differentially associated with phenotypes of varying severity.
-\textbf{a}, The dot plot shows the mean encoded frequency value for a
-given annotation (0=``never'', 1=``rarely'', 2=``often'', 3=``always'';
-shown as dot size), aggregated by associated cell type. One-sided
-Wilcoxan rank-sum tests were performed for each cell type (witihn each
-GPT annotation) to determine which cell types had significantly higher
-frequency values (0-3) than all other cell types. Dots are colored by
-\(-log_2(FDR)\) when Wilcoxan test FDR values were less than 0.05. All
-dots with non-significant Wilcoxan tests are instead colored grey. Cell
-types (rows) are clustered according to the p-values of the Wilcoxan
-tests. \textbf{b}, The scatterplot shows a relationship between the
-number of phenotypes each cell type is significantly associated with,
-and the mean composite severity score of each cell type. The cell types
-with the top/bottom three x/y axis values are labeled to illustrate the
-cell types that cause the most/least phenotypic disruption when
-dysfunctional.}
+\subcaption{\label{fig-celltype-severity-dotD08295A6-16DC-499D-85A8-8BA656E013A2}Genetic
+disruptions to some cell types cause more clinically severe phenotypes
+than others. \textbf{a}, Different cell types are associated with
+different aspects of phenotypic severity. The dot plot shows the mean
+encoded frequency value for a given severity annotation (0=``never'',
+1=``rarely'', 2=``often'', 3=``always''; shown as dot size), aggregated
+by the associated cell type. One-sided Wilcoxon rank-sum tests were
+performed for each cell type (within each GPT annotation) to determine
+which cell types more frequently caused severe phenotypes than all other
+cell types. Dots are colored by \(-log_2(FDR)\) when Wilcoxon test FDR
+values were less than 0.05. All dots with non-significant Wilcoxon tests
+are instead colored grey. Cell types (rows) are clustered according to
+the p-values of the Wilcoxon tests. \textbf{b}, Cell types that affect
+more phenotypes tend to have more clinically severe consequences.
+Specifically, the number of phenotypes each cell type is significantly
+associated with, and the mean composite severity score of each cell
+type. The cell types with the top/bottom three x/y axis values are
+labeled to illustrate the cell types that cause the most/least
+phenotypic disruption when dysfunctional. Side histograms show the
+density of data points along each axis. Summary statistics for the
+linear regression are shown in the title (\(t_{Student}\) = Student
+t-test statistic, \(p\) = p-value, \(\hat{r}_{Pearson}\) = Pearson
+correlation coefficient, \(CI_{95\%}\) = confidence intervals,
+\(n_{pairs}\) = number of observed data pairs).}
 
 }
 
@@ -1041,9 +1061,9 @@ determined by GPT-4 annotations) was strongly predictive of the
 proportion of significantly associated foetal cell types in our results
 (\(p=\)\(4.7 \times 10^{-261}\),
 \(\chi^2_{Pearson}=\)\(1.2 \times 10^{3}\),
-\(\hat{V}_{Cramer}=\)\(0.22\)). This result is consistent with the
-expected role of foetal cell types in development and the aetiology of
-congenital disorders.
+\(\hat{V}_{Cramer}=\)\(0.22\), Fig.~\ref{fig-congenital}a). This result
+is consistent with the expected role of foetal cell types in development
+and the aetiology of congenital disorders.
 
 \begin{figure}[H]
 
@@ -1076,17 +1096,16 @@ Universal Public Domain Dedication.}
 
 \end{figure}%
 
-Upon exploring these results more deeply, we also found that some
-branches of the HPO were more commonly enriched in foetal cell types
-compared to others (\(\hat{V}_{Cramer}\)=\(0.22\),
-\(p\)\textless{}\(2.2 \times 10^{-308}\)). The branch with the greatest
-proportion of foetal cell type enrichments was `Abnormality of limbs'
-(\(35\)\%), followed by `Growth abnormality' (\(32\)\%) and `Abnormality
-of the musculoskeletal system' (\(29\)\%). Most notably, `Abnormality of
-the musculoskeletal system' was the most enriched branch for foetal cell
-type associations with a p-value of \texttt{ZZZ}. These results align
-well with the fact that physical malformations tend to be developmental
-in origin.
+Some branches of the HPO were more commonly enriched in foetal cell
+types compared to others (\(\hat{V}_{Cramer}\)=\(0.22\),
+\(p\)\textless{}\(2.2 \times 10^{-308}\), Fig.~\ref{fig-congenital}b).
+The branch with the greatest proportion of foetal cell type enrichments
+was `Abnormality of limbs' (\(35\)\%), followed by `Growth abnormality'
+(\(32\)\%) and `Abnormality of the musculoskeletal system' (\(29\)\%).
+Notably, `Abnormality of limbs' branch was most disproportionatltey
+enriched for foetal cell type associations relative to all other
+branches (35\% cell types). These results align well with the fact that
+physical malformations tend to be developmental in origin.
 
 Conversely, the HPO branches that were most biased towards adult cell
 types were `Abnormality of blood and blood-forming tissues' (\(97\)\%),
@@ -1095,19 +1114,20 @@ thoracic cavity' (\(93\)\%).
 
 Some phenotypes exclusively involve the foetal version of a cell type,
 while others exclusively involve the adult version. We sought to find
-those phenotypes which had the greatest biased towards either end of
-this spectrum. To do so, we designed a metric to identify which
-phenotypes were more often associated with foetal cell types than adult
-cell types. For each phenotype, we calculated the difference in the
-association p-values between the foetal and adult version of the
-equivalent cell type. The resulting metric ranges from 1 (indicating the
-phenotype is only associated with the foetal version of the cell type)
-and -1 (indicating the phenotype is only associated with the adult
-version of the cell type). To summarise the most foetal-biased phenotype
-categories, we ran an ontological enrichment test with the HPO graph. To
-identify foetal cell type-biased phenotype categories, we fed the top
-\(50\) phenotypes with the greatest foetal cell type bias (closer to 1)
-into the enrichment function. Conversely, we used the top \(50\)
+those phenotypes which had the greatest bias towards either end of this
+spectrum. To do so, we designed a metric to identify which phenotypes
+were more often associated with foetal cell types than adult cell types.
+For each phenotype, we calculated the difference in the association
+p-values between the foetal and adult version of the equivalent cell
+type. The resulting metric ranges from 1 (indicating the phenotype is
+only associated with the foetal version of the cell type) and -1
+(indicating the phenotype is only associated with the adult version of
+the cell type). To summarise the most foetal-biased phenotype
+categories, we ran an ontological enrichment test with the HPO graph
+Table~\ref{tbl-hpo_enrich}. To identify foetal cell type-biased
+phenotype categories, we fed the top \(50\) phenotypes with the greatest
+foetal cell type bias (closer to 1) into the enrichment function
+Table~\ref{tbl-foetal_examples}. Conversely, we used the top \(50\)
 phenotypes with the greatest adult cell type bias (closer to -1) to
 identify adult cell type-biased phenotype categories.
 
@@ -1115,39 +1135,38 @@ The phenotype categories with the greatest bias towards foetal cell
 types were `Abnormal nasal morphology' (p=\(2.4 \times 10^{-7}\),
 \(log_2(\text{fold-change})\)=\(4.5\)) and `Abnormal external nose
 morphology' (p=\(2.5 \times 10^{-6}\),
-\(log_2(\text{fold-change})\)=\(5.4\)). Specific examples of such
-phenotypes include `Short middle phalanx of the 2nd finger', `Abnormal
-morphology of the nasal alae', and `Abnormal labia minora morphology'.
-Indeed, these phenotypes are morphological defects apparent at birth
-caused by abnormal developmental processes.
+\(log_2(\text{fold-change})\)=\(5.4\)).
+
+Specific examples of such phenotypes include `Short middle phalanx of
+the 2nd finger', `Abnormal morphology of the nasal alae', and `Abnormal
+labia minora morphology'. Indeed, these phenotypes are morphological
+defects apparent at birth caused by abnormal developmental processes.
 
 Conversely, the most adult cell type-biased phenotype categories were
 `Abnormal elasticity of skin' (p=\(3.6 \times 10^{-7}\),
 \(log_2(\text{fold-change})\)=\(6.0\)) and `Abnormally lax or
 hyperextensible skin' (p=\(1.3 \times 10^{-5}\),
-\(log_2(\text{fold-change})\)=\(6.0\)). Specific examples of such
-phenotypes include `Excessive wrinkled skin' and `Paroxysmal
-supraventricular tachycardia'. It is well known that ageing naturally
+\(log_2(\text{fold-change})\)=\(6.0\)).
+
+Specific examples of such phenotypes include `Excessive wrinkled skin'
+and `Paroxysmal supraventricular tachycardia'
+Table~\ref{tbl-foetal_examples}. It is well known that ageing naturally
 causes a loss of skin elasticity (due to decreasing collagen production)
 and vascular degeneration\textsuperscript{57}. Next, we were interested
-whether some cell type tend to show strong differences in their
+whether some cell types tend to show strong differences in their
 phenotype associations between their foetal and adult forms. To test
 this, we performed an analogous enrichment procedure as with the
 phenotypes, except using Cell Ontology terms and the Cell Ontology
 graph. This analysis identified the cell type category connective tissue
 cell (p=\(1.8 \times 10^{-3}\), \(log_2(\text{fold-change})\)=\(3.2\))
 as the most foetal-biased cell type. No cell type categories were
-significantly enriched for the most adult-biased cell types
-(Table~\ref{tbl-cl_enrich}). This is likely due to the fact that cell
-types can be disrupted at different stages of life, resulting in
-different phenotypes. Thus there the same cell types may be involved in
-both the most foetal-biased and adult-biased phenotypes.
-
-See Table~\ref{tbl-hpo_enrich} for the full enrichment results, and
-Table~\ref{tbl-foetal_examples} for specific examples of the most
-foetal/adult-biased phenotypes. Together, these findings serve to
-further validate our methodology as a tool for identifying the causal
-cell types underlying a wide range of phenotypes.
+significantly enriched for the most adult-biased cell types. This is
+likely due to the fact that cell types can be disrupted at different
+stages of life, resulting in different phenotypes. Thus there the same
+cell types may be involved in both the most foetal-biased and
+adult-biased phenotypes. Together, these findings serve to further
+validate our methodology as a tool for identifying the causal cell types
+underlying a wide range of phenotypes.
 
 \subsubsection{Therapeutic target
 identification}\label{therapeutic-target-identification}
@@ -1213,7 +1232,7 @@ note that the phenotypes in the prioritised targets list are ranked by
 their severity, allowing us to distinguish between phenotypes with a
 high medical urgency (e.g.~`Hydranencephaly') from those with lower
 medical urgency (e.g.~`Increased mean corpuscular volume'). This can be
-useful for both clinicians, biomedical scientists, and pharmaceutical
+useful for clinicians, biomedical scientists, and pharmaceutical
 manufacturers who wish to focus their research efforts on phenotypes
 with the greatest need for intervention.
 
@@ -1235,18 +1254,15 @@ To determine whether the genes prioritised by our therapeutic targets
 pipeline were plausible, we checked what percentage of gene therapy
 targets we recapitulated. Data on therapeutic approval status was
 gathered from the Therapeutic Target Database (TTD; release
-2025-01-05)\textsuperscript{61}. Overall, we prioritised \(81\)\% of all
-non-failed existing gene therapy targets. A hypergeometric test
-confirmed that our prioritised targets were significantly enriched for
-non-failed gene therapy targets (\(p=\)\(1.8 \times 10^{-3}\)).
-Importantly, we did not prioritise any of the failed therapeutics (0\%),
-defined as having been terminated or withdrawn from the market. The
-hypergeometric test for depletion of failed targets did not reach
-significance (\(p=\)\(0.37\)), but this is to be expected as there was
-only one failed gene therapy target in the TTD database. For these
-hypergeometric tests, the background gene set was composed of the union
-of all phenotype-associated genes in the HPO and all gene therapy
-targets listed in TTD
+2025-07-27)\textsuperscript{61}. Overall, we prioritised \(87\)\% (120
+total) of all non-failed existing gene therapy targets (ie. those which
+are currently approved, investigative, or undergoing clinical trials). A
+hypergeometric test confirmed that our prioritised targets were
+significantly enriched for non-failed gene therapy targets
+(\(p=\)\(1.8 \times 10^{-5}\)). For these hypergeometric tests, the
+background gene set was composed of the union of all
+phenotype-associated genes in the HPO and all gene therapy targets
+listed in TTD.
 
 Even when considering therapeutics of any kind
 (Fig.~\ref{fig-therapy-validate-all}), not just gene therapies, we
@@ -1262,26 +1278,21 @@ In addition to aggregate enrichment results, we also provide specific
 examples of successful gene therapies whose cell type-specific mechanism
 were recapitulated by our phenotype-cell associations. In particular,
 our pipeline nominated the gene \emph{RPE65} within `retinal pigment
-epithelial cell's as the top target for Fundus atrophyUndetectable
-light- and dark-adapted electroretinogramAbsent foveal reflexEye
-pokingDelayed early-childhood social milestone developmentPosterior
-synechiae of the anterior chamberGranular macular
-appearanceRhegmatogenous retinal detachmentOptic disc drusen
-vision-related phenotypes that are hallmarks of 'Leber congenital
-amaurosis, type II' and `Severe early-childhood-onset retinal
-dystrophy'. Indeed, gene therapies targeting \emph{RPE65} within the
-retina of patients with these rare genetic conditions are some of the
-most successful clinical applications of this technology to date, able
-to restore vision in many cases\textsuperscript{62}. In other cases, a
-tissue (e.g.~liver) may be known to be causally involved in disease
-genesis, but the precise causal cell types within that tissue remain
-unknown (e.g.~heptocytes, Kupffer cells, Cholangiocytes, Hepatic
-stellate cells, Natural killer cells, etc.). Tissue-level investigations
-(e.g.~using bulk transcriptomics or epigenomics) would be dominated by
-hepatocytes, which comprise 75\% of the liver. Our prioritized gene
-therapy targets can aid in such scenarios by providing the cell
-type-resolution context most likely to be causal for a given phenotype
-or set of phenotypes.
+epithelial cells' as the top target for `Fundus atrophy' vision-related
+phenotypes that are hallmarks of `Leber congenital amaurosis, type II'
+and `Severe early-childhood-onset retinal dystrophy'. Indeed, gene
+therapies targeting \emph{RPE65} within the retina of patients with
+these rare genetic conditions are some of the most successful clinical
+applications of this technology to date, able to restore vision in many
+cases\textsuperscript{62}. In other cases, a tissue (e.g.~liver) may be
+known to be causally involved in disease genesis, but the precise causal
+cell types within that tissue remain unknown (e.g.~heptocytes, Kupffer
+cells, Cholangiocytes, Hepatic stellate cells, Natural killer cells,
+etc.). Tissue-level investigations (e.g.~using bulk transcriptomics or
+epigenomics) would be dominated by hepatocytes, which comprise 75\% of
+the liver. Our prioritized gene therapy targets can aid in such
+scenarios by providing the cell type-resolution context most likely to
+be causal for a given phenotype or set of phenotypes.
 
 \begin{figure}[H]
 
@@ -1360,9 +1371,10 @@ phenotypes or diseases as examples: `GM2-ganglioside accumulation',
 `Spinocerebellar atrophy', `Neuronal loss in central nervous system'.
 Only phenotypes with a GPT severity score greater than \(15\) were
 considered to avoid overplotting and to focus on the more clinically
-relevant phenotypes. These examples were then selected partly on the
-basis of severity rankings, and partly for their relatively smaller,
-simpler networks than lent themselves to compact visualisations.
+relevant phenotypes Fig.~\ref{fig-therapy-examples}a-h. These examples
+were then selected partly on the basis of severity rankings, and partly
+for their relatively smaller, simpler networks than lent themselves to
+compact visualisations.
 
 Tay-Sachs disease (TSD) is a devastating hereditary condition in which
 children are born appearing healthy, which gradually degrades leading to
@@ -1373,39 +1385,31 @@ editing technologies, there remain some outstanding challenges. One of
 which is identifying which cell types should be targeted to ensure the
 most effective treatments. Here we identified alternatively activated
 macrophages as the cell type most strongly associated with
-`GM2-ganglioside accumulation'. The role of aberrant macrophage activity
-in the regulation of ganglioside levels is supported by observation that
-gangliosides accumulate within macrophages in TSD\textsuperscript{63},
-as well as experimental evidence in rodent
-models\textsuperscript{64.,65,66}. Our results not only corroborate
-these findings, but propose macrophages as the primary causal cell type
-in TSD, making it the most promising cell type to target in therapies.
-
-Another challenge in TSD is early detection and diagnosis, before
-irreversible damage has occurred. Our pipeline implicated extravillous
-trophoblasts of the placenta in `GM2-ganglioside accumulation'. While
-not necessarily a target for gene therapy, checking these cells \emph{in
-utero} for an absence of \emph{HEXA} may serve as a viable biomarker as
-these cells normally express the gene at high levels. Early detection of
-TSD may lengthen the window of opportunity for therapeutic
-intervention\textsuperscript{67}, especially when genetic sequencing is
-not available or variants of unknown significance are found within
-\emph{HEXA}\textsuperscript{68}.
+`GM2-ganglioside accumulation' Fig.~\ref{fig-therapy-examples}i. The
+role of aberrant macrophage activity in the regulation of ganglioside
+levels is supported by observation that gangliosides accumulate within
+macrophages in TSD\textsuperscript{63}, as well as experimental evidence
+in rodent models\textsuperscript{64.,65,66}. Our results not only
+corroborate these findings, but propose macrophages as the primary
+causal cell type in TSD, making it the most promising cell type to
+target in therapies.
 
 Spinocerebellar atrophy is a debilitating and lethal phenotype that
 occurs in diseases such as Spinocerebellar ataxia and Boucher-Nenhauser
 syndrome. These diseases are characterised by progressive degeneration
 of the cerebellum and spinal cord, leading to severe motor and cognitive
-impairments. Our pipeline identified M2 macrophages as the only causal
-cell type associated with `Spinocerebellar atrophy'. This strongly
-suggests that degeneration of cerebellar Purkinje cells are in fact
-downstream consequences of macrophage dysfunction, rather than being the
-primary cause themselves. This is consistent with the known role of
-macrophages, especially microglia, in neuroinflammation and other
-neurodegenerative conditions such as Alzheimer's and Parkinsons'
-disease\textsuperscript{69--71}. While experimental and postmortem
+impairments. Our pipeline identified M2 macrophages (labeled as the
+closest CL term `Alternatively activated macrophages' in
+Fig.~\ref{fig-therapy-examples}j) as the only causal cell type
+associated with `Spinocerebellar atrophy'. This strongly suggests that
+degeneration of cerebellar Purkinje cells are in fact downstream
+consequences of macrophage dysfunction, rather than being the primary
+cause themselves. This is consistent with the known role of macrophages,
+especially microglia, in neuroinflammation and other neurodegenerative
+conditions such as Alzheimer's and Parkinsons'
+disease\textsuperscript{67--69}. While experimental and postmortem
 observational studies have implicated microglia in spinocerebellar
-atrophy previously\textsuperscript{69}, our results provide a
+atrophy previously\textsuperscript{67}, our results provide a
 statistically-supported and unbiased genetic link between known risk
 genes and this cell type. Therefore, targeting M2 microglia in the
 treatment of spinocerebellar atrophy may therefore represent a promising
@@ -1423,7 +1427,8 @@ Next, we investigated the phenotype `Neuronal loss in the central
 nervous system'. Despite the fact that this is a fairly broad phenotype,
 we found that it was only significantly associated with 3 cell types
 (alternatively activated macrophage, macrophage, epithelial cell),
-specifically M2 macrophages and sinusoidal endothelial cells.
+specifically M2 macrophages and sinusoidal endothelial cells
+Fig.~\ref{fig-therapy-examples}k.
 
 Skeletal dysplasia is a heterogeneous group of over 450 disorders that
 affect the growth and development of bone and cartilage. This phenotype
@@ -1490,26 +1495,26 @@ translatability}\label{experimental-model-translatability}
 We computed interspecies translatability scores using a combination of
 both ontological (\(SIM_{o}\)) and genotypic (\(SIM_{g}\)) similarity
 relative to each homologous human phenotype and its associated genes
-Fig.~\ref{fig-animal-models}. In total, we mapped 278 non-human
+Fig.~\ref{fig-animal-models}. In total, we mapped 1,221 non-human
 phenotypes (in \emph{Caenorhabditis elegans}, \emph{Danio rerio},
-\emph{Mus musculus}, \emph{Rattus norvegicus}) to 849 homologous human
+\emph{Mus musculus}, \emph{Rattus norvegicus}) to 3,319 homologous human
 phenotypes. Amongst the 5,252 phenotype within our prioritised therapy
-targets, 354 had viable animal models in at least on non-human species.
-Per species, the number of homologous phenotypes was: \emph{Danio rerio}
-(n=214)\emph{Mus musculus} (n=150)\emph{Caenorhabditis elegans}
-(n=35)\emph{Rattus norvegicus} (n=3). Amongst our prioritised targets
-with a GPT-4 severity score of \textgreater10, the phenotypes with the
-greatest animal model similarity were `Anterior vertebral fusion'
-(\(SIM_{og}=0.97\)), `Disc-like vertebral bodies' (\(SIM_{og}=0.96\)),
-`Metaphyseal enchondromatosis' (\(SIM_{og}=0.95\)), `Peripheral retinal
-avascularization' (\(SIM_{og}=0.94\)), `Retinal vascular malformation'
-(\(SIM_{og}=0.94\)).
+targets, 1,788 had viable animal models in at least on non-human
+species. Per species, the number of homologous phenotypes was: \emph{Mus
+musculus} (n=1705)\emph{Danio rerio} (n=244)\emph{Rattus norvegicus}
+(n=85)\emph{Caenorhabditis elegans} (n=23). Amongst our prioritised
+targets with a GPT-4 severity score of \textgreater10, the phenotypes
+with the greatest animal model similarity were ``Rudimentary to absent
+tibiae'' (\(SIM_{og}=1\)), ``Hypoglutaminemia'' (\(SIM_{og}=1\)),
+``Bilateral ulnar hypoplasia'' (\(SIM_{og}=0.99\)), ``Disproportionate
+shortening of the tibia'' (\(SIM_{og}=0.99\)), ``Acrobrachycephaly''
+(\(SIM_{og}=0.98\)).
 
 \newpage{}
 
 \subsubsection{Mappings}\label{mappings}
 
-\begin{longtable}[]{@{}lrrrr@{}}
+\begin{table}
 
 \caption{\label{tbl-mappings}Mappings between HPO phenotypes and other
 medical ontologies. ``source'' indicates the medical ontology and
@@ -1519,27 +1524,39 @@ ontology and HPO respectively. ``mappings'' is the total number of
 cross-ontology mappings within a given distance. Some IDs may have more
 than one mapping for a given source due to many-to-many relationships.}
 
-\tabularnewline
+\centering{
 
-\toprule\noalign{}
-source & distance & source terms & HPO terms & mappings \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-ICD10 & 2 & 25 & 23 & 25 \\
-ICD10 & 3 & 839 & 876 & 1170 \\
-ICD9 & 1 & 21 & 21 & 21 \\
-ICD9 & 2 & 434 & 306 & 462 \\
-ICD9 & 3 & 1052 & 920 & 1816 \\
-SNOMED & 1 & 4413 & 3483 & 4654 \\
-SNOMED & 2 & 75 & 21 & 78 \\
-SNOMED & 3 & 1796 & 833 & 9605 \\
-UMLS & 1 & 12898 & 11601 & 13049 \\
-UMLS & 2 & 140 & 113 & 142 \\
-UMLS & 3 & 1871 & 1204 & 11021 \\
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+source & distance & source terms & HPO terms & mappings\\
+\hline
+ICD10 & 2 & 25 & 23 & 25\\
+\hline
+ICD10 & 3 & 839 & 876 & 1170\\
+\hline
+ICD9 & 1 & 21 & 21 & 21\\
+\hline
+ICD9 & 2 & 434 & 306 & 462\\
+\hline
+ICD9 & 3 & 1052 & 920 & 1816\\
+\hline
+SNOMED & 1 & 4413 & 3483 & 4654\\
+\hline
+SNOMED & 2 & 75 & 21 & 78\\
+\hline
+SNOMED & 3 & 1796 & 833 & 9605\\
+\hline
+UMLS & 1 & 12898 & 11601 & 13049\\
+\hline
+UMLS & 2 & 140 & 113 & 142\\
+\hline
+UMLS & 3 & 1871 & 1204 & 11021\\
+\hline
+\end{tabular}
 
-\end{longtable}
+}
+
+\end{table}%
 
 Mappings from HPO phenotypes and other commonly used medical ontologies
 were gathered in order to facilitate use of the results in this study in
@@ -1619,16 +1636,16 @@ Unfortunately, there are currently only treatments available for less
 than 5\% of RDs\textsuperscript{6}. Novel technologies including CRISPR,
 prime editing, antisense oligonucleotides, viral vectors, and/or lipid
 nanoparticles, have been undergone significant advances in the last
-several years\textsuperscript{72--76} and proven remarkable clinical
+several years\textsuperscript{70--74} and proven remarkable clinical
 success in an increasing number of clinical
-applications\textsuperscript{77--80}. The U.S. Food and Drug
+applications\textsuperscript{75--78}. The U.S. Food and Drug
 Administration (FDA) recently announced an landmark program aimed
 towards improving the international regulatory framework to take
 advantage of the evolving gene/cell therapy
-technologies\textsuperscript{81} with the aim of bringing dozens more
+technologies\textsuperscript{79} with the aim of bringing dozens more
 therapies to patients in a substantially shorter timeframe than
 traditional pharmaceutical product development (typically 5-20 years
-with a median of 8.3 years)\textsuperscript{82}. While these
+with a median of 8.3 years)\textsuperscript{80}. While these
 technologies have the potential to revolutionise RD medicine, their
 successful application is dependent on first understanding the
 mechanisms causing each disease.
@@ -1639,15 +1656,15 @@ therapeutic targets
 (Fig.~\ref{fig-therapy-filter}-Fig.~\ref{fig-therapy-examples}).
 Targeting cell type-specific mechanisms underlying granular RD
 phenotypes can improve therapeutic effectiveness by treating the causal
-root of an individual's conditions\textsuperscript{73,83}. A cell
+root of an individual's conditions\textsuperscript{71,81}. A cell
 type-specific approach also helps to reduce the number of harmful side
 effects caused by unintentionally delivering the therapeutic to
 off-target tissues/cell types (which may induce aberrant gene activity),
 especially when combined with technologies that can target cell surface
-antigens (e.g viral vectors)\textsuperscript{84}. This has the
+antigens (e.g viral vectors)\textsuperscript{82}. This has the
 additional benefit of reducing the minimal effective dose of a
 therapeutic, which can be both immunogenic and extremely financially
-costly\textsuperscript{9,10,72,75}. Here, we demonstrate the utility of
+costly\textsuperscript{9,10,70,73}. Here, we demonstrate the utility of
 a high-throughput evidence-based approach to RD therapeutics discovery
 by highlighting several of the most promising therapeutic candidates.
 Our pipeline takes into account a myriad of factors, including the
@@ -1659,8 +1676,7 @@ well as a quantitative analysis of phenotypic and genetic animal model
 translatability (Fig.~\ref{fig-animal-models}). We validated these
 candidates by comparing the proportional overlap with gene therapies
 that are presently in the market or undergoing clinical trials, in which
-we recovered \(81\)\% of all active gene therapies and
-\(NaN \times 10^{-Inf}\)\% of failed gene therapies
+we recovered \(87\)\% of all active gene therapies
 (Fig.~\ref{fig-therapy-validate}, Fig.~\ref{fig-therapy-validate-all}).
 Despite nominating a large number of putative targets, hypergeometric
 tests confirmed that our targets were strongly enriched for targets of
@@ -1676,11 +1692,11 @@ neurodegenerative phenotypes involved alternatively activated (M2)
 macrophages. The role of macrophages in neurodegeneration is complex,
 with both neuroprotective and neurotoxic functions, including the
 clearance of misfolded proteins, the regulation of the blood-brain
-barrier, and the modulation of the immune response\textsuperscript{85}.
+barrier, and the modulation of the immune response\textsuperscript{83}.
 We also recapitulated prior evidence that microglia, the resident
 macrophages of the nervous system, are causally implicated in
 Alzheimer's disease (AD)
-(Fig.~\ref{fig-therapy-examples-supp})\textsuperscript{86}. An important
+(Fig.~\ref{fig-therapy-examples-supp})\textsuperscript{84}. An important
 contribution of our current study is that we were able to pinpoint the
 specific phenotypes of AD caused by macrophages to neurofibrillary
 tangles and long-tract signs (reflexes that indicate the functioning of
@@ -1693,7 +1709,7 @@ scRNA-seq references currently available, they are nevertheless missing
 certain tissues, cell types (e.g.~spermatocytes, oocytes), and life
 stages (post-natal childhood, senility). It is also possible that we
 have not captured certain cell state signatures that only occur in
-disease (e.g.~disease-associated microglia\textsuperscript{87,88}).
+disease (e.g.~disease-associated microglia\textsuperscript{85,86}).
 Though we reasoned that using only control cell type signatures would
 mitigate bias towards any particular disease, and avoid degradation of
 gene signatures due to loss of function mutations. Second, the
@@ -1712,7 +1728,7 @@ investigate here. Along with a scaling prestep during linear modelling,
 this means that all the results are internally consistent and can be
 directly compared to one another (in stark contrast to literature
 meta-analyses). Furthermore, for the phenotype gene signatures we used
-expert-curated GenCC annotations\textsuperscript{89,90} to weight the
+expert-curated GenCC annotations\textsuperscript{87,88} to weight the
 current strength of evidence supporting a causal relationship between
 each gene and phenotype. This is especially important for phenotypes
 with large genes lists (thousands of annotations) for which some of the
@@ -1720,11 +1736,11 @@ relationships may be tenuous. Within the cell type references, we
 deliberately chose to use specificity scores (rather than raw gene
 expression) as this normalisation procedure has previously been
 demonstrated to better distinguish between signatures of highly similar
-cell types/subtypes\textsuperscript{91}.
+cell types/subtypes\textsuperscript{89}.
 
 Common ontology-controlled frameworks like the HPO open a wealth of new
 opportunities, especially when addressing RDs. Services such as the
-Matchmaker Exchange\textsuperscript{92,93} have enabled the discovery of
+Matchmaker Exchange\textsuperscript{90,91} have enabled the discovery of
 hundreds of underlying genetic etiologies, and led to the diagnosis of
 many patients. This also opens the possibility of gathering cohorts of
 geographically dispersed patients to run clinical trials, the only
@@ -1733,7 +1749,7 @@ number of individuals who qualify for these treatments, as well as the
 trial sample size, proposals have been made deviate from the traditional
 single-disease clinical trial model and instead perform basket trials on
 groups of RDs with shared molecular etiologies
-(SaME)\textsuperscript{94}.
+(SaME)\textsuperscript{92}.
 
 Moving forward, we are now actively seeking industry and academic
 partnerships to begin experimentally validating our multi-scale target
@@ -1770,9 +1786,9 @@ specific mechanisms of virtually all rare diseases.
 
 \subsubsection{Human Phenotype Ontology}\label{human-phenotype-ontology}
 
-The latest version of the HPO (release releases) was downloaded from the
-EMBL-EBI Ontology Lookup Service\textsuperscript{95} and imported into R
-using the \texttt{HPOExplorer} package. This R object was used to
+The latest version of the HPO (release 2024-02-08) was downloaded from
+the EMBL-EBI Ontology Lookup Service\textsuperscript{93} and imported
+into R using the \texttt{HPOExplorer} package. This R object was used to
 extract ontological relationships between phenotypes as well as to
 assign absolute and relative ontological levels to each phenotype. The
 latest version of the HPO phenotype-to-gene mappings and phenotype
@@ -1787,8 +1803,8 @@ resources used to generate these annotations (OMIM, Orphanet, DECIPHER)
 use variable methodologies (e.g.~expert-curated review of the medical
 literature vs.~automated text mining of the literature). Therefore we
 imported data from the Gene Curation Coalition
-(GenCC)\textsuperscript{89,90}, which (as of 2024-11-02) 22,060 evidence
-scores across 7,259 diseases and 5,165 genes. Evidence scores are
+(GenCC)\textsuperscript{87,88}, which (as of 2025-07-26) 24,112 evidence
+scores across 7,566 diseases and 5,533 genes. Evidence scores are
 defined by GenCC using a standardised ordinal rubric which we then
 encoded as a semi-quantitative score ranging from 0 (no evidence of
 disease-gene relationship) to 6 (strongest evidence of disease-gene
@@ -1886,7 +1902,7 @@ data (collected with microwell-seq) from embryonic, foetal, and adult
 human samples across 49 tissues\textsuperscript{33}.
 
 Specificity matrices were generated separately for each transcriptomic
-atlas using the R package \texttt{EWCE} (v1.11.3)\textsuperscript{91}.
+atlas using the R package \texttt{EWCE} (v1.11.3)\textsuperscript{89}.
 Within each atlas, cell types were defined using the authors' original
 freeform annotations in order to preserve the granularity of cell
 subtypes as well as incorporate expert-identified rare cell types. Cell
@@ -1963,7 +1979,7 @@ models.
 We repeated the aforementioned procedure separately for each of the
 single-cell references. Once all results were generated using both cell
 type references (2,206,994 association tests total), we applied
-Benjamini-Hochberg false discovery rate\textsuperscript{96} (denoted as
+Benjamini-Hochberg false discovery rate\textsuperscript{94} (denoted as
 \(FDR_{pc}\)) to account for multiple testing. Of note, we applied this
 correction across all results at once (as opposed to each single-cell
 reference separately) to ensure the \(FDR_{pc}\) was stringently
@@ -2030,7 +2046,7 @@ more often enriched (FDR\textless0.05) within that branch relative to
 all of the other HPO branches of an equivalent level in the ontology
 (including all branches not shown in Fig.~\ref{fig-summary}b). After
 applying Benjamini-Hochberg multiple testing
-correction\textsuperscript{96} (denoted as \(FDR _{b,c}\)), we annotated
+correction\textsuperscript{94} (denoted as \(FDR _{b,c}\)), we annotated
 each respective branch-by-cell type bar according to the significance
 (**** : \(FDR _{b,c}<1e-04\), *** : \(FDR _{b,c}<0.001\), ** :
 \(FDR _{b,c}<0.01\), * : \(FDR _{b,c}<0.05\)). Cell types in
@@ -2150,7 +2166,7 @@ impaired mobility, physical malformations, blindness, sensory
 impairments, immunodeficiency, cancer, reduced fertility, or is
 associated with a congenital onset. These criteria were previously
 defined in surveys of medical experts as a means of systematically
-assessing phenotype severity\textsuperscript{97}. Responses for each
+assessing phenotype severity\textsuperscript{95}. Responses for each
 metric were provided in a consistent one-word format which could be one
 of: `never', `rarely', `often', `always'. This procedure was repeated in
 batches (to avoid exceeding token limits) until annotations were
@@ -2221,7 +2237,7 @@ Let us denote:
 
 Using the numerically encoded GPT annotations (0=``never'',
 1=``rarely'', 2=``often'', 3=``always'') we computed the mean encoded
-value per cell type within each annotation. One-sided Wilcoxan rank-sum
+value per cell type within each annotation. One-sided Wilcoxon rank-sum
 tests were run using the \texttt{rstatix::wilcox\_test()} function to
 test whether each cell type was associated with more severe phenotypes
 relative to all other cell types. This procedure was repeated for
@@ -2268,14 +2284,28 @@ between the foetal and adult version of the equivalent cell type
 (\(\text{foetal-adult bias}: p_{adult} - p_{foetal} = \Delta p \in [-1,1]\)).
 A score of 1 indicates the phenotype is only associated with the foetal
 version of the cell type and -1 indicates the phenotype is only
-associated with the adult version of the cell type. Ontological
-enrichment tests were then run on the top 50 and bottom 50 phenotypes
-with the greatest foetal-adult bias scores to identify the most
-foetal-biased and adult-biased phenotype categories, respectively. The
-was performed using the \texttt{simona::dag\_enrich\_on\_offsprings}
+associated with the adult version of the cell type.
+
+In order to summarise higher-order HPO phenotype categories that were
+most biased towards foetal or adult cell types, ontological enrichment
+tests were run on the phenotypes with the top/bottom 50
+greatest/smallest foetal-adult bias scores. The enrichment tests were
+performed using the \texttt{simona::dag\_enrich\_on\_offsprings}
 function, which uses a hypergeometric test to determine whether a list
 of terms in an ontology are enriched for offspring terms (descendants)
-of a given ancestor term within the ontology.
+of a given ancestor term within the ontology. Phenotypes categories with
+an HPO ontological enrichment a p-value \textless{} 0.05 were considered
+significant.
+
+We were similarly interested in which higher-order cell type categories
+tended to be most commonly associated with these strongly
+foetal-/adult-biased phenotype s. Another set of ontological enrichment
+tests were run on the cell types associated with the top/bottom 50
+phenotypes from the previous analysis. The CL ontology-aligned IDs for
+each group cell types were fed into the
+\texttt{simona::dag\_enrich\_on\_offsprings} using the CL ontology.
+Significiantly enriched cell type categories were defined as those with
+a CL ontological enrichment p-value \textless{} 0.05.
 
 \subsubsection{Therapeutic target
 identification}\label{therapeutic-target-identification-1}
@@ -2303,7 +2333,7 @@ To assess whether our prioritised therapeutic targets were likely to be
 viable, we computed the overlap between our gene targets and those of
 existing gene therapies at various stages of clinical development
 (Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
-therapy from the Therapeutic Target Database (TTD; release 2025-01-05)
+therapy from the Therapeutic Target Database (TTD; release 2025-07-27)
 and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
 gene symbols using the \texttt{orthogene} R package. We stratified our
 overlap metrics according to whether the therapies had failed
@@ -2365,13 +2395,29 @@ To further increase the ease of access for stakeholders in the RD
 community without the need for programmatic experience, we developed a
 series of web apps to interactively explore, visualise, and download the
 results from our study. Collectively, these web apps are called the Rare
-Disease Celltyping Portal. The landing page for the website was made
-using HTML, CSS, and javascript and the web apps were created using the
-Shiny Web application framework for R and deployed on the shinyapps.io
-server. The website can be accessed at
-\url{https://neurogenomics.github.io/rare_disease_celltyping_apps/home}.
+Disease Celltyping Portal. The website can be accessed at
+\url{https://neurogenomics-ukdri.dsi.ic.ac.uk/}.
+
+The Rare Disease Celltyping Portal integrates diverse datasets,
+including the HPO, cell types, genes, and phenotype severity, into a
+unified platform that allows users to perform flexible, bidirectional
+queries. Users can start from any entry point: either phenotype, cell
+type, genes, or severity, and seamlessly trace relationships across
+these dimensions.
+
+The portal provides a dynamic and intuitive exploration experience with
+its real-time interaction capabilities and responsive interface
+including network graphs, bar charts, and heat maps. It has the ability
+to handle large datasets efficiently and offer fast query response by
+building with FARM stack (FastAPI, React, MongoDB). The portal is
+designed for a broad audience, including researchers, clinicians, and
+biologists, by offering user-friendly navigation and interactive visual
+outputs. By enabling users to intuitively explore complex biological
+relationships, the portal aims to accelerate rare disease research,
+enhance diagnostic accuracy, and drive therapeutic innovation.
+
 All code used to generate the website can be found at
-\url{https://github.com/neurogenomics/rare_disease_celltyping_apps}.
+\url{https://github.com/neurogenomics/Rare-Disease-Web-Portal}.
 
 \subsubsection{Mappings}\label{mappings-1}
 
@@ -2390,11 +2436,7 @@ then downloaded, stored in a tabular format, and uploaded to the public
 
 \subsection{Tables}\label{tables}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.4359}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1923}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2436}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1282}}@{}}
+\begin{table}
 
 \caption{\label{tbl-summary}Summary statistics of enrichment results
 stratified by single-cell atlas. Summary statistics at multiple levels
@@ -2403,44 +2445,59 @@ phenotypes per cell type) stratified by the single-cell atlas that was
 used as a cell type signature reference (Descartes Human or Human Cell
 Landscape).}
 
-\tabularnewline
+\centering{
 
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-DescartesHuman
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-HumanCellLandscape
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-all
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-tests significant & 19,929 & 26,585 & 46,514 \\
-tests & 848,078 & 1,358,916 & 2,206,994 \\
-tests significant (\%) & 2.35 & 1.96 & 2.11 \\
-cell types significant & 77 & 124 & 201 \\
-cell types & 77 & 124 & 201 \\
-cell types significant (\%) & 100 & 100 & 100 \\
-phenotypes significant & 7,340 & 9,049 & 9,575 \\
-phenotypes tested & 11,014 & 10,959 & 11,028 \\
-phenotypes & 11,047 & 11,047 & 11,047 \\
-phenotypes significant (\%) & 66.4 & 81.9 & 86.7 \\
-diseases significant & 8,628 & 8,627 & 8,628 \\
-diseases & 8,631 & 8,631 & 8,631 \\
-diseases significant (\%) & 100 & 100 & 100 \\
-cell types per phenotype (mean) & 1.81 & 2.43 & 4.22 \\
-cell types per phenotype (median) & 1 & 2 & 3 \\
-cell types per phenotype (min) & 0 & 0 & 0 \\
-cell types per phenotype (max) & 31 & 28 & 59 \\
-phenotypes per cell type (mean) & 259 & 214 & 231 \\
-phenotypes per cell type (median) & 252 & 200 & 209 \\
-phenotypes per cell type (min) & 71 & 57 & 57 \\
-phenotypes per cell type (max) & 696 & 735 & 735 \\
+\begin{tabular}[t]{l|l|l|l}
+\hline
+  & DescartesHuman & HumanCellLandscape & all\\
+\hline
+tests significant & 19,929 & 26,585 & 46,514\\
+\hline
+tests & 848,078 & 1,358,916 & 2,206,994\\
+\hline
+tests significant (\%) & 2.35 & 1.96 & 2.11\\
+\hline
+cell types significant & 77 & 124 & 201\\
+\hline
+cell types & 77 & 124 & 201\\
+\hline
+cell types significant (\%) & 100 & 100 & 100\\
+\hline
+phenotypes significant & 7,340 & 9,049 & 9,575\\
+\hline
+phenotypes tested & 11,014 & 10,959 & 11,028\\
+\hline
+phenotypes & 11,047 & 11,047 & 11,047\\
+\hline
+phenotypes significant (\%) & 66.4 & 81.9 & 86.7\\
+\hline
+diseases significant & 8,628 & 8,627 & 8,628\\
+\hline
+diseases & 8,631 & 8,631 & 8,631\\
+\hline
+diseases significant (\%) & 100 & 100 & 100\\
+\hline
+cell types per phenotype (mean) & 1.81 & 2.43 & 4.22\\
+\hline
+cell types per phenotype (median) & 1 & 2 & 3\\
+\hline
+cell types per phenotype (min) & 0 & 0 & 0\\
+\hline
+cell types per phenotype (max) & 31 & 28 & 59\\
+\hline
+phenotypes per cell type (mean) & 259 & 214 & 231\\
+\hline
+phenotypes per cell type (median) & 252 & 200 & 209\\
+\hline
+phenotypes per cell type (min) & 71 & 57 & 57\\
+\hline
+phenotypes per cell type (max) & 696 & 735 & 735\\
+\hline
+\end{tabular}
 
-\end{longtable}
+}
+
+\end{table}%
 
 \newpage{}
 
@@ -2450,7 +2507,7 @@ phenotypes per cell type (max) & 696 & 735 & 735 \\
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6000}}@{}}
 
 \caption{\label{tbl-filters}Description of each filtering step performed
-in the multi-scale therapeutic target prioritisation pipleline. `Level'
+in the multi-scale therapeutic target prioritisation pipleline. `level'
 indicates the biological scale at which the step is applied to.}
 
 \tabularnewline
@@ -3019,121 +3076,106 @@ ganglioside accumulation causes neuroinflammation and behavioral
 alterations in a mouse model of early onset tay-sachs disease}.
 \emph{Journal of Neuroinflammation} \textbf{17}, 277 (2020).}
 
-\bibitem[\citeproctext]{ref-solovyevaNewApproachesTaySachs2018}
-\CSLLeftMargin{67. }%
-\CSLRightInline{Solovyeva, V. V. \emph{et al.}
-\href{https://doi.org/10.3389/fphys.2018.01663}{New approaches to
-tay-sachs disease therapy}. \emph{Frontiers in Physiology} \textbf{9},
-(2018).}
-
-\bibitem[\citeproctext]{ref-hoffmanNextgenerationDNASequencing2013}
-\CSLLeftMargin{68. }%
-\CSLRightInline{Hoffman, J. D. \emph{et al.}
-\href{https://doi.org/10.1002/mgg3.37}{Next-generation DNA sequencing of
-HEXA: A step in the right direction for carrier screening}.
-\emph{Molecular Genetics \& Genomic Medicine} \textbf{1}, 260--268
-(2013).}
-
 \bibitem[\citeproctext]{ref-ferroRoleMicrogliaAtaxias2019}
-\CSLLeftMargin{69. }%
+\CSLLeftMargin{67. }%
 \CSLRightInline{Ferro, A., Sheeler, C., Rosa, J.-G. \& Cvetanovic, M.
 \href{https://doi.org/10.1016/j.jmb.2019.01.016}{Role of microglia in
 ataxias}. \emph{Journal of molecular biology} \textbf{431}, 1792--1804
 (2019).}
 
 \bibitem[\citeproctext]{ref-holMicroglialTranscriptomicsMeets2022}
-\CSLLeftMargin{70. }%
+\CSLLeftMargin{68. }%
 \CSLRightInline{Hol, E. M. \& Pasterkamp, R. J. Microglial
 transcriptomics meets genetics: New disease leads. \emph{Nature Reviews
 Neurology} 1--2 (2022)
 doi:\href{https://doi.org/10.1038/s41582-022-00633-w}{10.1038/s41582-022-00633-w}.}
 
 \bibitem[\citeproctext]{ref-lopesAtlasGeneticEffects2020a}
-\CSLLeftMargin{71. }%
+\CSLLeftMargin{69. }%
 \CSLRightInline{Lopes, K. de P. \emph{et al.} Atlas of genetic effects
 in human microglia transcriptome across brain regions, aging and disease
 pathologies. \emph{bioRxiv} 2020.10.27.356113 (2020)
 doi:\href{https://doi.org/10.1101/2020.10.27.356113}{10.1101/2020.10.27.356113}.}
 
 \bibitem[\citeproctext]{ref-Bueren2023-ma}
-\CSLLeftMargin{72. }%
+\CSLLeftMargin{70. }%
 \CSLRightInline{Bueren, J. A. \& Auricchio, A. Advances and challenges
 in the development of gene therapy medicinal products for rare diseases.
 \emph{Hum. Gene Ther.} \textbf{34}, 763--775 (2023).}
 
 \bibitem[\citeproctext]{ref-Bulaklak2020-ta}
-\CSLLeftMargin{73. }%
+\CSLLeftMargin{71. }%
 \CSLRightInline{Bulaklak, K. \& Gersbach, C. A. The once and future gene
 therapy. \emph{Nat. Commun.} \textbf{11}, 5820 (2020).}
 
 \bibitem[\citeproctext]{ref-Godbout2023-uo}
-\CSLLeftMargin{74. }%
+\CSLLeftMargin{72. }%
 \CSLRightInline{Godbout, K. \& Tremblay, J. P. Prime editing for human
 gene therapy: Where are we now? \emph{Cells} \textbf{12}, (2023).}
 
 \bibitem[\citeproctext]{ref-Kohn2023-vh}
-\CSLLeftMargin{75. }%
+\CSLLeftMargin{73. }%
 \CSLRightInline{Kohn, D. B., Chen, Y. Y. \& Spencer, M. J. Successes and
 challenges in clinical gene therapy. \emph{Gene Ther.} \textbf{30},
 738--746 (2023).}
 
 \bibitem[\citeproctext]{ref-Zhao2023-qy}
-\CSLLeftMargin{76. }%
+\CSLLeftMargin{74. }%
 \CSLRightInline{Zhao, Z., Shang, P., Mohanraju, P. \& Geijsen, N. Prime
 editing: Advances and therapeutic applications. \emph{Trends
 Biotechnol.} \textbf{41}, 1000--1012 (2023).}
 
 \bibitem[\citeproctext]{ref-Darrow2019-om}
-\CSLLeftMargin{77. }%
+\CSLLeftMargin{75. }%
 \CSLRightInline{Darrow, J. J. Luxturna: {FDA} documents reveal the value
 of a costly gene therapy. \emph{Drug Discov. Today} \textbf{24},
 949--954 (2019).}
 
 \bibitem[\citeproctext]{ref-Mendell2017-kg}
-\CSLLeftMargin{78. }%
+\CSLLeftMargin{76. }%
 \CSLRightInline{Mendell, J. R. \emph{et al.} {Single-Dose}
 {Gene-Replacement} therapy for spinal muscular atrophy. \emph{N. Engl.
 J. Med.} \textbf{377}, 1713--1722 (2017).}
 
 \bibitem[\citeproctext]{ref-Mueller2017-fz}
-\CSLLeftMargin{79. }%
+\CSLLeftMargin{77. }%
 \CSLRightInline{Mueller, C. \emph{et al.} 5 year expression and
 neutrophil defect repair after gene therapy in alpha-1 antitrypsin
 deficiency. \emph{Mol. Ther.} \textbf{25}, 1387--1394 (2017).}
 
 \bibitem[\citeproctext]{ref-Russell2017-dh}
-\CSLLeftMargin{80. }%
+\CSLLeftMargin{78. }%
 \CSLRightInline{Russell, S. \emph{et al.} Efficacy and safety of
 voretigene neparvovec ({AAV2-hRPE65v2}) in patients with
 {RPE65-mediated} inherited retinal dystrophy: A randomised, controlled,
 open-label, phase 3 trial. \emph{Lancet} \textbf{390}, 849--860 (2017).}
 
 \bibitem[\citeproctext]{ref-Lu2024-kl}
-\CSLLeftMargin{81. }%
+\CSLLeftMargin{79. }%
 \CSLRightInline{Lu, C.-F. {FDA} takes first step toward international
 regulation of gene therapies to treat rare diseases. (2024).}
 
 \bibitem[\citeproctext]{ref-Brown2022-ye}
-\CSLLeftMargin{82. }%
+\CSLLeftMargin{80. }%
 \CSLRightInline{Brown, D. G., Wobst, H. J., Kapoor, A., Kenna, L. A. \&
 Southall, N. Clinical development times for innovative drugs. \emph{Nat.
 Rev. Drug Discov.} \textbf{21}, 793--794 (2022).}
 
 \bibitem[\citeproctext]{ref-Moffat2017-al}
-\CSLLeftMargin{83. }%
+\CSLLeftMargin{81. }%
 \CSLRightInline{Moffat, J. G., Vincent, F., Lee, J. A., Eder, J. \&
 Prunotto, M. Opportunities and challenges in phenotypic drug discovery:
 An industry perspective. \emph{Nat. Rev. Drug Discov.} \textbf{16},
 531--543 (2017).}
 
 \bibitem[\citeproctext]{ref-Zhou2013-wx}
-\CSLLeftMargin{84. }%
+\CSLLeftMargin{82. }%
 \CSLRightInline{Zhou, Q. \& Buchholz, C. J. Cell type specific gene
 delivery by lentiviral vectors: New options in immunotherapy.
 \emph{Oncoimmunology} \textbf{2}, e22566 (2013).}
 
 \bibitem[\citeproctext]{ref-gaoMicrogliaNeurodegenerativeDiseases2023}
-\CSLLeftMargin{85. }%
+\CSLLeftMargin{83. }%
 \CSLRightInline{Gao, C., Jiang, J., Tan, Y. \& Chen, S.
 \href{https://doi.org/10.1038/s41392-023-01588-0}{Microglia in
 neurodegenerative diseases: mechanism and potential therapeutic
@@ -3141,78 +3183,78 @@ targets}. \emph{Signal Transduction and Targeted Therapy} \textbf{8},
 1--37 (2023).}
 
 \bibitem[\citeproctext]{ref-mcquadeMicrogliaAlzheimerDisease2019}
-\CSLLeftMargin{86. }%
+\CSLLeftMargin{84. }%
 \CSLRightInline{Mcquade, A. \& Blurton-jones, M. Microglia in
 alzheimer's disease : Exploring how genetics and phenotype influence
 risk. \emph{Journal of Molecular Biology} 1--13 (2019)
 doi:\href{https://doi.org/10.1016/j.jmb.2019.01.045}{10.1016/j.jmb.2019.01.045}.}
 
 \bibitem[\citeproctext]{ref-keren-shaulUniqueMicrogliaType2017}
-\CSLLeftMargin{87. }%
+\CSLLeftMargin{85. }%
 \CSLRightInline{Keren-shaul, H. \emph{et al.}
 \href{https://doi.org/10.1016/j.cell.2017.05.018}{A unique microglia
 type associated with restricting development of alzheimer 's disease}.
 \emph{Cell} \textbf{169}, 1276--1290.e17 (2017).}
 
 \bibitem[\citeproctext]{ref-deczkowskaDiseaseAssociatedMicrogliaUniversal2018}
-\CSLLeftMargin{88. }%
+\CSLLeftMargin{86. }%
 \CSLRightInline{Deczkowska, A. \emph{et al.}
 \href{https://doi.org/10.1016/j.cell.2018.05.003}{Disease-associated
 microglia: A universal immune sensor of neurodegeneration}. \emph{Cell}
 \textbf{173}, 1073--1081 (2018).}
 
 \bibitem[\citeproctext]{ref-DiStefano2022-ao}
-\CSLLeftMargin{89. }%
+\CSLLeftMargin{87. }%
 \CSLRightInline{DiStefano, M. T. \emph{et al.} The gene curation
 coalition: A global effort to harmonize gene-disease evidence resources.
 \emph{Genet. Med.} \textbf{24}, 1732--1742 (2022).}
 
 \bibitem[\citeproctext]{ref-DiStefano2023-np}
-\CSLLeftMargin{90. }%
+\CSLLeftMargin{88. }%
 \CSLRightInline{DiStefano, M. \emph{et al.} P451: The gene curation
 coalition works to resolve discrepancies in gene-disease validity
 assertions. \emph{Genetics in Medicine Open} \textbf{1}, 100498 (2023).}
 
 \bibitem[\citeproctext]{ref-Skene2016-rb}
-\CSLLeftMargin{91. }%
+\CSLLeftMargin{89. }%
 \CSLRightInline{Skene, N. G. \& Grant, S. G. N. Identification of
 vulnerable cell types in major brain disorders using single cell
 transcriptomes and expression weighted cell type enrichment.
 \emph{Front. Neurosci.} \textbf{10}, 16 (2016).}
 
 \bibitem[\citeproctext]{ref-Osmond2022-ml}
-\CSLLeftMargin{92. }%
+\CSLLeftMargin{90. }%
 \CSLRightInline{Osmond, M. \emph{et al.} Outcome of over 1500 matches
 through the matchmaker exchange for rare disease gene discovery: The
 2-year experience of {Care4Rare} canada. \emph{Genet. Med.} \textbf{24},
 100--108 (2022).}
 
 \bibitem[\citeproctext]{ref-Philippakis2015-dq}
-\CSLLeftMargin{93. }%
+\CSLLeftMargin{91. }%
 \CSLRightInline{Philippakis, A. A. \emph{et al.} The matchmaker
 exchange: A platform for rare disease gene discovery. \emph{Hum. Mutat.}
 \textbf{36}, 915--921 (2015).}
 
 \bibitem[\citeproctext]{ref-Zanello2023-zd}
-\CSLLeftMargin{94. }%
+\CSLLeftMargin{92. }%
 \CSLRightInline{Zanello, G. \emph{et al.} Targeting shared molecular
 etiologies to accelerate drug development for rare diseases. \emph{EMBO
 Mol. Med.} \textbf{15}, e17159 (2023).}
 
 \bibitem[\citeproctext]{ref-Cote2010-gp}
-\CSLLeftMargin{95. }%
+\CSLLeftMargin{93. }%
 \CSLRightInline{Côté, R. \emph{et al.} The ontology lookup service:
 Bigger and better. \emph{Nucleic Acids Res.} \textbf{38}, W155--60
 (2010).}
 
 \bibitem[\citeproctext]{ref-Benjamini1995-vo}
-\CSLLeftMargin{96. }%
+\CSLLeftMargin{94. }%
 \CSLRightInline{Benjamini, Y. \& Hochberg, Y. Controlling the false
 discovery rate: A practical and powerful approach to multiple testing.
 \emph{J. R. Stat. Soc.} (1995).}
 
 \bibitem[\citeproctext]{ref-Lazarin2014-we}
-\CSLLeftMargin{97. }%
+\CSLLeftMargin{95. }%
 \CSLRightInline{Lazarin, G. A. \emph{et al.} Systematic classification
 of disease severity for evaluation of expanded carrier screening panels.
 \emph{PLoS One} \textbf{9}, e114391 (2014).}
@@ -3401,10 +3443,10 @@ filtering step.}
 
 }
 
-\subcaption{\label{fig-therapy-validate-allD08295A6-16DC-499D-85A8-8BA656E013A2}Therapeutics
-- Validation of prioritised therapeutic targets. Proportion of existing
-all therapy targets (documented in the Therapeutic Target Database)
-recapitulated by our prioritisation pipeline.}
+\subcaption{\label{fig-therapy-validate-allD08295A6-16DC-499D-85A8-8BA656E013A2}Validation
+of prioritised therapeutic targets. Proportion of existing all therapy
+targets (documented in the Therapeutic Target Database) recapitulated by
+our prioritisation pipeline.}
 
 }
 
@@ -3425,9 +3467,9 @@ recapitulated by our prioritisation pipeline.}
 }
 
 \subcaption{\label{fig-animal-modelsD08295A6-16DC-499D-85A8-8BA656E013A2}Identification
-of translatable experimental models. Interspecies translatability of
-human phenotypes nominated by the gene therapy prioritised pipeline.
-Above, the combined ontological-genotypic similarity score
+of translatable experimental models. Interspecies translatability of the
+top 200 human phenotypes nominated by the gene therapy prioritised
+pipeline. Above, the combined ontological-genotypic similarity score
 (\(SIM_{og}\)) is displayed as the heatmap fill colour stratified by the
 model organism (\emph{x-axis}). An additional column (``n\_genes\_db1''
 on the far left) displays the total number of unique genes annotated to
@@ -3583,343 +3625,289 @@ GENCC:100006 & Refuted Evidence & 0 \\
 
 \newpage{}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2800}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3600}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2867}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.0733}}@{}}
+\begin{table}
 
-\caption{\label{tbl-celltypes}On-target cell types for each HPO
-ancestral branch.}
+\caption{\label{tbl-celltypes}On-target cell types for each Human
+Phenotype Ontology (HPO) ancestral branch. Cell type-phenotype branch
+pairings were manually curated by comparing high-level HPO terms to
+terms within the Cell Ontology (CL). Each HPO branch is shown as bolded
+row dividers. Ancestral CL branch names are shown in the first column,
+along with the specific CL names and IDs.}
 
-\tabularnewline
+\centering{
 
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-hpo\_branch
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cl\_branch
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cl\_name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cl\_id
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Abnormality of the cardiovascular system & cardiocyte & cardiac muscle
-cell & CL:0000746 \\
-Abnormality of the cardiovascular system & cardiocyte & regular atrial
-cardiac myocyte & CL:0002129 \\
-Abnormality of the cardiovascular system & cardiocyte & endocardial cell
-& CL:0002350 \\
-Abnormality of the cardiovascular system & cardiocyte & epicardial
-adipocyte & CL:1000309 \\
-Abnormality of the cardiovascular system & cardiocyte & ventricular
-cardiac muscle cell & CL:2000046 \\
-Abnormality of the endocrine system & endocrine cell & endocrine cell &
-CL:0000163 \\
-Abnormality of the endocrine system & endocrine cell & neuroendocrine
-cell & CL:0000165 \\
-Abnormality of the endocrine system & endocrine cell & chromaffin cell &
-CL:0000166 \\
-Abnormality of the eye & photoreceptor cell / retinal cell &
-photoreceptor cell & CL:0000210 \\
-Abnormality of the eye & photoreceptor cell / retinal cell & amacrine
-cell & CL:0000561 \\
-Abnormality of the eye & photoreceptor cell / retinal cell & Mueller
-cell & CL:0000636 \\
-Abnormality of the eye & photoreceptor cell / retinal cell & retinal
-pigment epithelial cell & CL:0002586 \\
-Abnormality of the immune system & leukocyte & T cell & CL:0000084 \\
-Abnormality of the immune system & leukocyte & mature neutrophil &
-CL:0000096 \\
-Abnormality of the immune system & leukocyte & mast cell & CL:0000097 \\
-Abnormality of the immune system & leukocyte & microglial cell &
-CL:0000129 \\
-Abnormality of the immune system & leukocyte & professional antigen
-presenting cell & CL:0000145 \\
-Abnormality of the immune system & leukocyte & macrophage &
-CL:0000235 \\
-Abnormality of the immune system & leukocyte & B cell & CL:0000236 \\
-Abnormality of the immune system & leukocyte & dendritic cell &
-CL:0000451 \\
-Abnormality of the immune system & leukocyte & monocyte & CL:0000576 \\
-Abnormality of the immune system & leukocyte & plasma cell &
-CL:0000786 \\
-Abnormality of the immune system & leukocyte & alternatively activated
-macrophage & CL:0000890 \\
-Abnormality of the immune system & leukocyte & thymocyte & CL:0000893 \\
-Abnormality of the immune system & leukocyte & innate lymphoid cell &
-CL:0001065 \\
-Abnormality of the musculoskeletal system & cell of skeletal muscle /
-chondrocyte & chondrocyte & CL:0000138 \\
-Abnormality of the musculoskeletal system & cell of skeletal muscle /
-chondrocyte & cell of skeletal muscle & CL:0000188 \\
-Abnormality of the musculoskeletal system & cell of skeletal muscle /
-chondrocyte & skeletal muscle satellite cell & CL:0000594 \\
-Abnormality of the nervous system & neural cell & bipolar neuron &
-CL:0000103 \\
-Abnormality of the nervous system & neural cell & granule cell &
-CL:0000120 \\
-Abnormality of the nervous system & neural cell & Purkinje cell &
-CL:0000121 \\
-Abnormality of the nervous system & neural cell & glial cell &
-CL:0000125 \\
-Abnormality of the nervous system & neural cell & astrocyte &
-CL:0000127 \\
-Abnormality of the nervous system & neural cell & oligodendrocyte &
-CL:0000128 \\
-Abnormality of the nervous system & neural cell & microglial cell &
-CL:0000129 \\
-Abnormality of the nervous system & neural cell & neuroendocrine cell &
-CL:0000165 \\
-Abnormality of the nervous system & neural cell & chromaffin cell &
-CL:0000166 \\
-Abnormality of the nervous system & neural cell & photoreceptor cell &
-CL:0000210 \\
-Abnormality of the nervous system & neural cell & inhibitory interneuron
-& CL:0000498 \\
-Abnormality of the nervous system & neural cell & neuron & CL:0000540 \\
-Abnormality of the nervous system & neural cell & neuronal brush cell &
-CL:0000555 \\
-Abnormality of the nervous system & neural cell & amacrine cell &
-CL:0000561 \\
-Abnormality of the nervous system & neural cell & GABAergic neuron &
-CL:0000617 \\
-Abnormality of the nervous system & neural cell & Mueller cell &
-CL:0000636 \\
-Abnormality of the nervous system & neural cell & glutamatergic neuron &
-CL:0000679 \\
-Abnormality of the nervous system & neural cell & retinal ganglion cell
-& CL:0000740 \\
-Abnormality of the nervous system & neural cell & retina horizontal cell
-& CL:0000745 \\
-Abnormality of the nervous system & neural cell & Schwann cell &
-CL:0002573 \\
-Abnormality of the nervous system & neural cell & retinal pigment
-epithelial cell & CL:0002586 \\
-Abnormality of the nervous system & neural cell & visceromotor neuron &
-CL:0005025 \\
-Abnormality of the nervous system & neural cell & sympathetic neuron &
-CL:0011103 \\
-Abnormality of the respiratory system & respiratory epithelial cell /
-epithelial cell of lung & type II pneumocyte & CL:0002063 \\
-Abnormality of the respiratory system & respiratory epithelial cell /
-epithelial cell of lung & epithelial cell of lower respiratory tract &
-CL:0002632 \\
+\centering\begingroup\fontsize{8}{10}\selectfont
 
-\end{longtable}
+\begin{tabular}[t]{l|l|l}
+\hline
+CL branch & CL name & CL ID\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the cardiovascular system}}\\
+\hline
+\hspace{1em}cardiocyte & cardiac muscle cell & CL:0000746\\
+\hline
+\hspace{1em}cardiocyte & regular atrial cardiac myocyte & CL:0002129\\
+\hline
+\hspace{1em}cardiocyte & endocardial cell & CL:0002350\\
+\hline
+\hspace{1em}cardiocyte & epicardial adipocyte & CL:1000309\\
+\hline
+\hspace{1em}cardiocyte & ventricular cardiac muscle cell & CL:2000046\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the endocrine system}}\\
+\hline
+\hspace{1em}endocrine cell & endocrine cell & CL:0000163\\
+\hline
+\hspace{1em}endocrine cell & neuroendocrine cell & CL:0000165\\
+\hline
+\hspace{1em}endocrine cell & chromaffin cell & CL:0000166\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the eye}}\\
+\hline
+\hspace{1em}photoreceptor cell / retinal cell & photoreceptor cell & CL:0000210\\
+\hline
+\hspace{1em}photoreceptor cell / retinal cell & amacrine cell & CL:0000561\\
+\hline
+\hspace{1em}photoreceptor cell / retinal cell & Mueller cell & CL:0000636\\
+\hline
+\hspace{1em}photoreceptor cell / retinal cell & retinal pigment epithelial cell & CL:0002586\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the immune system}}\\
+\hline
+\hspace{1em}leukocyte & T cell & CL:0000084\\
+\hline
+\hspace{1em}leukocyte & mature neutrophil & CL:0000096\\
+\hline
+\hspace{1em}leukocyte & mast cell & CL:0000097\\
+\hline
+\hspace{1em}leukocyte & microglial cell & CL:0000129\\
+\hline
+\hspace{1em}leukocyte & professional antigen presenting cell & CL:0000145\\
+\hline
+\hspace{1em}leukocyte & macrophage & CL:0000235\\
+\hline
+\hspace{1em}leukocyte & B cell & CL:0000236\\
+\hline
+\hspace{1em}leukocyte & dendritic cell & CL:0000451\\
+\hline
+\hspace{1em}leukocyte & monocyte & CL:0000576\\
+\hline
+\hspace{1em}leukocyte & plasma cell & CL:0000786\\
+\hline
+\hspace{1em}leukocyte & alternatively activated macrophage & CL:0000890\\
+\hline
+\hspace{1em}leukocyte & thymocyte & CL:0000893\\
+\hline
+\hspace{1em}leukocyte & innate lymphoid cell & CL:0001065\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the musculoskeletal system}}\\
+\hline
+\hspace{1em}cell of skeletal muscle / chondrocyte & chondrocyte & CL:0000138\\
+\hline
+\hspace{1em}cell of skeletal muscle / chondrocyte & cell of skeletal muscle & CL:0000188\\
+\hline
+\hspace{1em}cell of skeletal muscle / chondrocyte & skeletal muscle satellite cell & CL:0000594\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the nervous system}}\\
+\hline
+\hspace{1em}neural cell & bipolar neuron & CL:0000103\\
+\hline
+\hspace{1em}neural cell & granule cell & CL:0000120\\
+\hline
+\hspace{1em}neural cell & Purkinje cell & CL:0000121\\
+\hline
+\hspace{1em}neural cell & glial cell & CL:0000125\\
+\hline
+\hspace{1em}neural cell & astrocyte & CL:0000127\\
+\hline
+\hspace{1em}neural cell & oligodendrocyte & CL:0000128\\
+\hline
+\hspace{1em}neural cell & microglial cell & CL:0000129\\
+\hline
+\hspace{1em}neural cell & neuroendocrine cell & CL:0000165\\
+\hline
+\hspace{1em}neural cell & chromaffin cell & CL:0000166\\
+\hline
+\hspace{1em}neural cell & photoreceptor cell & CL:0000210\\
+\hline
+\hspace{1em}neural cell & inhibitory interneuron & CL:0000498\\
+\hline
+\hspace{1em}neural cell & neuron & CL:0000540\\
+\hline
+\hspace{1em}neural cell & neuronal brush cell & CL:0000555\\
+\hline
+\hspace{1em}neural cell & amacrine cell & CL:0000561\\
+\hline
+\hspace{1em}neural cell & GABAergic neuron & CL:0000617\\
+\hline
+\hspace{1em}neural cell & Mueller cell & CL:0000636\\
+\hline
+\hspace{1em}neural cell & glutamatergic neuron & CL:0000679\\
+\hline
+\hspace{1em}neural cell & retinal ganglion cell & CL:0000740\\
+\hline
+\hspace{1em}neural cell & retina horizontal cell & CL:0000745\\
+\hline
+\hspace{1em}neural cell & Schwann cell & CL:0002573\\
+\hline
+\hspace{1em}neural cell & retinal pigment epithelial cell & CL:0002586\\
+\hline
+\hspace{1em}neural cell & visceromotor neuron & CL:0005025\\
+\hline
+\hspace{1em}neural cell & sympathetic neuron & CL:0011103\\
+\hline
+\multicolumn{3}{l}{\textbf{Abnormality of the respiratory system}}\\
+\hline
+\hspace{1em}respiratory epithelial cell / epithelial cell of lung & type II pneumocyte & CL:0002063\\
+\hline
+\hspace{1em}respiratory epithelial cell / epithelial cell of lung & epithelial cell of lower respiratory tract & CL:0002632\\
+\hline
+\end{tabular}
+\endgroup{}
 
-\newpage{}
+}
 
-\begin{longtable}[]{@{}llr@{}}
-
-\caption{\label{tbl-death}Encodings for Age of Death scores. Assigned
-numeric values for the Age of Death scores within the HPO annotations.}
-
-\tabularnewline
-
-\toprule\noalign{}
-hpo\_id & hpo\_name & encoding \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-HP:0003826 & Stillbirth & 1 \\
-HP:0005268 & Miscarriage & 1 \\
-HP:0034241 & Prenatal death & 1 \\
-HP:0003811 & Neonatal death & 2 \\
-HP:0001522 & Death in infancy & 3 \\
-HP:0003819 & Death in childhood & 4 \\
-HP:0011421 & Death in adolescence & 5 \\
-HP:0100613 & Death in early adulthood & 6 \\
-HP:0033763 & Death in adulthood & 7 \\
-HP:0033764 & Death in middle age & 7 \\
-HP:0033765 & Death in late adulthood & 8 \\
-
-\end{longtable}
+\end{table}%
 
 \newpage{}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0700}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1100}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.4600}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0900}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2100}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0600}}@{}}
+\begin{table}
 
-\caption{\label{tbl-hpo_enrich}Phenotype enrichment results. The
-phenotypes most biased towards associations with only the foetal
-versions of cell types (group=top) and those biased towards the adult
-versions of cell types (group=bottom). ``p\_adjust'' is the adjusted
-p-value from the enrichment test, ``log2\_fold\_enrichment'' is the log2
-fold-change from the enrichment test, and ``depth'' is the depth of the
-HPO term in the ontology.}
+\caption{\label{tbl-hpo_enrich}Some HPO phenotype categories or more
+biased towards foetal- or adult- versions of the same cell type. We took
+the top 50 phenotypes with the greatest bias towards foetal-cell type
+associations (``Foetal-biased'') and the greatest bias towards
+adult-cell type associations (``Adult-biased'') and fed each list of
+terms into ontological enrichment tests to get a summary of the
+representative HPO branches for each group. The phenotypes most biased
+towards associations with only the foetal versions of cell type and
+those biased towards the adult versions of cell types. ``FDR'' is the
+False Discovery Rate-adjusted p-value from the enrichment test,
+``log2-fold enrichment'' is the log2 fold-change from the enrichment
+test, and ``depth'' is the depth of the enriched HPO term in the
+ontology.}
 
-\tabularnewline
+\centering{
 
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-group
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-term
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-p\_adjust
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-log2\_fold\_enrichment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-depth
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-top & HP:0005105 & Abnormal nasal morphology & 0.00 & 4.5 & 6 \\
-top & HP:0010938 & Abnormal external nose morphology & 0.00 & 5.4 & 7 \\
-top & HP:0000366 & Abnormality of the nose & 0.00 & 3.8 & 5 \\
-top & HP:0000055 & Abnormal female external genitalia morphology & 0.00
-& 5.2 & 6 \\
-top & HP:0000271 & Abnormality of the face & 0.00 & 1.9 & 4 \\
-top & HP:0000234 & Abnormality of the head & 0.00 & 1.7 & 3 \\
-top & HP:0000152 & Abnormality of head or neck & 0.00 & 1.6 & 2 \\
-top & HP:0010460 & Abnormality of the female genitalia & 0.03 & 2.8 &
-5 \\
-top & HP:0000811 & Abnormal external genitalia & 0.03 & 2.8 & 5 \\
-top & HP:0000078 & Abnormality of the genital system & 0.03 & 1.9 & 3 \\
-bottom & HP:0010647 & Abnormal elasticity of skin & 0.00 & 6.0 & 5 \\
-bottom & HP:0008067 & Abnormally lax or hyperextensible skin & 0.00 &
-6.0 & 6 \\
-bottom & HP:0011121 & Abnormal skin morphology & 0.00 & 2.4 & 4 \\
-bottom & HP:0000951 & Abnormality of the skin & 0.00 & 2.1 & 3 \\
-bottom & HP:0001574 & Abnormality of the integument & 0.01 & 1.6 & 2 \\
-bottom & HP:0001626 & Abnormality of the cardiovascular system & 0.02 &
-1.4 & 2 \\
-bottom & HP:0030680 & Abnormal cardiovascular system morphology & 0.02 &
-1.7 & 3 \\
-bottom & HP:0025015 & Abnormal vascular morphology & 0.04 & 1.9 & 4 \\
-bottom & HP:0030962 & Abnormal morphology of the great vessels & 0.04 &
-2.7 & 6 \\
+\begin{tabular}[t]{l|l|r|r|r}
+\hline
+term & name & FDR & log2-fold enrichment & depth\\
+\hline
+\multicolumn{5}{l}{\textbf{Foetal-biased}}\\
+\hline
+\hspace{1em}HP:0005105 & Abnormal nasal morphology & 0.00 & 4.5 & 6\\
+\hline
+\hspace{1em}HP:0010938 & Abnormal external nose morphology & 0.00 & 5.4 & 7\\
+\hline
+\hspace{1em}HP:0000366 & Abnormality of the nose & 0.00 & 3.8 & 5\\
+\hline
+\hspace{1em}HP:0000055 & Abnormal female external genitalia morphology & 0.00 & 5.2 & 6\\
+\hline
+\hspace{1em}HP:0000271 & Abnormality of the face & 0.00 & 1.9 & 4\\
+\hline
+\hspace{1em}HP:0000234 & Abnormality of the head & 0.00 & 1.7 & 3\\
+\hline
+\hspace{1em}HP:0000152 & Abnormality of head or neck & 0.00 & 1.6 & 2\\
+\hline
+\hspace{1em}HP:0010460 & Abnormality of the female genitalia & 0.03 & 2.8 & 5\\
+\hline
+\hspace{1em}HP:0000811 & Abnormal external genitalia & 0.03 & 2.8 & 5\\
+\hline
+\hspace{1em}HP:0000078 & Abnormality of the genital system & 0.03 & 1.9 & 3\\
+\hline
+\multicolumn{5}{l}{\textbf{Adult-biased}}\\
+\hline
+\hspace{1em}HP:0010647 & Abnormal elasticity of skin & 0.00 & 6.0 & 5\\
+\hline
+\hspace{1em}HP:0008067 & Abnormally lax or hyperextensible skin & 0.00 & 6.0 & 6\\
+\hline
+\hspace{1em}HP:0011121 & Abnormal skin morphology & 0.00 & 2.4 & 4\\
+\hline
+\hspace{1em}HP:0000951 & Abnormality of the skin & 0.00 & 2.1 & 3\\
+\hline
+\hspace{1em}HP:0001574 & Abnormality of the integument & 0.01 & 1.6 & 2\\
+\hline
+\hspace{1em}HP:0001626 & Abnormality of the cardiovascular system & 0.02 & 1.4 & 2\\
+\hline
+\hspace{1em}HP:0030680 & Abnormal cardiovascular system morphology & 0.02 & 1.7 & 3\\
+\hline
+\hspace{1em}HP:0025015 & Abnormal vascular morphology & 0.04 & 1.9 & 4\\
+\hline
+\hspace{1em}HP:0030962 & Abnormal morphology of the great vessels & 0.04 & 2.7 & 6\\
+\hline
+\end{tabular}
 
-\end{longtable}
+}
+
+\end{table}%
 
 \newpage{}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.3810}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1048}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1048}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1429}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2000}}@{}}
+\begin{table}
 
 \caption{\label{tbl-foetal_examples}Examples of specific phenotypes that
 are most biased towards associations with only the foetal versions of
-cell types (group=top) and those biased towards the adult versions of
-cell types (group=bottom).}
+cell types (``Foetal-biased'') and those biased towards the adult
+versions of cell types (``Adult-biased''). ``p-value difference'' is the
+difference in the association p-values between the foetal and adult
+version of the equivalent cell type
+(\(\text{foetal-adult bias}: p_{adult} - p_{foetal} = \Delta p \in [-1,1]\)).}
 
-\tabularnewline
+\centering{
 
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-group
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-hpo\_name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-hpo\_id
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cl\_id
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cl\_name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-fetal\_nonfetal\_pdiff
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-top & Short middle phalanx of the 2nd finger & HP:0009577 & CL:0000138 &
-chondrocyte & 0.99 \\
-top & Abnormal morphology of the nasal alae & HP:0000429 & CL:0000057 &
-fibroblast & 0.95 \\
-top & Abnormal labia minora morphology & HP:0012880 & CL:0000499 &
-stromal cell & 0.94 \\
-top & Acromesomelia & HP:0003086 & CL:0000138 & chondrocyte & 0.93 \\
-top & Left atrial isomerism & HP:0011537 & CL:0000163 & endocrine cell &
-0.92 \\
-top & Fixed facial expression & HP:0005329 & CL:0000499 & stromal cell &
-0.92 \\
-top & Migraine without aura & HP:0002083 & CL:0000163 & endocrine cell &
-0.92 \\
-top & Truncal ataxia & HP:0002078 & CL:0000163 & endocrine cell &
-0.92 \\
-top & Anteverted nares & HP:0000463 & CL:0000057 & fibroblast & 0.91 \\
-top & Short 1st metacarpal & HP:0010034 & CL:0000138 & chondrocyte &
-0.90 \\
-bottom & Symblepharon & HP:0430007 & CL:0000138 & chondrocyte & -0.97 \\
-bottom & Abnormally lax or hyperextensible skin & HP:0008067 &
-CL:0000057 & fibroblast & -0.94 \\
-bottom & Reduced bone mineral density & HP:0004349 & CL:0000057 &
-fibroblast & -0.94 \\
-bottom & Paroxysmal supraventricular tachycardia & HP:0004763 &
-CL:0000138 & chondrocyte & -0.93 \\
-bottom & Lack of skin elasticity & HP:0100679 & CL:0000057 & fibroblast
-& -0.92 \\
-bottom & Excessive wrinkled skin & HP:0007392 & CL:0000057 & fibroblast
-& -0.91 \\
-bottom & Bruising susceptibility & HP:0000978 & CL:0000057 & fibroblast
-& -0.91 \\
-bottom & Corneal opacity & HP:0007957 & CL:0000057 & fibroblast &
--0.90 \\
-bottom & Broad skull & HP:0002682 & CL:0000138 & chondrocyte & -0.90 \\
-bottom & Emphysema & HP:0002097 & CL:0000057 & fibroblast & -0.89 \\
+\begin{tabular}[t]{l|l|l|l|r}
+\hline
+HPO name & HPO ID & CL ID & CL name & p-value difference\\
+\hline
+\multicolumn{5}{l}{\textbf{Foetal-biased}}\\
+\hline
+\hspace{1em}Short middle phalanx of the 2nd finger & HP:0009577 & CL:0000138 & chondrocyte & 0.99\\
+\hline
+\hspace{1em}Abnormal morphology of the nasal alae & HP:0000429 & CL:0000057 & fibroblast & 0.95\\
+\hline
+\hspace{1em}Abnormal labia minora morphology & HP:0012880 & CL:0000499 & stromal cell & 0.94\\
+\hline
+\hspace{1em}Acromesomelia & HP:0003086 & CL:0000138 & chondrocyte & 0.93\\
+\hline
+\hspace{1em}Left atrial isomerism & HP:0011537 & CL:0000163 & endocrine cell & 0.92\\
+\hline
+\hspace{1em}Fixed facial expression & HP:0005329 & CL:0000499 & stromal cell & 0.92\\
+\hline
+\hspace{1em}Migraine without aura & HP:0002083 & CL:0000163 & endocrine cell & 0.92\\
+\hline
+\hspace{1em}Truncal ataxia & HP:0002078 & CL:0000163 & endocrine cell & 0.92\\
+\hline
+\hspace{1em}Anteverted nares & HP:0000463 & CL:0000057 & fibroblast & 0.91\\
+\hline
+\hspace{1em}Short 1st metacarpal & HP:0010034 & CL:0000138 & chondrocyte & 0.90\\
+\hline
+\multicolumn{5}{l}{\textbf{Adult-biased}}\\
+\hline
+\hspace{1em}Symblepharon & HP:0430007 & CL:0000138 & chondrocyte & -0.97\\
+\hline
+\hspace{1em}Abnormally lax or hyperextensible skin & HP:0008067 & CL:0000057 & fibroblast & -0.94\\
+\hline
+\hspace{1em}Reduced bone mineral density & HP:0004349 & CL:0000057 & fibroblast & -0.94\\
+\hline
+\hspace{1em}Paroxysmal supraventricular tachycardia & HP:0004763 & CL:0000138 & chondrocyte & -0.93\\
+\hline
+\hspace{1em}Lack of skin elasticity & HP:0100679 & CL:0000057 & fibroblast & -0.92\\
+\hline
+\hspace{1em}Excessive wrinkled skin & HP:0007392 & CL:0000057 & fibroblast & -0.91\\
+\hline
+\hspace{1em}Bruising susceptibility & HP:0000978 & CL:0000057 & fibroblast & -0.91\\
+\hline
+\hspace{1em}Corneal opacity & HP:0007957 & CL:0000057 & fibroblast & -0.90\\
+\hline
+\hspace{1em}Broad skull & HP:0002682 & CL:0000138 & chondrocyte & -0.90\\
+\hline
+\hspace{1em}Emphysema & HP:0002097 & CL:0000057 & fibroblast & -0.89\\
+\hline
+\end{tabular}
 
-\end{longtable}
+}
 
-\newpage{}
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0789}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1447}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.3026}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1184}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2763}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0789}}@{}}
-
-\caption{\label{tbl-cl_enrich}Cell type enrichment results. The cell
-types that most strongly show a difference between their foetal and
-adult versions in their phenotype associations. ``p\_adjust'' is the
-adjusted p-value from the enrichment test, ``log2\_fold\_enrichment'' is
-the log2 fold-change from the enrichment test, and ``depth'' is the
-depth of the CL term in the ontology.}
-
-\tabularnewline
-
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-group
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-term
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-p\_adjust
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-log2\_fold\_enrichment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-depth
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-top & CL:0002320 & connective tissue cell & 0 & 3.2 & 1 \\
-
-\end{longtable}
+\end{table}%
 
 
 
