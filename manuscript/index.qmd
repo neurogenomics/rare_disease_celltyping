@@ -616,15 +616,6 @@ Having found four distinct cell types associated with RNI, we asked whether the 
 RNI provides a convenient case study to investigate this because each of the seven diseases that have RNI as a phenotype are purely monogenic.
 This makes is relatively straightforward to demonstrate how genes can drive associations between cell types, phenotypes and their respective diseases.
 
-Next, we visualised the putative causal relationships between genes, cell types and diseases associated with RNI as a network ([Fig. @fig-network-rni]).
-The phenotype 'Recurrent Neisserial infections' was connected to cell types through the aforementioned association test results (FDR\<0.05).
-Genes that were primarily driving these associations (i.e. genes that were both strongly linked with 'Recurrent Neisserial infections' and were highly specifically expressed in the given cell type) were designated as "driver genes" and retained for plotting.
-Across all phenotypes in the HPO, more specific phenotypes (terms in the HPO with greater IC) are not only more specific to certain cell types ([Fig. @fig-ontology-lvl]b), but are also associated with genes that have greater cell type-specific expression within those cell types.
-Even so, we should note that the choice of which specificity quantiles to include is arbitrary.
-It should also be noted that simply because a gene is not specific to a cell type does not mean it is not important for the function of the cell type.
-Indeed, there are many genes that are ubiquitously expressed throughout many tissues in the body and are essential for cell function.
-Gene expression specificity is nevertheless a useful metric to help distinguish many hundreds of cell (sub)types with overlapping gene signatures.
-
 Diseases that have 'Recurrent Neisserial infections' as a phenotype were collected from the HPO annotation files.
 Genes that were annotated to a given phenotype (e.g. 'Recurrent Neisserial infections') via a particular disease (e.g. 'C5 deficiency') constituted "symptom"-level gene sets.
 Only diseases whose symptom-level gene sets had \>25% overlap with the driver gene sets for at least one cell type were retained in the network plot.
@@ -634,52 +625,13 @@ This procedure revealed that genetic deficiencies in various complement system g
 While genes of the complement system are expressed throughout many different tissues and cell types, these results indicate that different subsets of these genes may mediate their effects through different cell types.
 While almost all of these genes show high expression specificity in hepatoblasts, only *C6*, *C7* and *CFI* meet the threshold for the status of driver genes in stromal cells.
 
-Recall that we showed in \[Fig.
-3b\] that as we approach the leaf nodes of the HPO we tends towards a given phenotype being associated with a single cell type.
+Recall that we showed in [Fig. @fig-rni]b that as we approach the leaf nodes of the HPO we tends towards a given phenotype being associated with a single cell type.
 Note that mean this in a theoretical sense, as we do not necessarily demonstrate a single cell type for each phenotype in this particular dataset.
 However, as more granular phenotypes are defined over time, we would expect this hypothesis to bear out.
 The corollary of this is that we would expect there to be at least four subtypes of the RNI phenotype, as predicted by the four distinct cell types found to underlying this phenotype.
 This may present as different clinical courses (e.g. early onset, late onset, relapse-remitting) or biomarkers (e.g. histological) to be reveal in future examinations of clinical cohorts.
 Based on this, we predict that forms of RNI caused by genes expressed in stromal cells would have phenotypic differences from those caused by genes expressed in stratified epithelial cell.
 In other words, phenotypic similarity is driven by the underlying causal cell types.
-
-::: {#fig-network-rni .hide-subcaptions}
-```{r fig-network-rni, cache.lazy=FALSE}
-#| label: fig-network-rni
-#| fig-cap: Causal network of recurrent Neisserial infections (RNI) reveals multiscale disease aetiology. RNI is a phenotype in seven different monogenic diseases caused by disruptions to specific complement system genes. Four cell types were significantly associated with RNI. **a**, One can trace how genes causal for RNI (yellow boxes, bottom) mediate their effects through cell types (orange circles, middle) and diseases (blue cylinders, top). Cell types are connected to RNI via association testing (FDR\<0.05). Genes shown here have both strong evidence for a causal role in RNI and high expression specificity in the associated cell type. Cell types can be linked  to monogenic diseases via the genes specifically expressed in those cell types (i.e. are in the top 25\% of cell type specificity expression quantiles). Nodes are arranged using the Sugiyama algorithm [@Sugiyama1981-ev]. **b** Expression specificity quantiles (1-40 scale) of each driver gene in each cell type (darker = greater specificity). **c** GenCC-derived eevidence scores between the RNI phenotype and each gene. **d** Expression specificity (0 = least specific, 1 = most specific) of each gene in each cell type.
-#| fig-height: 8
-#| fig-width: 8
-
-if(knitr::is_html_output()){
-  knitr::opts_current$set(results="asis")
-  vn_rni$plot
-  prioritise_targets_multiheatmap_out$plot
-} else { 
-  # Read the image
-  img <- magick::image_read(here::here("manuscript/img/fig-rni.png"), 
-                            density = 400)
-  img_grob <- grid::rasterGrob(img, interpolate = TRUE)
-  
-  # Create a ggplot with the image as a background
-  img_plot <- ggplot2::ggplot() +
-    ggplot2::annotation_custom(img_grob, xmin = -Inf, xmax = Inf, 
-                      ymin = -Inf, ymax = Inf) +
-    ggplot2::theme_void()
-  
-  fig_network_rni <- patchwork::wrap_plots(
-    img_plot,
-    prioritise_targets_multiheatmap_out$plot,
-    ncol = 1,
-    heights = c(1, .6)
-  ) + 
-    patchwork::plot_annotation(tag_levels = "a") & 
-    ggplot2::theme(plot.margin = ggplot2::margin(),
-                   plot.tag = ggplot2::element_text(size = 12)) # works now
-  fig_network_rni
-  # ggplot2::ggsave("~/Downloads/fig_network_rni.png", fig_network_rni, dpi = 400, height = 8, width = 8)
-} 
-```
-:::
 
 ### Prioritising phenotypes based on severity
 
@@ -738,8 +690,8 @@ Meanwhile, `r plot_celltype_severity_out$bar$data$cl_name[length(plot_celltype_s
 Different aspects of phenotype severity will be more associated with some cell types than others.
 After encoding the GPT annotations numerically (0="never", 1="rarely", 2="often", 3="always") we computed the mean encoded value per cell type within each annotation.
 We then ran a series of one-sided Wilcoxon rank-sum tests to objectively determine whether some cell types tended to be associated with phenotypes that more frequently caused certain severity metrics (death, intellectual disability, impaired mobility, etc.) relative to all other cell types ([Fig. @fig-celltype-severity-dot]a).
-This consistently yielded expected relationships between cell types (e.g. `r (plot_celltype_severity_out$dot$data[variable=="blindness"]|>data.table::setorderv("p"))$cl_name[1]`) and phenotype characteristics (e.g. blindness).
-Similarly, phenotypes that more commonly cause death are most commonly associated with `r (plot_celltype_severity_out$dot$data[variable=="blindness"]|>data.table::setorderv("p"))$cl_name[1]`, and least commonly associated with `r (plot_celltype_severity_out$dot$data[variable=="death"]|>data.table::setorderv("p",-1))$cl_name[1]`s and `r (plot_celltype_severity_out$dot$data[variable=="death"]|>data.table::setorderv("p",-1))$cl_name[2]`s.
+This consistently yielded expected relationships between cell types (e.g. `r (plot_celltype_severity_out$dot$data[variable=="blindness"]|>data.table::setorderv("p"))$cl_name[1]`s) and phenotype characteristics (e.g. blindness).
+Similarly, phenotypes that more commonly cause death are most commonly associated with `r (plot_celltype_severity_out$dot$data[variable=="death"]|>data.table::setorderv("p"))$cl_name[1]`s, and least commonly associated with `r (plot_celltype_severity_out$dot$data[variable=="death"]|>data.table::setorderv("p",-1))$cl_name[1]`s and `r (plot_celltype_severity_out$dot$data[variable=="death"]|>data.table::setorderv("p",-1))$cl_name[2]`s.
 Analagous patterns of expected associations are shown consistently across all annotations (e.g. fertility-reducing phenotypes associated with `r (plot_celltype_severity_out$dot$data[variable=="reduced fertility"]|>data.table::setorderv("p"))$cl_name[1]`s, immunodeficiency-causing phenotypes associated with `r (plot_celltype_severity_out$dot$data[variable=="immunodeficiency"]|>data.table::setorderv("p"))$cl_name[1]`s, mobility-impairing phenotypes associated with `r (plot_celltype_severity_out$dot$data[variable=="impaired mobility"]|>data.table::setorderv("p"))$cl_name[1]`s, cancer-causing phenotypes associated with `r (plot_celltype_severity_out$dot$data[variable=="cancer"]|>data.table::setorderv("p"))$cl_name[1]`s, etc.).
 
 We also sought to answer whether the number of phenotypes that a cell type is associated with has a relationship with the severity of those phenotypes ([Fig. @fig-celltype-severity-dot]b).
@@ -1125,7 +1077,7 @@ vn_therapy <- lapply(stats::setNames(phenotypes_network, phenotypes_network), fu
 ::: {#fig-therapy-examples .hide-subcaptions}
 ```{r fig-therapy-examples}
 #| label: fig-therapy-examples
-#| fig-cap: Evidence-based pipeline nominates causal mechanisms to target for gene therapy. Shown here are the top 40 prioritised gene therapy targets at multiple biological scales, stratified by congenital (top row) vs. non-congential phenotypes (bottom row) as well as severity class ("profound" or "severe"). In this plot, only the top 10 most severe phenotypes within a given strata/substrata are shown **a,c**, Severity annotation generated by GPT-4. **b,d**, Composite severity scores computed across all severity metrics. **e,g**, Top mediator disease and cell type-specific target for each phenotype. **f,h** top target gene for each phenotype within humans (*Homo sapiens*). We also include the 1:1 ortholog of each human gene in several commonly used animal models, including monkey (*Macaca mulatta*), mouse (*Mus musculus*), zebrafish (*Danio rerio*), fly (*Drosophila melanogaster*) and nematode (*Caenorhabditis elegans*). Boxes are empty where no 1:1 ortholog is known. **i-k** Example cell type-specific gene therapy targets for several severe phenotypes and their associated diseases. Each disease (blue cylinders) is connected to its phenotype (purple cylinders) based on well-established clinical observations recorded within the HPO [@Gargano2024-fc]. Phenotypes are connected to cell types (orange circles) via association testing between weighted gene sets (FDR<0.05). Each cell type is connected to the prioritised gene targets (yellow boxes) based on the driver gene analysis.The thickness of the edges connecting the nodes represent the (mean) fold-change from the bootstrapped enrichment tests. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
+#| fig-cap: Evidence-based pipeline nominates causal mechanisms to target for gene therapy. Shown here are the top 40 prioritised gene therapy targets at multiple biological scales, stratified by congenital (top row) vs. non-congential phenotypes (bottom row) as well as severity class ("profound" or "severe"). In this plot, only the top 10 most severe phenotypes within a given strata/substrata are shown **a,c**, Severity annotation generated by GPT-4. **b,d**, Composite severity scores computed across all severity metrics. **e,g**, Top mediator disease and cell type-specific target for each phenotype. **f,h** top target gene for each phenotype within humans (*Homo sapiens*). We also include the 1:1 ortholog of each human gene in several commonly used animal models, including monkey (*Macaca mulatta*), mouse (*Mus musculus*), zebrafish (*Danio rerio*), fly (*Drosophila melanogaster*) and nematode (*Caenorhabditis elegans*). Boxes are empty where no 1:1 ortholog is known. See supplement [Fig. @fig-therapy-examples2] for network plots of  cell type-specific gene therapy targets for several severe phenotypes and their associated diseases.
 #| fig-height: 10
 
 if(knitr::is_html_output()){
@@ -1152,6 +1104,7 @@ if(knitr::is_html_output()){
   #   ggplot2::theme(plot.margin = ggplot2::unit(c(0,0,0,0),"pt"), 
   #                  panel.background = ggplot2::element_rect(fill = "grey50"))
   # }) 
+  
   
   
   # fig_therapy_examples <- ( (
@@ -1181,78 +1134,56 @@ if(knitr::is_html_output()){
   # ) 
   
   ## Combined plots in Illustrator for more flexibility
-  magick::image_read(here::here("manuscript","img","fig-therapy-examples.png"), 
-                     density=400) |>
-    magick::image_scale(geometry = "2000x2000>")
-    # magick::image_resize("1000x1000",) 
+  # magick::image_read(here::here("manuscript","img","fig-therapy-examples.png"), 
+  #                    density=400) |>
+  #   magick::image_scale(geometry = "2000x2000>")
+    # magick::image_resize("1000x1000",)
+  
+  prioritise_targets_grid_out$plot 
 } 
 ```
 :::
 
-From our prioritised targets, we selected the following four sets of phenotypes or diseases as examples: `r paste(shQuote(phenotypes_network), collapse=", ")`.
-Only phenotypes with a GPT severity score greater than `r severity_score_gpt_threshold` were considered to avoid overplotting and to focus on the more clinically relevant phenotypes [Fig. @fig-therapy-examples]a-h.
-These examples were then selected partly on the basis of severity rankings, and partly for their relatively smaller, simpler networks than lent themselves to compact visualisations.
+From our prioritised targets, we selected four phenotype or disease examples: `r paste(shQuote(phenotypes_network), collapse=", ")`.  
+To focus on clinically relevant phenotypes and reduce overplotting, we limited selection to those with GPT severity scores above `r severity_score_gpt_threshold` [Fig. @fig-therapy-examples]a-h.  
+Selection was based on severity and network simplicity to allow compact visualisation.
 
-Tay-Sachs disease (TSD) is a devastating hereditary condition in which children are born appearing healthy, which gradually degrades leading to death after 3-5 years.
-The underlying cause is the toxic accumulation of gangliosides in the nervous system due to a loss of the enzyme produced by *HEXA*.
-While this could in theory be corrected with gene editing technologies, there remain some outstanding challenges.
-One of which is identifying which cell types should be targeted to ensure the most effective treatments.
-Here we identified alternatively activated macrophages as the cell type most strongly associated with 'GM2-ganglioside accumulation' [Fig. @fig-therapy-examples]i.
-The role of aberrant macrophage activity in the regulation of ganglioside levels is supported by observation that gangliosides accumulate within macrophages in TSD [@fendersonChapterDevelopmentalGenetic2009], as well as experimental evidence in rodent models [@vilcaesGangliosideSynthesisPlasma2020.; @yoheGangliosideAlterationsStimulated1985; @demirGM2GangliosideAccumulation2020].
-Our results not only corroborate these findings, but propose macrophages as the primary causal cell type in TSD, making it the most promising cell type to target in therapies.
-
-<!-- Another challenge in TSD is early detection and diagnosis, before irreversible damage has occurred. -->
-<!-- Our pipeline implicated extravillous trophoblasts of the placenta in 'GM2-ganglioside accumulation'. -->
-<!-- While not necessarily a target for gene therapy (as the child is detached from the placenta after birth), checking these cells *in utero* for an absence of *HEXA* may serve as a viable biomarker as these cells normally express the gene at high levels. -->
-<!-- Early detection of TSD may lengthen the window of opportunity for therapeutic intervention [@solovyevaNewApproachesTaySachs2018], especially when genetic sequencing is not available or variants of unknown significance are found within *HEXA* [@hoffmanNextgenerationDNASequencing2013]. -->
+Tay-Sachs disease (TSD) is a fatal neurodegenerative condition caused by *HEXA* deficiency and ganglioside buildup.  
+We identified alternatively activated macrophages as the cell type most associated with 'GM2-ganglioside accumulation' [Fig. @fig-therapy-examples]i.  
+This aligns with prior findings of ganglioside accumulation in TSD macrophages [@fendersonChapterDevelopmentalGenetic2009; @vilcaesGangliosideSynthesisPlasma2020.; @yoheGangliosideAlterationsStimulated1985; @demirGM2GangliosideAccumulation2020].  
+Our results support macrophages as causal in TSD and the most promising therapeutic target.
 
 ```{r sca}
 sca <- results[q<0.05 & hpo_name=='Spinocerebellar atrophy']
 ```
 
-Spinocerebellar atrophy is a debilitating and lethal phenotype that occurs in diseases such as Spinocerebellar ataxia and Boucher-Nenhauser syndrome.
-These diseases are characterised by progressive degeneration of the cerebellum and spinal cord, leading to severe motor and cognitive impairments.
-Our pipeline identified M2 macrophages (labeled as the closest CL term 'Alternatively activated macrophages' in [Fig. @fig-therapy-examples]j) as the only causal cell type associated with 'Spinocerebellar atrophy'.
-This strongly suggests that degeneration of cerebellar Purkinje cells are in fact downstream consequences of macrophage dysfunction, rather than being the primary cause themselves.
-This is consistent with the known role of macrophages, especially microglia, in neuroinflammation and other neurodegenerative conditions such as Alzheimer's and Parkinsons' disease [@ferroRoleMicrogliaAtaxias2019; @holMicroglialTranscriptomicsMeets2022; @lopesAtlasGeneticEffects2020a].
-While experimental and postmortem observational studies have implicated microglia in spinocerebellar atrophy previously [@ferroRoleMicrogliaAtaxias2019], our results provide a statistically-supported and unbiased genetic link between known risk genes and this cell type.
-Therefore, targeting M2 microglia in the treatment of spinocerebellar atrophy may therefore represent a promising therapeutic strategy.
-This is aided by the fact that there are mouse models that perturb the ortholog of human spinocerebellar atrophy risk genes (e.g. [*Atxn1*](https://www.informatics.jax.org/marker/MGI:104783), [*Pnpla6*](https://www.informatics.jax.org/marker/MGI:1354723)) and reliably recapitulate the effects of this diseases at the cellular (e.g. loss of Purkinje cells), morphological (e.g. atrophy of the cerebellum, spinal cord, and muscles), and functional (e.g. ataxia) levels.
+Spinocerebellar atrophy is a progressive neurodegenerative phenotype in disorders like Spinocerebellar ataxia.  
+Our pipeline implicates M2 macrophages ('Alternatively activated macrophages') as the only causal cell type [Fig. @fig-therapy-examples]j.  
+This suggests Purkinje cell loss is downstream of macrophage dysfunction, consistent with microglial roles in neurodegeneration [@ferroRoleMicrogliaAtaxias2019; @holMicroglialTranscriptomicsMeets2022; @lopesAtlasGeneticEffects2020a].  
+Our findings provide the first statistically supported link between risk genes and this cell type, which is supported by relevant mouse models (e.g. *Atxn1*, *Pnpla6*) that replicate cellular and behavioural disease phenotypes.
 
 ```{r neuronal_loss}
 neuronal_loss <- results[q<0.05 & hpo_name=='Neuronal loss in central nervous system']
 ```
 
-Next, we investigated the phenotype 'Neuronal loss in the central nervous system'.
-Despite the fact that this is a fairly broad phenotype, we found that it was only significantly associated with `r length(unique(neuronal_loss$cl_name))` cell types (`r paste(unique(neuronal_loss$cl_name), collapse=', ')`), specifically M2 macrophages and sinusoidal endothelial cells [Fig. @fig-therapy-examples]k.
+Despite its broad definition, 'Neuronal loss in central nervous system' was associated with only `r length(unique(neuronal_loss$cl_name))` cell types: `r paste(unique(neuronal_loss$cl_name), collapse=', ')`, specifically M2 macrophages and sinusoidal endothelial cells [Fig. @fig-therapy-examples]k.
 
-Skeletal dysplasia is a heterogeneous group of over 450 disorders that affect the growth and development of bone and cartilage.
-This phenotype can be lethal when deficient bone growth leads to the constriction of vital organs such as the lungs.
-Even after surgical interventions, these complications continue to arise as the child develops.
-Pharmacological interventions to treat this condition have largely been ineffective.
-While there are various cell types involved in skeletal system development, our pipeline nominated chondrocytes as the causal cell type underlying the lethal form of this condition ([Fig. @fig-therapy-examples-supp]).
-Assuringly, we found that the disease 'Achondrogenesis Type 1B' is caused by the genes *SLC26A2* and *COL2A1* via chondrocytes.
-We also found that 'Platyspondylic lethal skeletal dysplasia, Torrance type'.
-Thus, in cases where surgical intervention is insufficient, targeting these genes within chondrocytes may prove a viable long-term solution for children suffering from lethal skeletal dysplasia.
+Skeletal dysplasia comprises 450+ disorders affecting bone and cartilage, often leading to lethal outcomes via organ compression.  
+While surgeries offer partial relief, pharmacological options remain limited.  
+Our analysis identified chondrocytes as causal [Fig. @fig-therapy-examples-supp], consistent with known gene–cell links (e.g. *SLC26A2*, *COL2A1* in Achondrogenesis Type 1B and Torrance-type dysplasia).  
+Chondrocyte-targeted therapy may offer long-term solutions where surgery falls short.
 
-Alzheimer's disease (AD) is the most common neurodegenerative condition.
-It is characterised by a set of variably penetrant phenotypes including memory loss, cognitive decline, and cerebral proteinopathy.
-Interestingly, we found that different forms of early onset AD (which are defined by the presence of a specific disease gene) are each associated with different cell types via different phenotypes ([Fig. @fig-therapy-examples-supp]).
-For example, AD 3 and AD 4 are primarily associated with cells of the digestive system (`r paste(shQuote(unique(top_targets[disease_name=="Alzheimer disease 4"]$cl_name)), collapse=", ")`) and are implied to be responsible for the phenotypes `r paste(shQuote(unique(top_targets[disease_name=="Alzheimer disease 4"]$hpo_name)), collapse=", ")`.
-Meanwhile, AD 2 is primarily associated with immune cells (`r paste(shQuote(unique(top_targets[disease_name %in% c("Early-onset autosomal dominant Alzheimer disease","Alzheimer disease 2")]$cl_name)[1]), collapse=", ")`) and is implied to be responsible for the phenotypes `r paste(shQuote(unique(top_targets[disease_name %in% c("Early-onset autosomal dominant Alzheimer disease","Alzheimer disease 2")]$hpo_name)), collapse=", ")`.
-This suggests that different forms of AD may be driven by different cell types and phenotypes, which may help to explain its variability in onset and clinical presentation.
+Alzheimer's disease (AD), a common neurodegenerative condition, presents with variable symptoms such as memory loss and proteinopathy.  
+Our analysis shows distinct monogenic AD subtypes associate with different cell types and phenotypes [Fig. @fig-therapy-examples-supp].  
+For example, AD subtypes 3 and 4 implicate digestive cells (`r paste(shQuote(unique(top_targets[disease_name=="Alzheimer disease 4"]$cl_name)), collapse=", ")`), while AD subtype 2 involves immune cells (`r paste(shQuote(unique(top_targets[disease_name %in% c("Early-onset autosomal dominant Alzheimer disease","Alzheimer disease 2")]$cl_name)[1]), collapse=", ")`).  
+These findings may explain heterogeneity in AD onset and presentation.
 
-Finally, Parkinson's disease (PD) is characterised by motor symptoms such as tremor, rigidity, and bradykinesia.
-However there are a number of additional phenotypes associated with the disease that span multiple physiological systems.
-PD 19a and PD 8 seemed to align most closely with the canonical understanding of PD as a disease of the central nervous system in that they implicated oligodendrocytes and neurons ([Fig. @fig-therapy-examples-supp]).
-Though the reference datasets being used in this study were not annotated at sufficient resolution to distinguish between different subtypes of neurons, in particular dopaminergic neurons.
-PD 19a/8 also suggested that risk variants in *LRRK2* mediate their effects on PD through both myeloid cells and oligodendrocytes by causing gliosis of the substantia nigra.
-The remaining clusters of PD mechanisms revolved around chondrocytes (PD 20), amacrine cells of the eye (hereditary late-onset PD), and the respiratory/immune system (PD 14).
-While the diversity in cell type-specific mechanisms is somewhat surprising, it may help to explain the wide variety of cross-system phenotypes frequently observed in PD.
+Parkinson’s disease (PD) includes motor and systemic symptoms.  
+PD subtypes 19a and 8 implicate oligodendrocytes and neurons [Fig. @fig-therapy-examples-supp], suggesting *LRRK2* variants act via gliosis in the substantia nigra.  
+Other PD mechanisms involved chondrocytes (PD 20), amacrine cells (late-onset PD), and respiratory/immune cells (PD 14).  
+This diversity may underlie PD’s multisystem features.
 
-It should be noted that the HPO only includes gene annotations for the monogenic forms of AD and PD.
-However it has previously been shown that there is at least partial overlap in their phenotypic and genetic aetiology with respect to their common forms.
-Thus understanding the monogenic forms of these diseases may shed light onto their more common counterparts.
+Note: HPO annotations cover only monogenic AD and PD, yet phenotypic/genetic overlaps with common forms suggest our findings may inform broader disease understanding.
 
 ### Experimental model translatability
 
@@ -1285,10 +1216,7 @@ Amongst our prioritised targets with a GPT-4 severity score of \>10, the phenoty
 
 ### Mappings
 
-::: {#tbl-mappings}
-```{r tbl-mappings}
-#| label: tbl-mappings 
-
+```{r maps_agg}
 maps <- HPOExplorer::get_mappings(max_dist = NULL) 
 maps_agg <- (
   data.table::rbindlist(maps, idcol = "source")
@@ -1298,16 +1226,7 @@ maps_agg <- (
    keyby=c("source","distance")]
 maps_agg_top <- maps_agg[distance==1][get("HPO terms")==max(get("HPO terms")),]
 
-maps_agg|> 
-  kableExtra::kbl() 
 ```
-
-Mappings between HPO phenotypes and other medical ontologies.
-"source" indicates the medical ontology and "distance" indicates the cross-ontology distance.
-"source terms" and "HPO terms" indicates the number of unique IDs mapped from the source ontology and HPO respectively.
-"mappings" is the total number of cross-ontology mappings within a given distance.
-Some IDs may have more than one mapping for a given source due to many-to-many relationships.
-:::
 
 Mappings from HPO phenotypes and other commonly used medical ontologies were gathered in order to facilitate use of the results in this study in both clinical and research settings.
 Direct mappings, with a cross-ontology distance of 1, are the most precise and reliable.
@@ -1358,7 +1277,7 @@ Our pipeline takes into account a myriad of factors, including the strength of t
 We validated these candidates by comparing the proportional overlap with gene therapies that are presently in the market or undergoing clinical trials, in which we recovered `r ttd_nonfailed_val`% of all active gene therapies ([Fig. @fig-therapy-validate], [Fig. @fig-therapy-validate-all]).
 Despite nominating a large number of putative targets, hypergeometric tests confirmed that our targets were strongly enriched for targets of existing therapies that are either approved or currently undergoing clinical trials.
 
-From our target prioritisation pipeline results, we highlight cell type-specific mechanisms for 'GM2-ganglioside accumulation' in Tay-Sachs disease, spinocerebellar atrophy in spinocerebellar ataxia, and 'Neuronal loss in central nervous system' in a variety of diseases ([Fig. @fig-therapy-examples]).
+From our target prioritisation pipeline results, we highlight cell type-specific mechanisms for 'GM2-ganglioside accumulation' in Tay-Sachs disease, spinocerebellar atrophy in spinocerebellar ataxia, and 'Neuronal loss in central nervous system' in a variety of diseases ([Fig. @fig-therapy-examples, @fig-therapy-examples2]).
 Of interest, all three of these neurodegenerative phenotypes involved alternatively activated (M2) macrophages.
 The role of macrophages in neurodegeneration is complex, with both neuroprotective and neurotoxic functions, including the clearance of misfolded proteins, the regulation of the blood-brain barrier, and the modulation of the immune response [@gaoMicrogliaNeurodegenerativeDiseases2023].
 We also recapitulated prior evidence that microglia, the resident macrophages of the nervous system, are causally implicated in Alzheimer's disease (AD) ([Fig. @fig-therapy-examples-supp]) [@mcquadeMicrogliaAlzheimerDisease2019].
@@ -1787,6 +1706,23 @@ Mappings between each pair of ontologies were then downloaded, stored in a tabul
 
 ## Tables
 
+::: {#tbl-mappings}
+```{r tbl-mappings}
+#| label: tbl-mappings 
+
+maps_agg|> 
+  kableExtra::kbl() 
+```
+
+Mappings between HPO phenotypes and other medical ontologies.
+"source" indicates the medical ontology and "distance" indicates the cross-ontology distance.
+"source terms" and "HPO terms" indicates the number of unique IDs mapped from the source ontology and HPO respectively.
+"mappings" is the total number of cross-ontology mappings within a given distance.
+Some IDs may have more than one mapping for a given source due to many-to-many relationships.
+:::
+
+{{< pagebreak >}}
+
 ::: {#tbl-summary}
 ```{r tbl-summary}
 #| label: tbl-summary  
@@ -1867,6 +1803,80 @@ This work was supported by a UK Dementia Research Institute (UK DRI) Future Lead
 
 ## Supplementary Materials
 
+### Supplementary Results
+
+#### Selected example targets
+
+From our prioritised targets, we selected the following four sets of phenotypes or diseases as examples: `r paste(shQuote(phenotypes_network), collapse=", ")`.
+Only phenotypes with a GPT severity score greater than `r severity_score_gpt_threshold` were considered to avoid overplotting and to focus on the more clinically relevant phenotypes [Fig. @fig-therapy-examples]a-h.
+These examples were then selected partly on the basis of severity rankings, and partly for their relatively smaller, simpler networks than lent themselves to compact visualisations.
+
+Tay-Sachs disease (TSD) is a devastating hereditary condition in which children are born appearing healthy, which gradually degrades leading to death after 3-5 years.
+The underlying cause is the toxic accumulation of gangliosides in the nervous system due to a loss of the enzyme produced by *HEXA*.
+While this could in theory be corrected with gene editing technologies, there remain some outstanding challenges.
+One of which is identifying which cell types should be targeted to ensure the most effective treatments.
+Here we identified alternatively activated macrophages as the cell type most strongly associated with 'GM2-ganglioside accumulation' [Fig. @fig-therapy-examples]i.
+The role of aberrant macrophage activity in the regulation of ganglioside levels is supported by observation that gangliosides accumulate within macrophages in TSD [@fendersonChapterDevelopmentalGenetic2009], as well as experimental evidence in rodent models [@vilcaesGangliosideSynthesisPlasma2020.; @yoheGangliosideAlterationsStimulated1985; @demirGM2GangliosideAccumulation2020].
+Our results not only corroborate these findings, but propose macrophages as the primary causal cell type in TSD, making it the most promising cell type to target in therapies.
+
+Another challenge in TSD is early detection and diagnosis, before irreversible damage has occurred.
+Our pipeline implicated extravillous trophoblasts of the placenta in 'GM2-ganglioside accumulation'.
+While not necessarily a target for gene therapy (as the child is detached from the placenta after birth), checking these cells *in utero* for an absence of *HEXA* may serve as a viable biomarker as these cells normally express the gene at high levels.
+Early detection of TSD may lengthen the window of opportunity for therapeutic intervention [@solovyevaNewApproachesTaySachs2018], especially when genetic sequencing is not available or variants of unknown significance are found within *HEXA* [@hoffmanNextgenerationDNASequencing2013].
+
+
+Spinocerebellar atrophy is a debilitating and lethal phenotype that occurs in diseases such as Spinocerebellar ataxia and Boucher-Nenhauser syndrome.
+These diseases are characterised by progressive degeneration of the cerebellum and spinal cord, leading to severe motor and cognitive impairments.
+Our pipeline identified M2 macrophages (labeled as the closest CL term 'Alternatively activated macrophages' in [Fig. @fig-therapy-examples]j) as the only causal cell type associated with 'Spinocerebellar atrophy'.
+This strongly suggests that degeneration of cerebellar Purkinje cells are in fact downstream consequences of macrophage dysfunction, rather than being the primary cause themselves.
+This is consistent with the known role of macrophages, especially microglia, in neuroinflammation and other neurodegenerative conditions such as Alzheimer's and Parkinsons' disease [@ferroRoleMicrogliaAtaxias2019; @holMicroglialTranscriptomicsMeets2022; @lopesAtlasGeneticEffects2020a].
+While experimental and postmortem observational studies have implicated microglia in spinocerebellar atrophy previously [@ferroRoleMicrogliaAtaxias2019], our results provide a statistically-supported and unbiased genetic link between known risk genes and this cell type.
+Therefore, targeting M2 microglia in the treatment of spinocerebellar atrophy may therefore represent a promising therapeutic strategy.
+This is aided by the fact that there are mouse models that perturb the ortholog of human spinocerebellar atrophy risk genes (e.g. [*Atxn1*](https://www.informatics.jax.org/marker/MGI:104783), [*Pnpla6*](https://www.informatics.jax.org/marker/MGI:1354723)) and reliably recapitulate the effects of this diseases at the cellular (e.g. loss of Purkinje cells), morphological (e.g. atrophy of the cerebellum, spinal cord, and muscles), and functional (e.g. ataxia) levels.
+ 
+
+Next, we investigated the phenotype 'Neuronal loss in the central nervous system'.
+Despite the fact that this is a fairly broad phenotype, we found that it was only significantly associated with `r length(unique(neuronal_loss$cl_name))` cell types (`r paste(unique(neuronal_loss$cl_name), collapse=', ')`), specifically M2 macrophages and sinusoidal endothelial cells [Fig. @fig-therapy-examples]k.
+
+Skeletal dysplasia is a heterogeneous group of over 450 disorders that affect the growth and development of bone and cartilage.
+This phenotype can be lethal when deficient bone growth leads to the constriction of vital organs such as the lungs.
+Even after surgical interventions, these complications continue to arise as the child develops.
+Pharmacological interventions to treat this condition have largely been ineffective.
+While there are various cell types involved in skeletal system development, our pipeline nominated chondrocytes as the causal cell type underlying the lethal form of this condition ([Fig. @fig-therapy-examples-supp]).
+Assuringly, we found that the disease 'Achondrogenesis Type 1B' is caused by the genes *SLC26A2* and *COL2A1* via chondrocytes.
+We also found that 'Platyspondylic lethal skeletal dysplasia, Torrance type'.
+Thus, in cases where surgical intervention is insufficient, targeting these genes within chondrocytes may prove a viable long-term solution for children suffering from lethal skeletal dysplasia.
+
+Alzheimer's disease (AD) is the most common neurodegenerative condition.
+It is characterised by a set of variably penetrant phenotypes including memory loss, cognitive decline, and cerebral proteinopathy.
+Interestingly, we found that different forms of early onset AD (which are defined by the presence of a specific disease gene) are each associated with different cell types via different phenotypes ([Fig. @fig-therapy-examples-supp]).
+For example, AD 3 and AD 4 are primarily associated with cells of the digestive system (`r paste(shQuote(unique(top_targets[disease_name=="Alzheimer disease 4"]$cl_name)), collapse=", ")`) and are implied to be responsible for the phenotypes `r paste(shQuote(unique(top_targets[disease_name=="Alzheimer disease 4"]$hpo_name)), collapse=", ")`.
+Meanwhile, AD 2 is primarily associated with immune cells (`r paste(shQuote(unique(top_targets[disease_name %in% c("Early-onset autosomal dominant Alzheimer disease","Alzheimer disease 2")]$cl_name)[1]), collapse=", ")`) and is implied to be responsible for the phenotypes `r paste(shQuote(unique(top_targets[disease_name %in% c("Early-onset autosomal dominant Alzheimer disease","Alzheimer disease 2")]$hpo_name)), collapse=", ")`.
+This suggests that different forms of AD may be driven by different cell types and phenotypes, which may help to explain its variability in onset and clinical presentation.
+
+Finally, Parkinson's disease (PD) is characterised by motor symptoms such as tremor, rigidity, and bradykinesia.
+However there are a number of additional phenotypes associated with the disease that span multiple physiological systems.
+PD 19a and PD 8 seemed to align most closely with the canonical understanding of PD as a disease of the central nervous system in that they implicated oligodendrocytes and neurons ([Fig. @fig-therapy-examples-supp]).
+Though the reference datasets being used in this study were not annotated at sufficient resolution to distinguish between different subtypes of neurons, in particular dopaminergic neurons.
+PD 19a/8 also suggested that risk variants in *LRRK2* mediate their effects on PD through both myeloid cells and oligodendrocytes by causing gliosis of the substantia nigra.
+The remaining clusters of PD mechanisms revolved around chondrocytes (PD 20), amacrine cells of the eye (hereditary late-onset PD), and the respiratory/immune system (PD 14).
+While the diversity in cell type-specific mechanisms is somewhat surprising, it may help to explain the wide variety of cross-system phenotypes frequently observed in PD.
+
+It should be noted that the HPO only includes gene annotations for the monogenic forms of AD and PD.
+However it has previously been shown that there is at least partial overlap in their phenotypic and genetic aetiology with respect to their common forms.
+Thus understanding the monogenic forms of these diseases may shed light onto their more common counterparts.
+
+#### Phenome-wide analyses discover novel phenotype-cell type associations
+
+We visualised the putative causal relationships between genes, cell types and diseases associated with RNI as a network ([Fig. @fig-network-rni]).
+The phenotype 'Recurrent Neisserial infections' was connected to cell types through the aforementioned association test results (FDR\<0.05).
+Genes that were primarily driving these associations (i.e. genes that were both strongly linked with 'Recurrent Neisserial infections' and were highly specifically expressed in the given cell type) were designated as "driver genes" and retained for plotting.
+Across all phenotypes in the HPO, more specific phenotypes (terms in the HPO with greater IC) are not only more specific to certain cell types ([Fig. @fig-ontology-lvl]b), but are also associated with genes that have greater cell type-specific expression within those cell types.
+Even so, we should note that the choice of which specificity quantiles to include is arbitrary.
+It should also be noted that simply because a gene is not specific to a cell type does not mean it is not important for the function of the cell type.
+Indeed, there are many genes that are ubiquitously expressed throughout many tissues in the body and are essential for cell function.
+Gene expression specificity is nevertheless a useful metric to help distinguish many hundreds of cell (sub)types with overlapping gene signatures.
+
 ### Supplementary Figures
 
 ::: {#fig-evidence-histograms .hide-subcaptions}
@@ -1940,6 +1950,46 @@ plot_celltype_severity_out$bar$plot +
 
 {{< pagebreak >}}
 
+::: {#fig-network-rni .hide-subcaptions}
+```{r fig-network-rni, cache.lazy=FALSE}
+#| label: fig-network-rni
+#| fig-cap: Causal network of recurrent Neisserial infections (RNI) reveals multiscale disease aetiology. RNI is a phenotype in seven different monogenic diseases caused by disruptions to specific complement system genes. Four cell types were significantly associated with RNI. **a**, One can trace how genes causal for RNI (yellow boxes, bottom) mediate their effects through cell types (orange circles, middle) and diseases (blue cylinders, top). Cell types are connected to RNI via association testing (FDR\<0.05). Genes shown here have both strong evidence for a causal role in RNI and high expression specificity in the associated cell type. Cell types can be linked  to monogenic diseases via the genes specifically expressed in those cell types (i.e. are in the top 25\% of cell type specificity expression quantiles). Nodes are arranged using the Sugiyama algorithm [@Sugiyama1981-ev]. **b** Expression specificity quantiles (1-40 scale) of each driver gene in each cell type (darker = greater specificity). **c** GenCC-derived eevidence scores between the RNI phenotype and each gene. **d** Expression specificity (0 = least specific, 1 = most specific) of each gene in each cell type.
+#| fig-height: 8
+#| fig-width: 8
+
+if(knitr::is_html_output()){
+  knitr::opts_current$set(results="asis")
+  vn_rni$plot
+  prioritise_targets_multiheatmap_out$plot
+} else { 
+  # Read the image
+  img <- magick::image_read(here::here("manuscript/img/fig-rni.png"), 
+                            density = 400)
+  img_grob <- grid::rasterGrob(img, interpolate = TRUE)
+  
+  # Create a ggplot with the image as a background
+  img_plot <- ggplot2::ggplot() +
+    ggplot2::annotation_custom(img_grob, xmin = -Inf, xmax = Inf, 
+                      ymin = -Inf, ymax = Inf) +
+    ggplot2::theme_void()
+  
+  fig_network_rni <- patchwork::wrap_plots(
+    img_plot,
+    prioritise_targets_multiheatmap_out$plot,
+    ncol = 1,
+    heights = c(1, .6)
+  ) + 
+    patchwork::plot_annotation(tag_levels = "a") & 
+    ggplot2::theme(plot.margin = ggplot2::margin(),
+                   plot.tag = ggplot2::element_text(size = 12)) # works now
+  fig_network_rni
+  # ggplot2::ggsave("~/Downloads/fig_network_rni.png", fig_network_rni, dpi = 400, height = 8, width = 8)
+} 
+```
+:::
+
+{{< pagebreak >}}
+
 ::: {#fig-therapy-filter .hide-subcaptions}
 ```{r fig-therapy-filter}
 #| label: fig-therapy-filter
@@ -1983,6 +2033,42 @@ plot_upheno_out <- KGExplorer::plot_upheno(
   name="Phenotype-\ngenotype\nsimilarity"
   )
 plot_upheno_out$heatmap
+```
+:::
+
+{{< pagebreak >}}
+
+::: {#fig-therapy-examples2 .hide-subcaptions}
+```{r fig-therapy-examples2}
+#| label: fig-therapy-examples2
+#| fig-cap: Causal multiscale networks reveal cell type-specific therapeutic targets. Each disease (blue cylinders) is connected to its phenotype (purple cylinders) based on well-established clinical observations recorded within the HPO [@Gargano2024-fc]. Phenotypes are connected to cell types (orange circles) via association testing between weighted gene sets (FDR<0.05). Each cell type is connected to the prioritised gene targets (yellow boxes) based on the driver gene analysis.The thickness of the edges connecting the nodes represent the (mean) fold-change from the bootstrapped enrichment tests. Nodes were spatially arranged using the Sugiyama algorithm [@Sugiyama1981-ev].
+
+img_paths <- stats::setNames(
+   here::here(
+     "manuscript",
+     "img","fig-therapy-examples",
+  c("tay-sachs.png",
+    "spinocerebellar-atrophy.png",
+    "neuronal-loss.png")),
+   c("GM2-ganglioside accumulation",
+     "Spinocerebellar atrophy",
+     "Neuronal loss in central nervous system")
+ )
+ fig_networks <- lapply(img_paths, function(x){
+   i = which(x==img_paths)
+   magick::image_read(x, density=300)|>magick::image_ggplot(interpolate=TRUE) +
+   ggplot2::theme_void() +
+   ggplot2::labs(subtitle=names(img_paths)[i]) +
+   ggplot2::theme(plot.margin = ggplot2::unit(c(0,0,0,0),"pt"),
+                  panel.background = ggplot2::element_rect(fill = "grey50"))
+ })
+ 
+{design <- "AB
+           CC"
+ patchwork::wrap_plots(fig_networks, ncol = 1, 
+                       design=design, heights = c(.75, 1)) +
+   patchwork::plot_annotation(tag_levels = "A")  
+}
 ```
 :::
 
