@@ -205,7 +205,7 @@ kg_hp <- validate_associations_mkg_out$kg[grepl("^HP:",from)]
 Rare diseases (RDs) are an extremely heterogeneous and underserved category of medical conditions.
 While the majority of RDs are strongly genetic, it remains largely unknown via which physiological mechanisms genetics cause RD.
 Therefore, we sought to systematically characterise the cell type-specific mechanisms underlying all RD phenotypes with a known genetic cause by leveraging the Human Phenotype Ontology and transcriptomic single-cell atlases of the entire human body from embryonic, foetal, and adult samples.
-In total we identified significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) unique phenotypes across `r  res_summ_all[["diseases significant"]]` RDs. This greatly the collective knowledge of RD phenotype-cell type mechanisms. Next, we sought to systematically identify phenotypes in which the application of these results would have the greatest clinical impact based on metrics of severity (e.g. lethality, motor/mental impairment) and compatibility with gene therapy (e.g. filtering out physical malformations). Furthermore, we have made these results entirely reproducible and freely accessible to the global community to maximise their impact, including an interactive web portal (<https://neurogenomics.github.io/rare_disease_celltyping_apps/home>). To summarise, this work represents a significant step forward in the mission to treat patients across an extremely diverse spectrum of serious RDs.
+In total we identified significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) unique phenotypes across `r  res_summ_all[["diseases significant"]]` RDs. This greatly the collective knowledge of RD phenotype-cell type mechanisms. Next, we sought to systematically identify phenotypes in which the application of these results would have the greatest clinical impact based on metrics of severity (e.g. lethality, motor/mental impairment) and compatibility with gene therapy (e.g. filtering out physical malformations). Furthermore, we have made these results entirely reproducible and freely accessible to the global community to maximise their impact, including an interactive web portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>). To summarise, this work represents a significant step forward in the mission to treat patients across an extremely diverse spectrum of serious RDs.
 
 ## Introduction {#sec-introduction}
 
@@ -362,27 +362,6 @@ Here, we consider a cell type to be *on-target* relative to a given HPO branch i
 Within each high-level branch in the HPO shown in [Fig. @fig-summary]b, we tested whether each cell type was more often associated with phenotypes in that branch relative to those in all other branches (including those not shown).
 We then checked whether each cell type was overrepresented (at FDR\<0.05) within its respective on-target HPO branch, where the number of phenotypes within that branch.
 Indeed, we found that all `r length(unique(overrep_df[["HPO branch"]]))` HPO branches were disproportionately associated with on-target cell types from their respective organ systems.
-
-{{< pagebreak >}}
-
-::: {#tbl-ontarget-celltypes}
-```{r tbl-ontarget-celltypes}
-#| label: tbl-ontarget-celltypes
-
-
-
-overrep_df |>
-  knitr::kable()
-#   # dplyr::select(-`HPO branch`) |>
-  # kableExtra::kbl() 
-  # kableExtra::kable_styling(full_width=FALSE)
-  # kableExtra::group_rows(index=overrep_df$`HPO branch`)
-```
-
-Cross-ontology mappings between HPO and CL branches.
-The last two columns represent the number of cell types that were overrepresented in the on-target HPO branch and the total number of cell types in that branch.
-A disaggregated version of this table with all descendant cell type names is available in @tbl-celltypes.
-:::
 
 ```{r cor_pct_p}
 cor.pct_p <- stats::cor.test(plot_bar_dendro_out$ggprop_out$data$pct, 
@@ -1169,7 +1148,7 @@ Despite its broad definition, 'Neuronal loss in central nervous system' was asso
 
 Skeletal dysplasia comprises 450+ disorders affecting bone and cartilage, often leading to lethal outcomes via organ compression.
 While surgeries offer partial relief, pharmacological options remain limited.
-Our analysis identified chondrocytes as causal [Fig. @fig-therapy-examples-supp], consistent with known gene–cell links (e.g. *SLC26A2*, *COL2A1* in Achondrogenesis Type 1B and Torrance-type dysplasia).  
+Our analysis identified chondrocytes as causal [Fig. @fig-therapy-examples-supp], consistent with known gene–cell links (e.g. *SLC26A2*, *COL2A1* in Achondrogenesis Type 1B and Torrance-type dysplasia).
 Chondrocyte-targeted therapy may offer long-term solutions where surgery falls short.
 
 Alzheimer's disease (AD), a common neurodegenerative condition, presents with variable symptoms such as memory loss and proteinopathy.
@@ -1300,7 +1279,7 @@ To further increase the number of individuals who qualify for these treatments, 
 Moving forward, we are now actively seeking industry and academic partnerships to begin experimentally validating our multi-scale target predictions and exploring their potential for therapeutic translation.
 Nevertheless, there are more promising therapeutic targets here than our research group could ever hope to pursue by ourselves.
 In the interest of accelerating research and ensuring RD patients are able to benefit from this work as quickly as possible, we have decided to publicly release all of the results described in this study.
-These can be accessed in multiple ways, including through a suite of R packages as well as a web app, the Rare Disease Celltyping Portal (https://neurogenomics.github.io/rare_disease_celltyping_apps/home/).
+These can be accessed in multiple ways, including through a suite of R packages as well as a web app, the Rare Disease Celltyping Portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>).
 The latter allows our results to be easily queried, filtered, visualised, and downloaded without any knowledge of programming.
 Through these resources we aim to make our findings useful to a wide variety of RD stakeholders including subdomain experts, clinicians, advocacy groups, and patients.
 
@@ -1765,7 +1744,7 @@ All data is publicly available through the following resources:
 -   Gene x Phenotype association matrix (*hpo_matrix.rds*; <https://github.com/neurogenomics/MSTExplorer/releases>)
 -   GPT-4 phenotype severity annotations (<https://github.com/neurogenomics/rare_disease_celltyping/releases/download/latest/gpt_check_annot.csv.gz>)
 -   Full phenotype-cell type association test results <https://github.com/neurogenomics/MSTExplorer/releases/download/v0.1.10/phenomix_results.tsv.gz>
--   Rare Disease Celltyping Portal (<https://neurogenomics.github.io/rare_disease_celltyping_apps/home>)
+-   Rare Disease Celltyping Portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>)
 
 ## Code Availability
 
@@ -2144,6 +2123,26 @@ vn_therapy
 :::
 
 ### Supplementary Tables
+
+
+::: {#tbl-ontarget-celltypes}
+```{r tbl-ontarget-celltypes}
+#| label: tbl-ontarget-celltypes
+
+
+
+overrep_df |>
+  knitr::kable()
+#   # dplyr::select(-`HPO branch`) |>
+  # kableExtra::kbl() 
+  # kableExtra::kable_styling(full_width=FALSE)
+  # kableExtra::group_rows(index=overrep_df$`HPO branch`)
+```
+
+Cross-ontology mappings between HPO and CL branches.
+The last two columns represent the number of cell types that were overrepresented in the on-target HPO branch and the total number of cell types in that branch.
+A disaggregated version of this table with all descendant cell type names is available in @tbl-celltypes.
+:::
 
 ::: {#tbl-gencc}
 ```{r tbl-gencc}
