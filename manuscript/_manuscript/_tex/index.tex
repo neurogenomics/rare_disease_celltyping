@@ -192,7 +192,7 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Cell type-specific contextualisation of the human phenome: towards the systematic treatment of all rare diseases},
-  pdfauthor={Brian M. Schilder; Kitty B. Murphy; Yichun Zhang; Hiranyamaya Dash; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
+  pdfauthor={Brian M. Schilder; Kitty B. Murphy; Hiranyamaya Dash; Yichun Zhang; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
   pdfkeywords={rare disease, phenotype, single-cell, gene therapy},
   colorlinks=true,
   linkcolor={blue},
@@ -204,17 +204,17 @@
 
 \title{Cell type-specific contextualisation of the human phenome:
 towards the systematic treatment of all rare diseases}
-\author{Brian M. Schilder \and Kitty B. Murphy \and Yichun
-Zhang \and Hiranyamaya Dash \and Robert Gordon-Smith \and Jai
+\author{Brian M. Schilder \and Kitty B. Murphy \and Hiranyamaya
+Dash \and Yichun Zhang \and Robert Gordon-Smith \and Jai
 Chapman \and Momoko Otani \and Nathan G. Skene}
-\date{2025-08-03}
+\date{2025-08-07}
 
 \begin{document}
 \maketitle
 
 
 \setstretch{1.5}
-\newpage{}
+\newpage
 
 \subsection{Abstract}\label{abstract}
 
@@ -370,21 +370,21 @@ underlying RD phenotypes.
 
 \centering{
 
-\includegraphics[width=\linewidth,height=7.5in,keepaspectratio]{img/study_design.png}
+\includegraphics[width=\linewidth,height=15in,keepaspectratio]{img/study_design.png}
 
 }
 
-\caption{\label{fig-study-design}Multi-modal data fusion reveals the
-cell types underlying thousands of human phenotypes. Schematic overview
-of study design in which we numerically encoded the strength of evidence
-linking each gene and each phenotype (using the Human Phenotype Ontology
-and GenCC databases). We then created gene signature profiles for all
-cell types in the Descartes Human and Human Cell Landscape scRNA-seq
-atlases. Finally, we iteratively ran generalised linear regression tests
-between all pairwise combinations of phenotype gene signatures and cell
-type gene signatures. The resulting associations were then used to
-nominate cell type-resolved gene therapy targets for thousands of rare
-diseases.}
+\caption{\label{fig-study-design}\textbf{Multi-modal data fusion reveals
+the cell types underlying thousands of human phenotypes.} Schematic
+overview of study design in which we numerically encoded the strength of
+evidence linking each gene and each phenotype (using the Human Phenotype
+Ontology and GenCC databases). We then created gene signature profiles
+for all cell types in the Descartes Human and Human Cell Landscape
+scRNA-seq atlases. Finally, we iteratively ran generalised linear
+regression tests between all pairwise combinations of phenotype gene
+signatures and cell type gene signatures. The resulting associations
+were then used to nominate cell type-resolved gene therapy targets for
+thousands of rare diseases.}
 
 \end{figure}%
 
@@ -502,9 +502,9 @@ on-target.
 
 }
 
-\subcaption{\label{fig-summaryD08295A6-16DC-499D-85A8-8BA656E013A2}High-throughput
+\subcaption{\label{fig-summaryD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{High-throughput
 analysis reveals cell types underlying thousands of rare disease
-phenotypes. \textbf{a}, Some cell types are much more commonly
+phenotypes.} \textbf{a}, Some cell types are much more commonly
 associated with phenotypes than others. Bar height indicates the total
 number of significant phenotype enrichments per cell type
 (FDR\textless0.05) across all branches of the HPO. \textbf{b}, Analyses
@@ -538,17 +538,17 @@ overlapping cell types Fig.~\ref{fig-ctd-correlation}. In total there
 were 142,285 phenotype-cell type associations to compare across the two
 datasets (across 10,945 phenotypes and 13 cell types annotated to the
 exact same CL term. We found that the correlation between p-values of
-the two datasets was high (\(rho\)=\(0.49\),
-\(p\)=\(1.1 \times 10^{-93}\)). Within the subset of results that were
+the two datasets was high (\(rho\)=\(0.91\),
+\(p\)=\(5.7 \times 10^{-6}\)). Within the subset of results that were
 significant in both single-cell datasets (FDR\textless0.05), we found
 that degree of correlation between the association effect sizes across
-datasets was even stronger (\(rho=\)\(0.72\),
-\(p=\)\(1.1 \times 10^{-93}\)). We also checked for the intra-dataset
+datasets was even stronger (\(rho=\)\(0.82\),
+\(p=\)\(5.7 \times 10^{-6}\)). We also checked for the intra-dataset
 consistency between the p-values of the foetal and adult samples in the
 Human Cell Landscape, showing a very similar degree of correlation as
-the inter-dataset comparison (\(rho=\)\(0.44\),
-\(p=\)\(2.4 \times 10^{-149}\)). Together, these results suggest that
-our approach to identifying phenotype-cell type associations is highly
+the inter-dataset comparison (\(rho=\)\(0.95\),
+\(p=\)\(5.0 \times 10^{-15}\)). Together, these results suggest that our
+approach to identifying phenotype-cell type associations is highly
 replicable and generalisable to new datasets.
 
 \subsubsection{More specific phenotypes are associated with fewer genes
@@ -587,9 +587,9 @@ associated cell types at each ontological level
 
 }
 
-\subcaption{\label{fig-ontology-lvlD08295A6-16DC-499D-85A8-8BA656E013A2}More
+\subcaption{\label{fig-ontology-lvlD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{More
 specific phenotypes are associated with fewer, more specific genes and
-cell types. Information content (IC), is a normalised measure of
+cell types.} Information content (IC), is a normalised measure of
 ontology term specificity. Terms with lower IC represent the broadest
 HPO terms (e.g.~`All'), while terms with higher IC indicate
 progressively more specific HPO terms (e.g.~`Contracture of proximal
@@ -727,9 +727,9 @@ which are well-known to involve the liver\textsuperscript{53--55}.
 
 }
 
-\subcaption{\label{fig-rniD08295A6-16DC-499D-85A8-8BA656E013A2}Association
+\subcaption{\label{fig-rniD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Association
 tests reveal that hepatoblasts have a unique role in recurrent
-Neisserial infections. Significant phenotype-cell type tests for
+Neisserial infections.} Significant phenotype-cell type tests for
 phenotypes within the branch `Recurrent bacterial infections'. Amongst
 all different kinds of recurrent bacterial infections, hepatoblasts
 (highlighted by vertical dotted lines) are exclusively enriched in
@@ -897,9 +897,9 @@ severity (p=\(5.0 \times 10^{-3}\), Pearson coefficient=\(0.28\)).
 
 }
 
-\subcaption{\label{fig-celltype-severity-dotD08295A6-16DC-499D-85A8-8BA656E013A2}Genetic
+\subcaption{\label{fig-celltype-severity-dotD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Genetic
 disruptions to some cell types cause more clinically severe phenotypes
-than others. \textbf{a}, Different cell types are associated with
+than others.} \textbf{a}, Different cell types are associated with
 different aspects of phenotypic severity. The dot plot shows the mean
 encoded frequency value for a given severity annotation (0=``never'',
 1=``rarely'', 2=``often'', 3=``always''; shown as dot size), aggregated
@@ -969,9 +969,9 @@ and the aetiology of congenital disorders.
 
 }
 
-\subcaption{\label{fig-congenitalD08295A6-16DC-499D-85A8-8BA656E013A2}Foetal
+\subcaption{\label{fig-congenitalD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Foetal
 vs.~adult cell type references provide development context to phenotype
-aetiology. \textbf{a}, Congenital phenotypes are more often associated
+aetiology.} \textbf{a}, Congenital phenotypes are more often associated
 with foetal cell types. As a phenotype is more often congenital in
 nature, the greater proportion of foetal cell types are significantly
 associated with it. \textbf{b}, The proportion of phenotype-cell type
@@ -1148,7 +1148,7 @@ To determine whether the genes prioritised by our therapeutic targets
 pipeline were plausible, we checked what percentage of gene therapy
 targets we recapitulated. Data on therapeutic approval status was
 gathered from the Therapeutic Target Database (TTD; release
-2025-08-03)\textsuperscript{60}. Overall, we prioritised \(87\)\% (120
+2025-08-07)\textsuperscript{60}. Overall, we prioritised \(87\)\% (120
 total) of all non-failed existing gene therapy targets (ie. those which
 are currently approved, investigative, or undergoing clinical trials). A
 hypergeometric test confirmed that our prioritised targets were
@@ -1198,8 +1198,8 @@ be causal for a given phenotype or set of phenotypes.
 
 }
 
-\subcaption{\label{fig-therapy-validateD08295A6-16DC-499D-85A8-8BA656E013A2}Prioritised
-targets recapitulate existing gene therapy targets. The proportion of
+\subcaption{\label{fig-therapy-validateD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Prioritised
+targets recapitulate existing gene therapy targets.} The proportion of
 existing gene therapy targets (documented in the Therapeutic Target
 Database) recapitulated by our prioritisation pipeline. Therapeutics are
 stratified by the stage of clinical development they were at during the
@@ -1227,8 +1227,8 @@ list.}
 
 }
 
-\subcaption{\label{fig-therapy-examplesD08295A6-16DC-499D-85A8-8BA656E013A2}Evidence-based
-pipeline nominates causal mechanisms to target for gene therapy. Shown
+\subcaption{\label{fig-therapy-examplesD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Evidence-based
+pipeline nominates causal mechanisms to target for gene therapy.} Shown
 here are the top 40 prioritised gene therapy targets at multiple
 biological scales, stratified by congenital (top row) vs.~non-congential
 phenotypes (bottom row) as well as severity class (``profound'' or
@@ -1332,7 +1332,7 @@ tibiae'' (\(SIM_{og}=1\)), ``Hypoglutaminemia'' (\(SIM_{og}=1\)),
 shortening of the tibia'' (\(SIM_{og}=0.99\)), ``Acrobrachycephaly''
 (\(SIM_{og}=0.98\)).
 
-\newpage{}
+\newpage
 
 \subsubsection{Mappings}\label{mappings}
 
@@ -1657,7 +1657,8 @@ diseases for which that phenotype is a symptom. This resulted in a final
 
 \hfill\break
 
-Construction of the tensor of Phenotype-by-Gene evidence scores.
+\textbf{Construction of the tensor of Phenotype-by-Gene evidence
+scores.}
 
 \hfill\break
 
@@ -1856,15 +1857,18 @@ consistency}\label{validation-of-inter--and-intra-dataset-consistency-1}
 
 We tested for inter-dataset consistency of our phenotype-cell type
 association results across different single-cell reference datasets
-(Descartes Human and Human Cell Landscape). First, for association tests
-with exactly matching Cell Ontology ID across the two references, we
-tested for a relationship between the p-values generated with each of
-the references by fitting linear regression model (\texttt{stats::lm}
-via the R function \texttt{ggstatsplot::ggscatterstats}). Next, we
-performed an additional linear regression between the model \(R^2\)
-estimates of all significant phenotype-cell type associations (FDR
-\textless{} 0.05) with exactly matching cell types across the two
-references.
+(Descartes Human and Human Cell Landscape). For all tests reported here,
+the relevant association metrics (p-values or effect size) were first
+averaged to the level of ancestral HPO terms (5 levels down the
+hierachy) to reduce figure size. For association tests with exactly
+matching Cell Ontology ID across the two references, we tested for a
+relationship between the p-values generated with each of the references
+by fitting linear regression model (\texttt{stats::lm} via the R
+function \texttt{ggstatsplot::ggscatterstats}). Next, we performed an
+additional linear regression between the effect sizes (each GLM model's
+\(R^2\) estimates after applying a \(log_2\) fold-change tranformation)
+of all significant phenotype-cell type associations (FDR \textless{}
+0.05) with exactly matching cell types across the two references.
 
 We also tested for intra-dataset consistency within the Human Cell
 Landscape by running additional linear regressions between the
@@ -2110,7 +2114,7 @@ To assess whether our prioritised therapeutic targets were likely to be
 viable, we computed the overlap between our gene targets and those of
 existing gene therapies at various stages of clinical development
 (Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
-therapy from the Therapeutic Target Database (TTD; release 2025-08-03)
+therapy from the Therapeutic Target Database (TTD; release 2025-08-07)
 and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
 gene symbols using the \texttt{orthogene} R package. We stratified our
 overlap metrics according to whether the therapies had failed
@@ -2208,184 +2212,6 @@ cross-ontology mappings. Mappings between each pair of ontologies were
 then downloaded, stored in a tabular format, and uploaded to the public
 \texttt{HPOExplorer} Releases page
 (\url{https://github.com/neurogenomics/HPOExplorer/releases}).
-
-\newpage{}
-
-\subsection{Tables}\label{tables}
-
-\begin{table}
-
-\caption{\label{tbl-mappings}Mappings between HPO phenotypes and other
-medical ontologies. ``source'' indicates the medical ontology and
-``distance'' indicates the cross-ontology distance. ``source terms'' and
-``HPO terms'' indicates the number of unique IDs mapped from the source
-ontology and HPO respectively. ``mappings'' is the total number of
-cross-ontology mappings within a given distance. Some IDs may have more
-than one mapping for a given source due to many-to-many relationships.}
-
-\centering{
-
-\begin{tabular}[t]{l|r|r|r|r}
-\hline
-source & distance & source terms & HPO terms & mappings\\
-\hline
-ICD10 & 2 & 25 & 23 & 25\\
-\hline
-ICD10 & 3 & 839 & 876 & 1170\\
-\hline
-ICD9 & 1 & 21 & 21 & 21\\
-\hline
-ICD9 & 2 & 434 & 306 & 462\\
-\hline
-ICD9 & 3 & 1052 & 920 & 1816\\
-\hline
-SNOMED & 1 & 4413 & 3483 & 4654\\
-\hline
-SNOMED & 2 & 75 & 21 & 78\\
-\hline
-SNOMED & 3 & 1796 & 833 & 9605\\
-\hline
-UMLS & 1 & 12898 & 11601 & 13049\\
-\hline
-UMLS & 2 & 140 & 113 & 142\\
-\hline
-UMLS & 3 & 1871 & 1204 & 11021\\
-\hline
-\end{tabular}
-
-}
-
-\end{table}%
-
-\newpage{}
-
-\begin{table}
-
-\caption{\label{tbl-summary}Summary statistics of enrichment results
-stratified by single-cell atlas. Summary statistics at multiple levels
-(tests, cell types, phenotypes, diseases, cell types per phenotype,
-phenotypes per cell type) stratified by the single-cell atlas that was
-used as a cell type signature reference (Descartes Human or Human Cell
-Landscape).}
-
-\centering{
-
-\begin{tabular}[t]{l|l|l|l}
-\hline
-  & DescartesHuman & HumanCellLandscape & all\\
-\hline
-tests significant & 19,929 & 26,585 & 46,514\\
-\hline
-tests & 848,078 & 1,358,916 & 2,206,994\\
-\hline
-tests significant (\%) & 2.35 & 1.96 & 2.11\\
-\hline
-cell types significant & 77 & 124 & 201\\
-\hline
-cell types & 77 & 124 & 201\\
-\hline
-cell types significant (\%) & 100 & 100 & 100\\
-\hline
-phenotypes significant & 7,340 & 9,049 & 9,575\\
-\hline
-phenotypes tested & 11,014 & 10,959 & 11,028\\
-\hline
-phenotypes & 11,047 & 11,047 & 11,047\\
-\hline
-phenotypes significant (\%) & 66.4 & 81.9 & 86.7\\
-\hline
-diseases significant & 8,628 & 8,627 & 8,628\\
-\hline
-diseases & 8,631 & 8,631 & 8,631\\
-\hline
-diseases significant (\%) & 100 & 100 & 100\\
-\hline
-cell types per phenotype (mean) & 1.81 & 2.43 & 4.22\\
-\hline
-cell types per phenotype (median) & 1 & 2 & 3\\
-\hline
-cell types per phenotype (min) & 0 & 0 & 0\\
-\hline
-cell types per phenotype (max) & 31 & 28 & 59\\
-\hline
-phenotypes per cell type (mean) & 259 & 214 & 231\\
-\hline
-phenotypes per cell type (median) & 252 & 200 & 209\\
-\hline
-phenotypes per cell type (min) & 71 & 57 & 57\\
-\hline
-phenotypes per cell type (max) & 696 & 735 & 735\\
-\hline
-\end{tabular}
-
-}
-
-\end{table}%
-
-\newpage{}
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6000}}@{}}
-
-\caption{\label{tbl-filters}Description of each filtering step performed
-in the multi-scale therapeutic target prioritisation pipleline. `level'
-indicates the biological scale at which the step is applied to.}
-
-\tabularnewline
-
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-level
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-step
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-description
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-NA & 1. start & NA \\
-Cell type & 2. q threshold & Keep only cell type-phenotype association
-results at q\textless=0.05. \\
-Phenotype & 3. keep descendants & Remove phenotypes belonging to a
-certain branch of the HPO, as defined by an ancestor term. \\
-Phenotype & 4. info content threshold & Keep only phenotypes with a
-minimum information criterion score (computed from the HPO). \\
-Phenotype & 5. severity threshold & Keep only phenotypes with mean
-Severity equal to or below the threshold. \\
-Symptom & 6. pheno frequency threshold & Keep only phenotypes with mean
-frequency equal to or above the threshold (i.e.~how frequently a
-phenotype is associated with any diseases in which it occurs). \\
-Gene & 7. symptom gene overlap & Ensure that genes nominated at the
-phenotype-level also appear in the genes overlapping at the cell
-type-specific symptom-level. \\
-Gene & 8. evidence score threshold & Remove genes that are below an
-aggregate phenotype-gene evidence score threshold. \\
-Gene & 9. add driver genes & Keep only genes that are driving the
-association with a given phenotype (inferred by the intersection of
-phenotype-associated genes and gene with high-specificity quantiles in
-the target cell type). \\
-Symptom & 10. symptom intersection threshold & Minimum proportion of
-genes overlapping between a symptom gene list (phenotype-associated
-genes in the context of a particular disease) and the phenotype-cell
-type association driver genes. \\
-Gene & 11. gene frequency threshold & Keep only genes at or above a
-certain mean frequency threshold (i.e.~how frequently a gene is
-associated with a given phenotype when observed within a disease). \\
-Phenotype & 12. prune ancestors & Remove redundant ancestral phenotypes
-when at least one of their descendants already exist. \\
-All & 13. top n & Only return the top N targets per variable group
-(specified with the ``group\_vars'' argument). For example, setting
-``group\_vars'' to ``hpo\_id'' and ``top\_n'' to 1 would only return one
-target (row) per phenotype ID after sorting. \\
-NA & 14. end & NA \\
-
-\end{longtable}
-
-\newpage{}
 
 \subsection{Data Availability}\label{data-availability}
 
@@ -3101,7 +2927,7 @@ Man Cybern.} \textbf{11}, 109--125 (1981).}
 
 \hfill\break
 
-\newpage{}
+\newpage
 
 \subsection{Supplementary Materials}\label{supplementary-materials}
 
@@ -3281,8 +3107,8 @@ signatures.
 
 }
 
-\subcaption{\label{fig-evidence-histogramsD08295A6-16DC-499D-85A8-8BA656E013A2}Distribution
-of GenCC evidence scores at each processing step. GenCCC
+\subcaption{\label{fig-evidence-histogramsD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Distribution
+of GenCC evidence scores at each processing step.} GenCCC
 (\url{https://thegencc.org/}) is a database where semi-quantitative
 scores for the current strength of evidence attributing disruption of a
 gene as a causal factor in a given disease. ``gcc\_disease\_raw'' is the
@@ -3308,8 +3134,8 @@ deviation of those aggregated scores.}
 
 }
 
-\caption{\label{fig-diagram}Diagrammatic overview of multi-scale disease
-investigation strategy. Here we provide an abstract example of
+\caption{\label{fig-diagram}\textbf{Diagrammatic overview of multi-scale
+disease investigation strategy.} Here we provide an abstract example of
 differential disease aetiology across multiple scales: diseases (\(D\)),
 phenotypes (\(P\)), cell types (\(C\)), genes (\(G\)), and clinical
 outcomes (\(O\)). In the HPO, genes are assigned to phenotypes via
@@ -3324,7 +3150,7 @@ minimum threshold of 25\%.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3336,9 +3162,9 @@ minimum threshold of 25\%.}
 
 }
 
-\subcaption{\label{fig-ctd-correlationD08295A6-16DC-499D-85A8-8BA656E013A2}Inter-
+\subcaption{\label{fig-ctd-correlationD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Inter-
 and intra-dataset validation across the different CellTypeDataset (CTD)
-and developmental stages. Correlations are computed using Pearson
+and developmental stages.} Correlations are computed using Pearson
 correlation coefficient. Point density is plotted using a 2D kernel
 density estimate. \textbf{a} Correlation between the uncorrected
 p-values from all phenotype-cell type association tests using the
@@ -3359,7 +3185,7 @@ fetal samples vs.~Human Cell Landscape adult samples.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3371,10 +3197,10 @@ fetal samples vs.~Human Cell Landscape adult samples.}
 
 }
 
-\subcaption{\label{fig-monarch-recallD08295A6-16DC-499D-85A8-8BA656E013A2}Recall
+\subcaption{\label{fig-monarch-recallD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Recall
 of ground-truth Monarch Knowledge Graph phenotype-cell type
 relationships at each ontological distance between cell types according
-to the Cell Ontology.}
+to the Cell Ontology.}}
 
 }
 
@@ -3382,7 +3208,7 @@ to the Cell Ontology.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3394,9 +3220,9 @@ to the Cell Ontology.}
 
 }
 
-\subcaption{\label{fig-celltype-severity-barD08295A6-16DC-499D-85A8-8BA656E013A2}Cell
+\subcaption{\label{fig-celltype-severity-barD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Cell
 types ordered by the mean severity of the phenotypes they're associated
-with. \textbf{a}, The disribution of phenotype severity annotation
+with.} \textbf{a}, The disribution of phenotype severity annotation
 frequencies aggregated by cell type. \textbf{b}, The composite severity
 score, averaged across all phenotypes associated with each cell type.}
 
@@ -3406,7 +3232,7 @@ score, averaged across all phenotypes associated with each cell type.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3418,9 +3244,9 @@ score, averaged across all phenotypes associated with each cell type.}
 
 }
 
-\subcaption{\label{fig-network-rniD08295A6-16DC-499D-85A8-8BA656E013A2}Causal
+\subcaption{\label{fig-network-rniD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Causal
 network of recurrent Neisserial infections (RNI) reveals multi-scale
-disease aetiology. RNI is a phenotype in seven different monogenic
+disease aetiology.} RNI is a phenotype in seven different monogenic
 diseases caused by disruptions to specific complement system genes. Four
 cell types were significantly associated with RNI. \textbf{a}, One can
 trace how genes causal for RNI (yellow boxes, bottom) mediate their
@@ -3444,7 +3270,7 @@ cell type.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3456,8 +3282,8 @@ cell type.}
 
 }
 
-\subcaption{\label{fig-therapy-filterD08295A6-16DC-499D-85A8-8BA656E013A2}Prioritised
-target filtering steps. This plot visualises the number of unique
+\subcaption{\label{fig-therapy-filterD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Prioritised
+target filtering steps.} This plot visualises the number of unique
 phenotype-cell type associations, cell types, genes, and phenotypes
 (\emph{y-axis}) at each filtering step (\emph{x-axis}) within the
 multi-scale therapeutic target prioritisation pipeline. Each step in the
@@ -3471,7 +3297,7 @@ filtering step.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3483,8 +3309,8 @@ filtering step.}
 
 }
 
-\subcaption{\label{fig-therapy-validate-allD08295A6-16DC-499D-85A8-8BA656E013A2}Validation
-of prioritised therapeutic targets. Proportion of existing all therapy
+\subcaption{\label{fig-therapy-validate-allD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Validation
+of prioritised therapeutic targets.} Proportion of existing all therapy
 targets (documented in the Therapeutic Target Database) recapitulated by
 our prioritisation pipeline.}
 
@@ -3494,7 +3320,7 @@ our prioritisation pipeline.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3506,9 +3332,9 @@ our prioritisation pipeline.}
 
 }
 
-\subcaption{\label{fig-animal-modelsD08295A6-16DC-499D-85A8-8BA656E013A2}Identification
-of translatable experimental models. Interspecies translatability of the
-top 200 human phenotypes nominated by the gene therapy prioritised
+\subcaption{\label{fig-animal-modelsD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Identification
+of translatable experimental models.} Interspecies translatability of
+the top 200 human phenotypes nominated by the gene therapy prioritised
 pipeline. Above, the combined ontological-genotypic similarity score
 (\(SIM_{og}\)) is displayed as the heatmap fill colour stratified by the
 model organism (\emph{x-axis}). An additional column (``n\_genes\_db1''
@@ -3522,7 +3348,7 @@ their ontological similarity in the HPO (\emph{y-axis}).}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}[H]
 
@@ -3534,9 +3360,9 @@ their ontological similarity in the HPO (\emph{y-axis}).}
 
 }
 
-\subcaption{\label{fig-therapy-examples2D08295A6-16DC-499D-85A8-8BA656E013A2}Causal
-multi-scale networks reveal cell type-specific therapeutic targets. Each
-disease (blue cylinders) is connected to its phenotype (purple
+\subcaption{\label{fig-therapy-examples2D08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Causal
+multi-scale networks reveal cell type-specific therapeutic targets.}
+Each disease (blue cylinders) is connected to its phenotype (purple
 cylinders) based on well-established clinical observations recorded
 within the HPO\textsuperscript{11}. Phenotypes are connected to cell
 types (orange circles) via association testing between weighted gene
@@ -3552,7 +3378,7 @@ arranged using the Sugiyama algorithm\textsuperscript{97}.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3568,21 +3394,22 @@ arranged using the Sugiyama algorithm\textsuperscript{97}.}
 
 }
 
-\caption{\label{fig-therapy-examples-supp}Example cell type-specific
-gene therapy targets for several severe phenotypes and their associated
-diseases. Each disease (blue cylinders) is connected to its phenotype
-(purple cylinders) based on well-established clinical observations
-recorded within the HPO\textsuperscript{11}.Phenotypes are connected to
-cell types (red circles) via association testing between weighted gene
-sets (FDR\textless0.05). Each cell type is connected to the prioritised
-gene targets (yellow boxes) based on the driver gene analysis.The
-thickness of the edges connecting the nodes represent the (mean)
-fold-change from the bootstrapped enrichment tests. Nodes were spatially
-arranged using the Sugiyama algorithm\textsuperscript{97}.}
+\caption{\label{fig-therapy-examples-supp}\textbf{Example cell
+type-specific gene therapy targets for phenotypes associated with
+respiratory failure-related diseases.} Each disease (blue cylinders) is
+connected to its phenotype (purple cylinders) based on well-established
+clinical observations recorded within the
+HPO\textsuperscript{11}.Phenotypes are connected to cell types (red
+circles) via association testing between weighted gene sets
+(FDR\textless0.05). Each cell type is connected to the prioritised gene
+targets (yellow boxes) based on the driver gene analysis.The thickness
+of the edges connecting the nodes represent the (mean) fold-change from
+the bootstrapped enrichment tests. Nodes were spatially arranged using
+the Sugiyama algorithm\textsuperscript{97}.}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3592,12 +3419,13 @@ arranged using the Sugiyama algorithm\textsuperscript{97}.}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-b}Amyotrophic lateral
-sclerosis}
+\caption{\label{fig-therapy-examples-supp-b}\textbf{Causal multi-scale
+network for phenotypes associated with Amyotrophic Lateral Sclerosis
+(ALS).}}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3607,11 +3435,12 @@ sclerosis}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-c}Dementia}
+\caption{\label{fig-therapy-examples-supp-c}\textbf{Causal multi-scale
+network for dementia phenotypes.}}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3621,11 +3450,12 @@ sclerosis}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-d}Lethal skeletal dysplasia}
+\caption{\label{fig-therapy-examples-supp-d}\textbf{Causal multi-scale
+network for the phenotype lethal skeletal dysplasia.}}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3635,11 +3465,12 @@ sclerosis}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-e}Small vessel disease}
+\caption{\label{fig-therapy-examples-supp-e}\textbf{Causal multi-scale
+network for phenotypes associated with small vessel disease.}}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3649,11 +3480,13 @@ sclerosis}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-f}Parkinson's disease}
+\caption{\label{fig-therapy-examples-supp-f}\textbf{Causal multi-scale
+network for phenotypes associated with various subtypes of Parkinson's
+disease.}}
 
 \end{figure}%
 
-\newpage{}
+\newpage
 
 \begin{figure}
 
@@ -3663,11 +3496,188 @@ sclerosis}
 
 }
 
-\caption{\label{fig-therapy-examples-supp-g}Alzheimer's disease}
+\caption{\label{fig-therapy-examples-supp-g}\textbf{Causal multi-scale
+network for phenotypes associated with various subtypes of Alzheimer's
+disease.}}
 
 \end{figure}%
 
 \subsubsection{Supplementary Tables}\label{supplementary-tables}
+
+\begin{table}
+
+\caption{\label{tbl-mappings}\textbf{Mappings between HPO phenotypes and
+other medical ontologies.} ``source'' indicates the medical ontology and
+``distance'' indicates the cross-ontology distance. ``source terms'' and
+``HPO terms'' indicates the number of unique IDs mapped from the source
+ontology and HPO respectively. ``mappings'' is the total number of
+cross-ontology mappings within a given distance. Some IDs may have more
+than one mapping for a given source due to many-to-many relationships.}
+
+\centering{
+
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+source & distance & source terms & HPO terms & mappings\\
+\hline
+ICD10 & 2 & 25 & 23 & 25\\
+\hline
+ICD10 & 3 & 839 & 876 & 1170\\
+\hline
+ICD9 & 1 & 21 & 21 & 21\\
+\hline
+ICD9 & 2 & 434 & 306 & 462\\
+\hline
+ICD9 & 3 & 1052 & 920 & 1816\\
+\hline
+SNOMED & 1 & 4413 & 3483 & 4654\\
+\hline
+SNOMED & 2 & 75 & 21 & 78\\
+\hline
+SNOMED & 3 & 1796 & 833 & 9605\\
+\hline
+UMLS & 1 & 12898 & 11601 & 13049\\
+\hline
+UMLS & 2 & 140 & 113 & 142\\
+\hline
+UMLS & 3 & 1871 & 1204 & 11021\\
+\hline
+\end{tabular}
+
+}
+
+\end{table}%
+
+\newpage
+
+\begin{table}
+
+\caption{\label{tbl-summary}\textbf{Summary statistics of enrichment
+results stratified by single-cell atlas.} Summary statistics at multiple
+levels (tests, cell types, phenotypes, diseases, cell types per
+phenotype, phenotypes per cell type) stratified by the single-cell atlas
+that was used as a cell type signature reference (Descartes Human or
+Human Cell Landscape).}
+
+\centering{
+
+\begin{tabular}[t]{l|l|l|l}
+\hline
+  & DescartesHuman & HumanCellLandscape & all\\
+\hline
+tests significant & 19,929 & 26,585 & 46,514\\
+\hline
+tests & 848,078 & 1,358,916 & 2,206,994\\
+\hline
+tests significant (\%) & 2.35 & 1.96 & 2.11\\
+\hline
+cell types significant & 77 & 124 & 201\\
+\hline
+cell types & 77 & 124 & 201\\
+\hline
+cell types significant (\%) & 100 & 100 & 100\\
+\hline
+phenotypes significant & 7,340 & 9,049 & 9,575\\
+\hline
+phenotypes tested & 11,014 & 10,959 & 11,028\\
+\hline
+phenotypes & 11,047 & 11,047 & 11,047\\
+\hline
+phenotypes significant (\%) & 66.4 & 81.9 & 86.7\\
+\hline
+diseases significant & 8,628 & 8,627 & 8,628\\
+\hline
+diseases & 8,631 & 8,631 & 8,631\\
+\hline
+diseases significant (\%) & 100 & 100 & 100\\
+\hline
+cell types per phenotype (mean) & 1.81 & 2.43 & 4.22\\
+\hline
+cell types per phenotype (median) & 1 & 2 & 3\\
+\hline
+cell types per phenotype (min) & 0 & 0 & 0\\
+\hline
+cell types per phenotype (max) & 31 & 28 & 59\\
+\hline
+phenotypes per cell type (mean) & 259 & 214 & 231\\
+\hline
+phenotypes per cell type (median) & 252 & 200 & 209\\
+\hline
+phenotypes per cell type (min) & 71 & 57 & 57\\
+\hline
+phenotypes per cell type (max) & 696 & 735 & 735\\
+\hline
+\end{tabular}
+
+}
+
+\end{table}%
+
+\newpage
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.6000}}@{}}
+
+\caption{\label{tbl-filters}\textbf{Description of each filtering step
+performed in the multi-scale therapeutic target prioritisation
+pipleline.} `level' indicates the biological scale at which the step is
+applied to.}
+
+\tabularnewline
+
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+level
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+step
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+description
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+NA & 1. start & NA \\
+Cell type & 2. q threshold & Keep only cell type-phenotype association
+results at q\textless=0.05. \\
+Phenotype & 3. keep descendants & Remove phenotypes belonging to a
+certain branch of the HPO, as defined by an ancestor term. \\
+Phenotype & 4. info content threshold & Keep only phenotypes with a
+minimum information criterion score (computed from the HPO). \\
+Phenotype & 5. severity threshold & Keep only phenotypes with mean
+Severity equal to or below the threshold. \\
+Symptom & 6. pheno frequency threshold & Keep only phenotypes with mean
+frequency equal to or above the threshold (i.e.~how frequently a
+phenotype is associated with any diseases in which it occurs). \\
+Gene & 7. symptom gene overlap & Ensure that genes nominated at the
+phenotype-level also appear in the genes overlapping at the cell
+type-specific symptom-level. \\
+Gene & 8. evidence score threshold & Remove genes that are below an
+aggregate phenotype-gene evidence score threshold. \\
+Gene & 9. add driver genes & Keep only genes that are driving the
+association with a given phenotype (inferred by the intersection of
+phenotype-associated genes and gene with high-specificity quantiles in
+the target cell type). \\
+Symptom & 10. symptom intersection threshold & Minimum proportion of
+genes overlapping between a symptom gene list (phenotype-associated
+genes in the context of a particular disease) and the phenotype-cell
+type association driver genes. \\
+Gene & 11. gene frequency threshold & Keep only genes at or above a
+certain mean frequency threshold (i.e.~how frequently a gene is
+associated with a given phenotype when observed within a disease). \\
+Phenotype & 12. prune ancestors & Remove redundant ancestral phenotypes
+when at least one of their descendants already exist. \\
+All & 13. top n & Only return the top N targets per variable group
+(specified with the ``group\_vars'' argument). For example, setting
+``group\_vars'' to ``hpo\_id'' and ``top\_n'' to 1 would only return one
+target (row) per phenotype ID after sorting. \\
+NA & 14. end & NA \\
+
+\end{longtable}
+
+\newpage
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2609}}
@@ -3676,11 +3686,11 @@ sclerosis}
   >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1801}}
   >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1180}}@{}}
 
-\caption{\label{tbl-ontarget-celltypes}Cross-ontology mappings between
-HPO and CL branches. The last two columns represent the number of cell
-types that were overrepresented in the on-target HPO branch and the
-total number of cell types in that branch. A disaggregated version of
-this table with all descendant cell type names is available in
+\caption{\label{tbl-ontarget-celltypes}\textbf{Cross-ontology mappings
+between HPO and CL branches.} The last two columns represent the number
+of cell types that were overrepresented in the on-target HPO branch and
+the total number of cell types in that branch. A disaggregated version
+of this table with all descendant cell type names is available in
 Table~\ref{tbl-celltypes}.}
 
 \tabularnewline
@@ -3716,8 +3726,8 @@ cell/epithelial cell of lung & 3 & 3 \\
 
 \begin{longtable}[]{@{}llr@{}}
 
-\caption{\label{tbl-gencc}Encodings for GenCC evidence scores. Assigned
-numeric values for the GenCC evidence levels.}
+\caption{\label{tbl-gencc}\textbf{Encodings for GenCC evidence scores.}
+Assigned numeric values for the GenCC evidence levels.}
 
 \tabularnewline
 
@@ -3738,16 +3748,16 @@ GENCC:100006 & Refuted Evidence & 0 \\
 
 \end{longtable}
 
-\newpage{}
+\newpage
 
 \begin{table}
 
-\caption{\label{tbl-celltypes}On-target cell types for each Human
-Phenotype Ontology (HPO) ancestral branch. Cell type-phenotype branch
-pairings were manually curated by comparing high-level HPO terms to
-terms within the Cell Ontology (CL). Each HPO branch is shown as bolded
-row dividers. Ancestral CL branch names are shown in the first column,
-along with the specific CL names and IDs.}
+\caption{\label{tbl-celltypes}\textbf{On-target cell types for each
+Human Phenotype Ontology (HPO) ancestral branch.} Cell type-phenotype
+branch pairings were manually curated by comparing high-level HPO terms
+to terms within the Cell Ontology (CL). Each HPO branch is shown as
+bolded row dividers. Ancestral CL branch names are shown in the first
+column, along with the specific CL names and IDs.}
 
 \centering{
 
@@ -3884,14 +3894,14 @@ CL branch & CL name & CL ID\\
 
 \end{table}%
 
-\newpage{}
+\newpage
 
 \begin{table}
 
-\caption{\label{tbl-hpo_enrich}Some HPO phenotype categories or more
-biased towards foetal- or adult- versions of the same cell type. We took
-the top 50 phenotypes with the greatest bias towards foetal-cell type
-associations (``Foetal-biased'') and the greatest bias towards
+\caption{\label{tbl-hpo_enrich}\textbf{Some HPO phenotype categories or
+more biased towards foetal- or adult- versions of the same cell type.}
+We took the top 50 phenotypes with the greatest bias towards foetal-cell
+type associations (``Foetal-biased'') and the greatest bias towards
 adult-cell type associations (``Adult-biased'') and fed each list of
 terms into ontological enrichment tests to get a summary of the
 representative HPO branches for each group. The phenotypes most biased
@@ -3956,16 +3966,16 @@ term & name & FDR & log2-fold enrichment & depth\\
 
 \end{table}%
 
-\newpage{}
+\newpage
 
 \begin{table}
 
-\caption{\label{tbl-foetal_examples}Examples of specific phenotypes that
-are most biased towards associations with only the foetal versions of
-cell types (``Foetal-biased'') and those biased towards the adult
-versions of cell types (``Adult-biased''). ``p-value difference'' is the
-difference in the association p-values between the foetal and adult
-version of the equivalent cell type
+\caption{\label{tbl-foetal_examples}\textbf{Examples of specific
+phenotypes that are most biased towards associations with only the
+foetal versions of cell types (``Foetal-biased'') and those biased
+towards the adult versions of cell types (``Adult-biased'').} ``p-value
+difference'' is the difference in the association p-values between the
+foetal and adult version of the equivalent cell type
 (\(\text{foetal-adult bias}: p_{adult} - p_{foetal} = \Delta p \in [-1,1]\)).}
 
 \centering{

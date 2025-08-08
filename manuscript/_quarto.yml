@@ -29,13 +29,22 @@ format:
     margin-right: 1in
     margin-top: 1in
     margin-bottom: 1in
-    dpi: 200
+    dpi: 100
     execute:
         warning: false
     header-includes:
       - \usepackage{annotate-equations}
       - \usepackage{lineno}
       - \linenumbers
+    # template-partials:
+    #     - "_extensions/quarto-journals/agu/partials/title.tex"
+    #     - "_extensions/quarto-journals/agu/partials/_authors.tex"
+    #     - "_extensions/quarto-journals/agu/partials/before-body.tex"
+    #     - "_extensions/quarto-journals/agu/partials/_affiliations.tex"
+    #     - "_extensions/quarto-journals/agu/partials/_corresponding-author.tex"
+    # format-resources:
+    #   - _extensions/quarto-journals/agu/agujournal2019.cls
+    #   - _extensions/quarto-journals/agu/trackchanges.sty
   # nature-pdf:
   #   execute:
   #     message: false
