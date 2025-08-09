@@ -142,6 +142,7 @@
 \usepackage{makecell}
 \usepackage{xcolor}
 \usepackage{annotate-equations}
+\usepackage{annotate-equations}
 \usepackage{lineno}
 \linenumbers
 \makeatletter
@@ -207,7 +208,7 @@ towards the systematic treatment of all rare diseases}
 \author{Brian M. Schilder \and Kitty B. Murphy \and Hiranyamaya
 Dash \and Yichun Zhang \and Robert Gordon-Smith \and Jai
 Chapman \and Momoko Otani \and Nathan G. Skene}
-\date{2025-08-07}
+\date{2025-08-08}
 
 \begin{document}
 \maketitle
@@ -227,18 +228,18 @@ known genetic cause by leveraging the Human Phenotype Ontology and
 transcriptomic single-cell atlases of the entire human body from
 embryonic, foetal, and adult samples. In total we identified significant
 associations between 201 cell types and 9,575/11,028 (86.7\%) unique
-phenotypes across 8,628 RDs. This greatly the collective knowledge of RD
-phenotype-cell type mechanisms. Next, we sought to systematically
+phenotypes across 8,628 RDs, greatly increasing the collective knowledge
+of RD phenotype-cell type mechanisms. Next, we sought to systematically
 identify phenotypes in which the application of these results would have
 the greatest clinical impact based on metrics of severity
 (e.g.~lethality, motor/mental impairment) and compatibility with gene
-therapy (e.g.~filtering out physical malformations). Furthermore, we
-have made these results entirely reproducible and freely accessible to
-the global community to maximise their impact, including an interactive
-web portal (\url{https://neurogenomics-ukdri.dsi.ic.ac.uk/}). To
-summarise, this work represents a significant step forward in the
-mission to treat patients across an extremely diverse spectrum of
-serious RDs.
+therapy (e.g.~cell type specificity, postnatal treatability).
+Furthermore, we have made these results entirely reproducible and freely
+accessible to the global community to maximise their impact, including
+an interactive web portal
+(\url{https://neurogenomics-ukdri.dsi.ic.ac.uk/}). To summarise, this
+work represents a significant step forward in the mission to treat
+patients across an extremely diverse spectrum of serious RDs.
 
 \subsection{Introduction}\label{sec-introduction}
 
@@ -1148,7 +1149,7 @@ To determine whether the genes prioritised by our therapeutic targets
 pipeline were plausible, we checked what percentage of gene therapy
 targets we recapitulated. Data on therapeutic approval status was
 gathered from the Therapeutic Target Database (TTD; release
-2025-08-07)\textsuperscript{60}. Overall, we prioritised \(87\)\% (120
+2025-08-08)\textsuperscript{60}. Overall, we prioritised \(87\)\% (120
 total) of all non-failed existing gene therapy targets (ie. those which
 are currently approved, investigative, or undergoing clinical trials). A
 hypergeometric test confirmed that our prioritised targets were
@@ -2114,7 +2115,7 @@ To assess whether our prioritised therapeutic targets were likely to be
 viable, we computed the overlap between our gene targets and those of
 existing gene therapies at various stages of clinical development
 (Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
-therapy from the Therapeutic Target Database (TTD; release 2025-08-07)
+therapy from the Therapeutic Target Database (TTD; release 2025-08-08)
 and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
 gene symbols using the \texttt{orthogene} R package. We stratified our
 overlap metrics according to whether the therapies had failed

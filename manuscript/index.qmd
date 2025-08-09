@@ -128,8 +128,10 @@ editor:
   markdown:
     wrap: sentence
 format:
-  pdf:
-    css: styles.css 
+  pdf: 
+    include-in-header: 
+      text: |
+        \usepackage{annotate-equations}
 ---
 
 ```{r setup, cache=FALSE, include=TRUE}
@@ -203,7 +205,7 @@ kg_hp <- validate_associations_mkg_out$kg[grepl("^HP:",from)]
 Rare diseases (RDs) are an extremely heterogeneous and underserved category of medical conditions.
 While the majority of RDs are strongly genetic, it remains largely unknown via which physiological mechanisms genetics cause RD.
 Therefore, we sought to systematically characterise the cell type-specific mechanisms underlying all RD phenotypes with a known genetic cause by leveraging the Human Phenotype Ontology and transcriptomic single-cell atlases of the entire human body from embryonic, foetal, and adult samples.
-In total we identified significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) unique phenotypes across `r  res_summ_all[["diseases significant"]]` RDs. This greatly the collective knowledge of RD phenotype-cell type mechanisms. Next, we sought to systematically identify phenotypes in which the application of these results would have the greatest clinical impact based on metrics of severity (e.g. lethality, motor/mental impairment) and compatibility with gene therapy (e.g. filtering out physical malformations). Furthermore, we have made these results entirely reproducible and freely accessible to the global community to maximise their impact, including an interactive web portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>). To summarise, this work represents a significant step forward in the mission to treat patients across an extremely diverse spectrum of serious RDs.
+In total we identified significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) unique phenotypes across `r  res_summ_all[["diseases significant"]]` RDs, greatly increasing the collective knowledge of RD phenotype-cell type mechanisms. Next, we sought to systematically identify phenotypes in which the application of these results would have the greatest clinical impact based on metrics of severity (e.g. lethality, motor/mental impairment) and compatibility with gene therapy (e.g. cell type specificity, postnatal treatability). Furthermore, we have made these results entirely reproducible and freely accessible to the global community to maximise their impact, including an interactive web portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>). To summarise, this work represents a significant step forward in the mission to treat patients across an extremely diverse spectrum of serious RDs.
 
 ## Introduction {#sec-introduction}
 

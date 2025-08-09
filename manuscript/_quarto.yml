@@ -36,20 +36,22 @@ format:
       - \usepackage{annotate-equations}
       - \usepackage{lineno}
       - \linenumbers
-    # template-partials:
-    #     - "_extensions/quarto-journals/agu/partials/title.tex"
-    #     - "_extensions/quarto-journals/agu/partials/_authors.tex"
-    #     - "_extensions/quarto-journals/agu/partials/before-body.tex"
-    #     - "_extensions/quarto-journals/agu/partials/_affiliations.tex"
-    #     - "_extensions/quarto-journals/agu/partials/_corresponding-author.tex"
-    # format-resources:
-    #   - _extensions/quarto-journals/agu/agujournal2019.cls
-    #   - _extensions/quarto-journals/agu/trackchanges.sty
+  # agu-pdf:
+  #   dpi: 200
+  #   notebook-links: false
+  #   header-includes:
+  #     - \usepackage{annotate-equations}
   # nature-pdf:
   #   execute:
   #     message: false
   #     warning: false
   #   header-includes:
   #     - \usepackage{annotate-equations}
+
+
+
+
+
+
 
 
