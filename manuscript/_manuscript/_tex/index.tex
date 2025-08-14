@@ -208,7 +208,7 @@ towards the systematic treatment of all rare diseases}
 \author{Brian M. Schilder \and Kitty B. Murphy \and Hiranyamaya
 Dash \and Yichun Zhang \and Robert Gordon-Smith \and Jai
 Chapman \and Momoko Otani \and Nathan G. Skene}
-\date{2025-08-10}
+\date{2025-08-13}
 
 \begin{document}
 \maketitle
@@ -656,12 +656,10 @@ as some interventions (e.g.~gene therapies) may be ineffective once
 developmental defects occur.\\
 In the DescartesHuman dataset all cells were foetal, while the Human
 Cell Landscape included both embryonic/foetal (\(29\)\% of cell types),
-and adult tissues
-(\texttt{r}data.table::data.table(plot\_congenital\_annotations\_out\(data)[,list(perc=mean(perc)),by="fetal_celltype"][fetal_celltype==FALSE]\)perc`\%
-of cell types). Some cell types exist in both stages
-(e.g.~chondrocytes), while others are foetal-specific (e.g.~neural crest
-cells). Congenital phenotypes (according to our severity annotations)
-were strongly associated with foetal cell types
+and adult tissues (\(71\)\% of cell types). Some cell types exist in
+both stages (e.g.~chondrocytes), while others are foetal-specific
+(e.g.~neural crest cells). Congenital phenotypes (according to our
+severity annotations) were strongly associated with foetal cell types
 (\(p=\)\(4.7 \times 10^{-261}\), \(\chi^2=\)\(1.2 \times 10^{3}\)),
 consistent with their developmental origins.
 
@@ -790,7 +788,7 @@ To determine whether the genes prioritised by our therapeutic targets
 pipeline were plausible, we checked what percentage of gene therapy
 targets we recapitulated. Data on therapeutic approval status was
 gathered from the Therapeutic Target Database (TTD; release
-2025-08-10)\textsuperscript{38}. Overall, we prioritised \(87\)\% (120
+2025-08-13)\textsuperscript{38}. Overall, we prioritised \(87\)\% (120
 total) of all non-failed existing gene therapy targets (ie. those which
 are currently approved, investigative, or undergoing clinical trials). A
 hypergeometric test confirmed that our prioritised targets were
@@ -1594,7 +1592,7 @@ To assess whether our prioritised therapeutic targets were likely to be
 viable, we computed the overlap between our gene targets and those of
 existing gene therapies at various stages of clinical development
 (Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
-therapy from the Therapeutic Target Database (TTD; release 2025-08-10)
+therapy from the Therapeutic Target Database (TTD; release 2025-08-13)
 and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
 gene symbols using the \texttt{orthogene} R package. We stratified our
 overlap metrics according to whether the therapies had failed
