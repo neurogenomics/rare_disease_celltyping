@@ -1,5 +1,6 @@
 project:
   type: manuscript
+  execute-dir: project
 manuscript:
   article: index.qmd
 # notebooks:
