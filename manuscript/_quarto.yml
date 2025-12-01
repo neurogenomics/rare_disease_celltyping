@@ -14,9 +14,11 @@ format:
   #   toc: true
   #   comments:
   #     hypothesis: true
-  # docx:
-  #   toc: false
-  #   notebook-links: false
+  docx:
+    toc: false
+    notebook-links: false
+    execute:
+        warning: false
   # agu-pdf:
   #   execute:
   #       message: false
@@ -37,6 +39,8 @@ format:
       - \usepackage{annotate-equations}
       - \usepackage{lineno}
       - \linenumbers
+    include-in-header:
+      - fixes.tex
   # agu-pdf:
   #   dpi: 200
   #   notebook-links: false

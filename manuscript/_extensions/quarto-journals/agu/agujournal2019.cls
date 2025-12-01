@@ -783,23 +783,31 @@ Corresponding author: #1,
   %% Test to see if it a figure or table: \ifx\@captype\xfigure
   %% If figure, \vskip\belowcaptionskip
 
+% \long\def\@makecaption#1#2{%
+% {\small
+% \ifx\@captype\xfigure
+% \vskip\abovecaptionskip\fi
+% {\ifturnofflinenums\else\ifnumlines\internallinenumbers\fi\fi
+%  \sbox\@tempboxa{\bf#1.\quad \rm #2}%
+%   \ifdim \wd\@tempboxa >.9\hsize
+% \bf #1.\quad\rm\relax #2\par
+%   \else
+% {\centering
+%  \bf #1.\rm\quad #2
+% \vskip1sp}
+%   \fi}
+% %%
+% \ifx\@captype\xfigure\else
+%   \vskip\belowcaptionskip\fi
+% }}
+
 \long\def\@makecaption#1#2{%
-{\small
-\ifx\@captype\xfigure
-\vskip\abovecaptionskip\fi
-{\ifturnofflinenums\else\ifnumlines\internallinenumbers\fi\fi
- \sbox\@tempboxa{\bf#1.\quad \rm #2}%
-  \ifdim \wd\@tempboxa >.9\hsize
-\bf #1.\quad\rm\relax #2\par
-  \else
-{\centering
- \bf #1.\rm\quad #2
-\vskip1sp}
-  \fi}
-%%
-\ifx\@captype\xfigure\else
-  \vskip\belowcaptionskip\fi
-}}
+  \small
+  \vskip\abovecaptionskip
+  \noindent\textbf{#1\ |} #2\par
+  \vskip\belowcaptionskip
+}
+
 
 
   %% Code to get text in tables to extend all the way to left and right
