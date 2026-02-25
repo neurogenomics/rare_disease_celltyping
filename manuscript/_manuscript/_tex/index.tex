@@ -1,26 +1,28 @@
 % Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
 ]{article}
-
+\usepackage{xcolor}
+\usepackage[lmargin=1in,rmargin=1in,tmargin=1in,bmargin=1in]{geometry}
 \usepackage{amsmath,amssymb}
-\usepackage{setspace}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 \usepackage{lmodern}
-\ifPDFTeX\else  
-    % xetex/luatex font selection
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -28,6 +30,7 @@
   \usepackage[]{microtype}
   \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+\usepackage{setspace}
 \makeatletter
 \@ifundefined{KOMAClassName}{% if non-KOMA class
   \IfFileExists{parskip.sty}{%
@@ -38,10 +41,6 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{xcolor}
-\usepackage[lmargin=1in,rmargin=1in,tmargin=1in,bmargin=1in]{geometry}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 % Make \paragraph and \subparagraph free-standing
 \makeatletter
 \ifx\paragraph\undefined\else
@@ -67,8 +66,7 @@
 \makeatother
 
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -93,6 +91,8 @@
 % Set default figure placement to htbp
 \def\fps@figure{htbp}
 \makeatother
+
+
 % definitions for citeproc citations
 \NewDocumentCommand\citeproctext{}{}
 \NewDocumentCommand\citeproc{mm}{%
@@ -126,6 +126,18 @@
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
 
 \usepackage{annotate-equations}
 
@@ -217,11 +229,9 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-
 \usepackage{bookmark}
-
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Cell type-specific contextualisation of the human phenome: towards the systematic treatment of all rare diseases},
   pdfauthor={Brian M. Schilder; Kitty B. Murphy; Hiranyamaya Dash; Yichun Zhang; Robert Gordon-Smith; Jai Chapman; Momoko Otani; Nathan G. Skene},
@@ -239,8 +249,7 @@ towards the systematic treatment of all rare diseases}
 \author{Brian M. Schilder \and Kitty B. Murphy \and Hiranyamaya
 Dash \and Yichun Zhang \and Robert Gordon-Smith \and Jai
 Chapman \and Momoko Otani \and Nathan G. Skene}
-\date{2025-11-30}
-
+\date{2026-02-24}
 \begin{document}
 \maketitle
 
@@ -940,7 +949,7 @@ To determine whether the genes prioritised by our therapeutic targets
 pipeline were plausible, we checked what percentage of existing gene
 therapy targets we recapitulated. Data on therapeutic approval status
 was gathered from the Therapeutic Target Database (TTD; release
-2025-11-30)\textsuperscript{43}. Overall, we prioritised \(87\)\% (120
+2026-02-25)\textsuperscript{43}. Overall, we prioritised \(87\)\% (120
 total) of all non-failed existing gene therapy targets (ie. those which
 are currently approved, investigative, or undergoing clinical trials). A
 hypergeometric test confirmed that our prioritised targets were
@@ -1165,16 +1174,25 @@ Alzheimer's disease, pinpointing links between specific phenotypes
 
 Current limitations of our study include missing certain rare cell
 subtypes and states (e.g.~immune cell responses, diseased states, aging)
-and incomplete knowledge of gene--phenotype associations. With the
-expectation that data will continue to improve over time, our pipeline
-is fully containerised and documented for end-to-end reproducibility.
-Comprehensive, ontology-aligned frameworks such as ours enable
-discovery, diagnosis, and basket trial design for shared molecular
-etiologies across many diseases\textsuperscript{71}. Furthermore, we
-invite collaborations to validate and translate these predictions, and
-have publicly released all results via R packages and the Rare Disease
-Celltyping Portal (\url{https://neurogenomics-ukdri.dsi.ic.ac.uk/}) to
-support broad access for researchers, clinicians, and patients.
+and incomplete knowledge of gene--phenotype associations. A related
+concern is that our statistical power to detect cell type associations
+may be diminished in phenotypes with very few gene associations. Fewer
+genes decreases variance explained with respect to the denser cell type
+specificity vectors, in turn decreasing power. The remaining
+associations for the most specific phenotypes therefore reflect cases
+where the effect size is sufficiently strong to overcome the reduced
+variance (Fig.~\ref{fig-ontology-lvl}). Therefore, weaker cell type
+associations with highly monogenic phenotypes may be missed by our
+analyses. With the expectation that data will continue to improve over
+time, our pipeline is fully containerised and documented for end-to-end
+reproducibility. Comprehensive, ontology-aligned frameworks such as ours
+enable discovery, diagnosis, and basket trial design for shared
+molecular etiologies across many diseases\textsuperscript{71}.
+Furthermore, we invite collaborations to validate and translate these
+predictions, and have publicly released all results via R packages and
+the Rare Disease Celltyping Portal
+(\url{https://neurogenomics-ukdri.dsi.ic.ac.uk/}) to support broad
+access for researchers, clinicians, and patients.
 
 In summary, we present a scalable, cost-effective, and reproducible
 method for phenome-wide, cell type--specific mechanism prediction in
@@ -1209,7 +1227,7 @@ supported, essentially decreasing the signal-to-noise
 ratio\textsuperscript{75}.
 
 Therefore we imported data from the Gene Curation Coalition
-(GenCC)\textsuperscript{76,77}, which (as of 2025-08-02) 24,112 evidence
+(GenCC)\textsuperscript{76,77}, which (as of 2025-11-30) 24,124 evidence
 scores across 7,566 diseases and 5,533 genes. Evidence scores are
 defined by GenCC using a standardised ordinal rubric which we then
 encoded as a semi-quantitative score ranging from 0 (no evidence of
@@ -1287,11 +1305,11 @@ diseases for which that phenotype is a symptom. This resulted in a final
   \text{if } \eqnmarkbox[Cerulean]{n3c}{D_i G_j} 
     \notin\eqnmarkbox[blue]{n4b}{A}
  \end{cases}
-\]
 \annotate[yshift=1em]{left}{n1}{Tensor of Phenotype-by-Gene \\evidence scores}
 \annotate[yshift=2.5em]{right}{n3a,n3b,n3c}{Tensor of Disease-by-Gene \\evidence scores}
 \annotate[yshift=-2.5em]{below,left}{n4a,n4b}{Disease-by-Gene-by-Phenotype \\relationships}
 \annotate[yshift=1em, xshift=-1em]{right}{n5}{Phenotype}
+\]
 
 \hfill\break
 
@@ -1359,12 +1377,12 @@ atlases and can be summarised as:
         N_c  
       }
     } 
-   ) 
+   )
   }
-\end{equation*}
 \annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix}
 \annotate[yshift=2em]{left}{s3a,s3b}{Compute mean expression of each gene per cell type}
 \annotate{below,left}{s6}{Compute row sums of \\mean gene-by-cell type matrix}
+\end{equation*}
 
 \hfill\break
 
@@ -1491,11 +1509,11 @@ follows:
      \eqnmarkbox[Chartreuse3]{g1}{|G_{d \cap p \cap c} |}
     }{
        \eqnmarkbox[Emerald]{g2}{|G_{dp}|}} 
-  \geq \eqnmarkbox[SeaGreen]{g3}{0.25} 
-\end{equation*}
+  \geq \eqnmarkbox[SeaGreen]{g3}{0.25}
 \annotate[yshift=1em]{left}{g1}{Intersect between \\symptom genes ($G_{dp}$) and driver genes ($G_{pc}$)}
 \annotate[yshift=-1em]{below,left}{g2}{Symptom genes \\(i.e. genes annotated to a phenotype\\ via a specific disease)}
 \annotate[yshift=-1em]{below,right}{g3}{Minimum proportion of overlap \\between $G_{dpc}$ and $G_{dp}$}
+\end{equation*}
 
 \hfill\break
 \hfill\break
@@ -1781,12 +1799,12 @@ Let us denote:
     }{
     \eqnmarkbox[Tan]{nss5}{\sum_{j=1}^{m}(\max\{F_j\} \times W_j)} 
   } \times 100
-\end{equation*}
 \annotate[yshift=1em]{left}{nss}{Normalised Severity Score \\for each phenotype}
 \annotate[yshift=3em]{left}{nss2}{Sum of weighted annotation values \\across all metrics}
 \annotate[yshift=3em]{right}{nss3}{Numerically encoded annotation value \\of metric $j$ for phenotype $p$}
 \annotate[yshift=1em]{right}{nss4}{Weight for metric $j$}
 \annotate[yshift=-1em]{below,right}{nss5}{Theoretical maximum severity score}
+\end{equation*}
 
 \hfill\break
 
@@ -1915,7 +1933,7 @@ To assess whether our prioritised therapeutic targets were likely to be
 viable, we computed the overlap between our gene targets and those of
 existing gene therapies at various stages of clinical development
 (Fig.~\ref{fig-therapy-validate}). Gene targets were obtained for each
-therapy from the Therapeutic Target Database (TTD; release 2025-11-30)
+therapy from the Therapeutic Target Database (TTD; release 2026-02-25)
 and mapped onto standardised HUGO Gene Nomenclature Committee (HGNC)
 gene symbols using the \texttt{orthogene} R package. We stratified our
 overlap metrics according to whether the therapies had failed
@@ -2832,20 +2850,20 @@ translatability}\label{experimental-model-translatability-1}
 We computed interspecies translatability scores using a combination of
 both ontological (\(SIM_{o}\)) and genotypic (\(SIM_{g}\)) similarity
 relative to each homologous human phenotype and its associated genes
-Fig.~\ref{fig-animal-models}. In total, we mapped 1,221 non-human
+Fig.~\ref{fig-animal-models}. In total, we mapped 281 non-human
 phenotypes (in \emph{Caenorhabditis elegans}, \emph{Danio rerio},
-\emph{Mus musculus}, \emph{Rattus norvegicus}) to 3,319 homologous human
+\emph{Mus musculus}, \emph{Rattus norvegicus}) to 375 homologous human
 phenotypes. Amongst the 5,252 phenotype within our prioritised therapy
-targets, 1,788 had viable animal models in at least on non-human
-species. Per species, the number of homologous phenotypes was: \emph{Mus
-musculus} (n=1705), \emph{Danio rerio} (n=244), \emph{Rattus norvegicus}
-(n=85), \emph{Caenorhabditis elegans} (n=23). Amongst our prioritised
+targets, 154 had viable animal models in at least on non-human species.
+Per species, the number of homologous phenotypes was: \emph{Mus
+musculus} (n=146), \emph{Danio rerio} (n=29), \emph{Rattus norvegicus}
+(n=5), \emph{Caenorhabditis elegans} (n=1). Amongst our prioritised
 targets with a GPT-4 severity score of \textgreater10, the phenotypes
-with the greatest animal model similarity were ``Rudimentary to absent
-tibiae'' (\(SIM_{og}=1\)), ``Hypoglutaminemia'' (\(SIM_{og}=1\)),
-``Bilateral ulnar hypoplasia'' (\(SIM_{og}=0.99\)), ``Disproportionate
-shortening of the tibia'' (\(SIM_{og}=0.99\)), ``Acrobrachycephaly''
-(\(SIM_{og}=0.98\)).
+with the greatest animal model similarity were `Odontodysplasia'
+(\(SIM_{og}=0.97\)), `Wide-cupped costochondral junctions'
+(\(SIM_{og}=0.93\)), `Short tubular bones of the hand'
+(\(SIM_{og}=0.85\)), `Megacystis' (\(SIM_{og}=0.76\)), `Cryptophthalmos'
+(\(SIM_{og}=0.71\)).
 
 \subsubsection{Supplementary Figures}\label{supplementary-figures}
 
@@ -3048,7 +3066,7 @@ our prioritisation pipeline.}
 
 \subcaption{\label{fig-animal-modelsD08295A6-16DC-499D-85A8-8BA656E013A2}\textbf{Identification
 of translatable experimental models.} Interspecies translatability of
-the top 200 human phenotypes nominated by the gene therapy prioritised
+the top human phenotypes nominated by the gene therapy prioritised
 pipeline. Above, the combined ontological-genotypic similarity score
 (\(SIM_{og}\)) is displayed as the heatmap fill colour stratified by the
 model organism (\emph{x-axis}). An additional column (``n\_genes\_db1''

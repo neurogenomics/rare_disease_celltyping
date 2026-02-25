@@ -1307,6 +1307,7 @@ We recovered `r ttd_nonfailed_val`% of active gene therapies, confirming strong 
 Highlighted cases include macrophage-driven phenotypes in Tay-Sachs, spinocerebellar ataxia, and Alzheimer’s disease, pinpointing links between specific phenotypes (e.g. neurofibrillary tangles) and causal cell types.
 
 Current limitations of our study include missing certain rare cell subtypes and states (e.g. immune cell responses, diseased states, aging) and incomplete knowledge of gene–phenotype associations.
+A related concern is that our statistical power to detect cell type associations may be diminished in phenotypes with very few gene associations. Fewer genes decreases variance explained with respect to the denser cell type specificity vectors, in turn decreasing power. The remaining associations for the most specific phenotypes therefore reflect cases where the effect size is sufficiently strong to overcome the reduced variance ([Fig. @fig-ontology-lvl]). Therefore, weaker cell type associations with highly monogenic phenotypes may be missed by our analyses. 
 With the expectation that data will continue to improve over time, our pipeline is fully containerised and documented for end-to-end reproducibility.
 Comprehensive, ontology-aligned frameworks such as ours enable discovery, diagnosis, and basket trial design for shared molecular etiologies across many diseases [@Zanello2023-zd].
 Furthermore, we invite collaborations to validate and translate these predictions, and have publicly released all results via R packages and the Rare Disease Celltyping Portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>) to support broad access for researchers, clinicians, and patients.
@@ -1400,7 +1401,11 @@ $$
   \text{if } \eqnmarkbox[Cerulean]{n3c}{D_i G_j} 
     \notin\eqnmarkbox[blue]{n4b}{A}
  \end{cases}
-$$ \annotate[yshift=1em]{left}{n1}{Tensor of Phenotype-by-Gene \\evidence scores} \annotate[yshift=2.5em]{right}{n3a,n3b,n3c}{Tensor of Disease-by-Gene \\evidence scores} \annotate[yshift=-2.5em]{below,left}{n4a,n4b}{Disease-by-Gene-by-Phenotype \\relationships} \annotate[yshift=1em, xshift=-1em]{right}{n5}{Phenotype}
+\annotate[yshift=1em]{left}{n1}{Tensor of Phenotype-by-Gene \\evidence scores}
+\annotate[yshift=2.5em]{right}{n3a,n3b,n3c}{Tensor of Disease-by-Gene \\evidence scores}
+\annotate[yshift=-2.5em]{below,left}{n4a,n4b}{Disease-by-Gene-by-Phenotype \\relationships}
+\annotate[yshift=1em, xshift=-1em]{right}{n5}{Phenotype}
+$$
 
 \
 
@@ -1455,9 +1460,12 @@ This procedure was repeated separately for each of the single-cell atlases and c
         N_c  
       }
     } 
-   ) 
+   )
   }
-\end{equation*} \annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix} \annotate[yshift=2em]{left}{s3a,s3b}{Compute mean expression of each gene per cell type} \annotate{below,left}{s6}{Compute row sums of \\mean gene-by-cell type matrix}
+\annotate[yshift=1em]{left}{s1}{Gene-by-cell type specificity matrix}
+\annotate[yshift=2em]{left}{s3a,s3b}{Compute mean expression of each gene per cell type}
+\annotate{below,left}{s6}{Compute row sums of \\mean gene-by-cell type matrix}
+\end{equation*}
 :::
 
 \
@@ -1546,8 +1554,11 @@ This procedure was repeated for all phenotype-cell type-disease triads, which ca
      \eqnmarkbox[Chartreuse3]{g1}{|G_{d \cap p \cap c} |}
     }{
        \eqnmarkbox[Emerald]{g2}{|G_{dp}|}} 
-  \geq \eqnmarkbox[SeaGreen]{g3}{0.25} 
-\end{equation*} \annotate[yshift=1em]{left}{g1}{Intersect between \\symptom genes ($G_{dp}$) and driver genes ($G_{pc}$)} \annotate[yshift=-1em]{below,left}{g2}{Symptom genes \\(i.e. genes annotated to a phenotype\\ via a specific disease)} \annotate[yshift=-1em]{below,right}{g3}{Minimum proportion of overlap \\between $G_{dpc}$ and $G_{dp}$}
+  \geq \eqnmarkbox[SeaGreen]{g3}{0.25}
+\annotate[yshift=1em]{left}{g1}{Intersect between \\symptom genes ($G_{dp}$) and driver genes ($G_{pc}$)}
+\annotate[yshift=-1em]{below,left}{g2}{Symptom genes \\(i.e. genes annotated to a phenotype\\ via a specific disease)}
+\annotate[yshift=-1em]{below,right}{g3}{Minimum proportion of overlap \\between $G_{dpc}$ and $G_{dp}$}
+\end{equation*}
 :::
 
 \
@@ -1728,7 +1739,12 @@ Let us denote:
     }{
     \eqnmarkbox[Tan]{nss5}{\sum_{j=1}^{m}(\max\{F_j\} \times W_j)} 
   } \times 100
-\end{equation*} \annotate[yshift=1em]{left}{nss}{Normalised Severity Score \\for each phenotype} \annotate[yshift=3em]{left}{nss2}{Sum of weighted annotation values \\across all metrics} \annotate[yshift=3em]{right}{nss3}{Numerically encoded annotation value \\of metric $j$ for phenotype $p$} \annotate[yshift=1em]{right}{nss4}{Weight for metric $j$} \annotate[yshift=-1em]{below,right}{nss5}{Theoretical maximum severity score}
+\annotate[yshift=1em]{left}{nss}{Normalised Severity Score \\for each phenotype}
+\annotate[yshift=3em]{left}{nss2}{Sum of weighted annotation values \\across all metrics}
+\annotate[yshift=3em]{right}{nss3}{Numerically encoded annotation value \\of metric $j$ for phenotype $p$}
+\annotate[yshift=1em]{right}{nss4}{Weight for metric $j$}
+\annotate[yshift=-1em]{below,right}{nss5}{Theoretical maximum severity score}
+\end{equation*}
 :::
 
 \
@@ -2101,13 +2117,13 @@ ttd_check_all_out$plot
 ::: {#fig-animal-models}
 ```{r fig-animal-models}
 #| label: fig-animal-models
-#| fig-cap:  __Identification of translatable experimental models.__ Interspecies translatability of the top 200 human phenotypes nominated by the gene therapy prioritised pipeline. Above, the combined ontological-genotypic similarity score ($SIM_{og}$) is displayed as the heatmap fill colour stratified by the model organism (*x-axis*). An additional column ("n_genes_db1" on the far left) displays the total number of unique genes annotated to the phenotypic within the HPO. Phenotypes are clustered according to their ontological similarity in the HPO (*y-axis*).
+#| fig-cap:  __Identification of translatable experimental models.__ Interspecies translatability of the top human phenotypes nominated by the gene therapy prioritised pipeline. Above, the combined ontological-genotypic similarity score ($SIM_{og}$) is displayed as the heatmap fill colour stratified by the model organism (*x-axis*). An additional column ("n_genes_db1" on the far left) displays the total number of unique genes annotated to the phenotypic within the HPO. Phenotypes are clustered according to their ontological similarity in the HPO (*y-axis*).
 #| fig-height: 12
 #| fig-width: 10
 
 library(ggplot2) # <-- Necessary due to bug in one of the plotting dependencies (tidyquant::scale_fill_tq) 
 upheno <- KGExplorer::get_ontology(name="upheno")
-top_ids <- unique(prioritise_targets_out$top_targets$hpo_id)[seq(200)]
+top_ids <- unique(prioritise_targets_out$top_targets$hpo_id)[seq(1000)]
 plot_upheno_out <- KGExplorer::plot_upheno(
   pheno_map_genes_match = pheno_map_genes_match, 
   filters=list(id1=top_ids),
