@@ -23,9 +23,11 @@
 #     readers navigate by label rather than by PDF hyperlink.
 #
 # Dependencies (install once):
-#   brew install qpdf poppler         # macOS (qpdf = split, poppler = pdftotext)
-#   apt install qpdf poppler-utils    # Debian / Ubuntu
-#   choco install qpdf xpdf-utils     # Windows
+#   brew install poppler                  # macOS (provides pdftotext, pdfseparate, pdfunite)
+#   apt install poppler-utils             # Debian / Ubuntu
+#   choco install xpdf-utils              # Windows
+# Optionally also install qpdf:
+#   brew install qpdf                     # qpdf is faster for single-step splits
 #
 # Usage:
 #   ./code/split_pdf.sh
@@ -56,14 +58,24 @@ if [[ ! -f "$PDF_IN" ]]; then
   exit 1
 fi
 
-for cmd in qpdf pdftotext; do
+for cmd in pdftotext; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "ERROR: required dependency '$cmd' not found in PATH." >&2
-    echo "Install on macOS via:    brew install qpdf poppler" >&2
-    echo "Install on Debian via:   apt install qpdf poppler-utils" >&2
+    echo "Install on macOS via:    brew install poppler" >&2
+    echo "Install on Debian via:   apt install poppler-utils" >&2
     exit 1
   fi
 done
+# Pick a split backend: prefer qpdf (single-call), fall back to pdfseparate+pdfunite (poppler).
+if command -v qpdf >/dev/null 2>&1; then
+  BACKEND=qpdf
+elif command -v pdfseparate >/dev/null 2>&1 && command -v pdfunite >/dev/null 2>&1; then
+  BACKEND=poppler
+else
+  echo "ERROR: need either qpdf, or pdfseparate+pdfunite, on PATH." >&2
+  echo "Install with: brew install poppler   (or:  brew install qpdf)" >&2
+  exit 1
+fi
 
 # --- Find the page where 'Supplementary Materials' starts -------------------
 #
@@ -71,6 +83,10 @@ done
 # and walk page by page until we hit the "Supplementary Materials" heading.
 # pdftotext page separator is the form-feed character (\f).
 
+# Run the pipeline with pipefail temporarily off, because awk's early-exit
+# closes the pipe to pdftotext (SIGPIPE) and pipefail would otherwise abort
+# the script even when we got the line we wanted.
+set +o pipefail
 SUPP_START_PAGE=$(pdftotext -layout "$PDF_IN" - | awk '
   BEGIN { page = 1 }
   /^\x0c/ { page++ }
@@ -84,6 +100,7 @@ SUPP_START_PAGE=$(pdftotext -layout "$PDF_IN" - | awk '
     }
   }
 ')
+set -o pipefail
 
 if [[ -z "${SUPP_START_PAGE:-}" ]]; then
   echo "ERROR: could not find 'Supplementary Materials' heading in the PDF." >&2
@@ -91,7 +108,12 @@ if [[ -z "${SUPP_START_PAGE:-}" ]]; then
   exit 1
 fi
 
-TOTAL_PAGES=$(qpdf --show-npages "$PDF_IN")
+# Total page count (pdfinfo from poppler if available; otherwise qpdf)
+if command -v pdfinfo >/dev/null 2>&1; then
+  TOTAL_PAGES=$(pdfinfo "$PDF_IN" | awk '/^Pages:/ {print $2}')
+else
+  TOTAL_PAGES=$(qpdf --show-npages "$PDF_IN")
+fi
 MAIN_LAST_PAGE=$((SUPP_START_PAGE - 1))
 
 if (( MAIN_LAST_PAGE < 1 || SUPP_START_PAGE > TOTAL_PAGES )); then
@@ -99,14 +121,28 @@ if (( MAIN_LAST_PAGE < 1 || SUPP_START_PAGE > TOTAL_PAGES )); then
   exit 1
 fi
 
-echo "PDF has $TOTAL_PAGES pages total."
+echo "PDF has $TOTAL_PAGES pages total. (split backend: $BACKEND)"
 echo "Main manuscript    : pages 1 through $MAIN_LAST_PAGE"
 echo "Additional file 1  : pages $SUPP_START_PAGE through $TOTAL_PAGES"
 
 # --- Perform the split ------------------------------------------------------
 
-qpdf --empty --pages "$PDF_IN" 1-$MAIN_LAST_PAGE -- "$PDF_MAIN"
-qpdf --empty --pages "$PDF_IN" $SUPP_START_PAGE-$TOTAL_PAGES -- "$PDF_SUPP"
+if [[ "$BACKEND" == "qpdf" ]]; then
+  qpdf --empty --pages "$PDF_IN" 1-$MAIN_LAST_PAGE -- "$PDF_MAIN"
+  qpdf --empty --pages "$PDF_IN" $SUPP_START_PAGE-$TOTAL_PAGES -- "$PDF_SUPP"
+else
+  # poppler backend: pdfseparate writes one PDF per page; pdfunite then merges.
+  TMPDIR_MAIN=$(mktemp -d)
+  TMPDIR_SUPP=$(mktemp -d)
+  trap 'rm -rf "$TMPDIR_MAIN" "$TMPDIR_SUPP"' EXIT
+  pdfseparate -f 1 -l $MAIN_LAST_PAGE "$PDF_IN" "$TMPDIR_MAIN/p-%d.pdf"
+  pdfseparate -f $SUPP_START_PAGE -l $TOTAL_PAGES "$PDF_IN" "$TMPDIR_SUPP/p-%d.pdf"
+  # pdfunite needs files in numeric order; ls -v sorts them naturally.
+  # shellcheck disable=SC2046
+  pdfunite $(ls -v "$TMPDIR_MAIN"/p-*.pdf) "$PDF_MAIN"
+  # shellcheck disable=SC2046
+  pdfunite $(ls -v "$TMPDIR_SUPP"/p-*.pdf) "$PDF_SUPP"
+fi
 
 echo
 echo "Wrote $PDF_MAIN"
