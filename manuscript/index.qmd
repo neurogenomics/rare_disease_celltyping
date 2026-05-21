@@ -1958,11 +1958,8 @@ We would like to thank the following individuals for their insightful feedback a
 
 ## Additional files
 
-- **Additional file 1** (`additional_file_1.pdf`): _Supplementary figures and tables (display form)._
-  PDF containing all supplementary figures (Fig. S1-S18) and supplementary tables (Table S1-S11) referenced in the main text, each with its full legend. Figure titles are formatted as "Fig S1", "Fig S2", ... and table titles as "Table S1:", "Table S2:", ..., matching the in-text citations of the form "Additional file 1: Fig. S1" and "Additional file 1: Table S1". Produced from the rendered manuscript PDF by extracting the Supplementary Materials section (`code/split_pdf.sh`).
-
-- **Additional file 2** (`additional_file_2.xlsx`): _Supplementary tables (machine-readable form)._
-  Multi-sheet Excel workbook containing the same supplementary tables (Table S1-S11) but in fully machine-readable form, so the underlying numeric data can be reused without OCR. Sheet names match the in-text citations exactly (`Table S1`, `Table S2`, ..., `Table S11`). Generated programmatically from the same R data objects that produce the rendered tables, via an R chunk at the end of the Supplementary Tables source (see `manuscript/index.qmd`, chunk `write_additional_file_2`).
+- **Additional file 1** (`additional_file_1.pdf`): Supplementary figures (Fig. S1-S18) and supplementary tables (Table S1-S11), each with its full legend.
+- **Additional file 2** (`additional_file_2.xlsx`): Supplementary tables (Table S1-S11) in machine-readable form.
 
 ## References {.unnumbered}
 
