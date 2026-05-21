@@ -85,13 +85,15 @@ Seven keywords listed in a visible **Keywords:** line immediately after the abst
 
 > Please rename the introduction section to "Background".
 
-**Response:** _Status: pending (Phase 2)._
+**Response:** **Done.**
+`## Introduction {#sec-introduction}` renamed to `## Background {#sec-background}`. No cross-references in the body of the manuscript pointed to the old `sec-introduction` id, so no link updates were required. See `manuscript/index.qmd` around line 251.
 
 ### 11. Move Methods to immediately follow Background — GH [#109](https://github.com/neurogenomics/rare_disease_celltyping/issues/109)
 
 > Please move your Methods section to immediately follow the Background.
 
-**Response:** _Status: pending (Phase 2)._
+**Response:** **Done.**
+The `## Methods` block (with all subsections: Human Phenotype Ontology, Single-cell transcriptomic atlases, Phenotype-cell type associations, Symptom-cell type associations, validation sections, prioritisation, congenital, therapeutic target identification/validation, model translatability, Novel R packages, Rare Disease Celltyping Portal, Mappings) was relocated to sit immediately after Background and before Results. New section order is: Background → Methods → Results → Discussion → Conclusions → Data/Code Availability → Acknowledgements → References → Supplementary Materials. See `manuscript/index.qmd` around lines 299-834.
 
 ### 12. Methods: cite all tools with version numbers — GH [#111](https://github.com/neurogenomics/rare_disease_celltyping/issues/111)
 
@@ -109,7 +111,8 @@ Seven keywords listed in a visible **Keywords:** line immediately after the abst
 
 > Please include a Conclusions section after the Discussion.
 
-**Response:** _Status: pending (Phase 2)._
+**Response:** **Done.**
+Added a `## Conclusions {#sec-conclusions}` section immediately after Discussion. The new section restates the framework's contribution (scalable, reproducible, phenome-wide, cell-type-specific mechanism prediction in rare diseases) and positions it relative to advances in gene therapy without duplicating Discussion content. The closing summary that previously lived inside Discussion has been folded into Conclusions. See `manuscript/index.qmd` around lines 1881-1886.
 
 ---
 
