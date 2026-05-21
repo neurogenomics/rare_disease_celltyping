@@ -153,7 +153,14 @@ See `manuscript/index.qmd` ~lines 1894-1955.
 
 > … this be presented as a fully linkable URL and also that all data described or used in the manuscript be fully referenced in the Reference list and cited throughout the manuscript accordingly, including in the Availability of data and materials section.
 
-**Response:** **Done (structure).** See group response in #15.
+**Response:** **Done.**
+Sixteen `@misc` entries were appended to `manuscript/references.bib` in DataCite-minimum format (authors, title, publisher / repository, year, full URL or DOI, with release notes where applicable):
+
+**Dataset entries:** `hpo_2024_release`, `gencc_data`, `descartes_human_data`, `human_cell_landscape_data`, `cell_ontology_release`, `monarch_kg_data`, `ttd_data`, `rdc_portal_zenodo`, `ctd_data_archive`, `gpt_severity_annotations`, `hgnc_complement`.
+
+**Software / code entries:** `kgexplorer_pkg`, `hpoexplorer_pkg`, `mstexplorer_pkg`, `rdc_analyses_repo`, `rdc_portal_code`.
+
+Every URL in the Availability of data and materials subsection is now accompanied by a cited reference (e.g., "Human Phenotype Ontology, release 2024-02-08 [@hpo_2024_release]: <https://hpo.jax.org>"). The Zenodo archive carries its DOI (10.5281/zenodo.15147825) and serves as the citable, archived snapshot of the Rare Disease Celltyping Portal data. See `manuscript/references.bib` (entries appended at the end) and `manuscript/index.qmd` ~lines 1904-1932.
 
 ### 18. Competing interests declaration — GH [#117](https://github.com/neurogenomics/rare_disease_celltyping/issues/117)
 
