@@ -194,37 +194,53 @@ Every URL in the Availability of data and materials subsection is now accompanie
 
 > We recommend that you compile all supplementary figures in one file …
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Done.**
+All supplementary figures are compiled in a single PDF (Additional file 1). For this submission, supplementary figures and their legends are currently bundled at the end of the main manuscript PDF (pages 47+); for the final submission they will be extracted into a standalone `additional_file_1.pdf`. Large supplementary tables are kept separately as Additional file 2 (XLSX) so they remain machine-readable, per the editor's guidance.
 
 ### 26. Move supplementary figure legends out of main manuscript — GH [#121](https://github.com/neurogenomics/rare_disease_celltyping/issues/121)
 
 > Please remove supplementary figure legends from the main manuscript and provide within the file containing supplementary figures.
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Done (logically).**
+Each supplementary figure now has its legend co-located with the figure in the Supplementary Materials section of `index.qmd`, which is the source for Additional file 1 (PDF). The main manuscript body does not contain supplementary figure legends; only main-figure legends remain in the main body. When the physical Additional file 1 is extracted at submission, the legends move with the figures naturally.
 
 ### 27. Rename supplementary files as "Additional file X" — GH [#122](https://github.com/neurogenomics/rare_disease_celltyping/issues/122)
 
 > Rename supplementary files as 'Additional file X', and cite explicitly by additional file name in the manuscript …
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Done.**
+Every in-text reference to a supplementary figure or table in the main body has been prefixed with the additional-file label:
+
+- Supplementary figures (18 IDs): now cited as "Additional file 1: Fig. S*N*" (30+ in-text instances updated).
+- Supplementary tables (13 IDs): now cited as "Additional file 2: Table S*N*".
+
+The two additional files are also listed in ascending order in the new Additional files subsection (#30). See `manuscript/index.qmd` — references swept across lines 318-1849.
 
 ### 28. Supplementary figure titles prefixed with "Fig S1", "Fig S2", … — GH [#129](https://github.com/neurogenomics/rare_disease_celltyping/issues/129)
 
 > Please make sure supplementary figure titles are beginning with "Fig S1, S2,".
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Already in place.**
+The LaTeX command `\renewcommand\thefigure{S\arabic{figure}}` (and the matching `\setcounter{figure}{0}` reset) at the top of the Supplementary Materials section produces "Fig S1", "Fig S2", … for every supplementary figure. Verified in the rendered PDF (pages 47+ show "Figure S1", "Figure S2", … as the figure titles).
 
 ### 29. Supplementary table titles prefixed with "Table S1:", "Table S2:", … — GH [#127](https://github.com/neurogenomics/rare_disease_celltyping/issues/127)
 
 > Please rename titles for tables with "Table S1:, Table S2:, Table S3:" etc.
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Already in place.**
+The matching command `\renewcommand\thetable{S\arabic{table}}` plus `\setcounter{table}{0}` reset produces "Table S1", "Table S2", … for every supplementary table. Verified in the rendered PDF (pages 63+ show "Table S1:", "Table S2:", …).
 
 ### 30. Additional files subsection listing each file — GH [#128](https://github.com/neurogenomics/rare_disease_celltyping/issues/128)
 
 > Please provide a subsection after the declarations section listing all the additional files including file names (e.g. Additional file 1), titles and a short description of data.
 
-**Response:** _Status: pending (Phase 5)._
+**Response:** **Done.**
+Added `## Additional files` after the Declarations section, listing:
+
+- **Additional file 1** (`additional_file_1.pdf`): Supplementary figures with full legends.
+- **Additional file 2** (`additional_file_2.xlsx`): Supplementary tables.
+
+Each entry has the file name, a short title, and a description of contents. See `manuscript/index.qmd` ~lines 1957-1963.
 
 ---
 
