@@ -29,4 +29,18 @@
 \captionsetup[subfigure]{labelformat=empty}
 
 
+% Suppress the automatic author row from \maketitle so the explicit
+% Authors / Affiliations / Corresponding-author block that follows the
+% title in the body is the sole rendering of author information on
+% the title page. (Genome Medicine round-2 revision.)
+\makeatletter
+\def\@maketitle{%
+  \newpage\null\vskip 2em%
+  \begin{center}%
+    {\LARGE \@title \par}%
+  \end{center}\par\vskip 1.5em%
+}
+\makeatother
+
+
 
