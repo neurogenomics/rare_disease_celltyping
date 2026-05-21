@@ -1962,7 +1962,7 @@ We would like to thank the following individuals for their insightful feedback a
   PDF containing all supplementary figures (Fig. S1-S18) and supplementary tables (Table S1-S11) referenced in the main text, each with its full legend. Figure titles are formatted as "Fig S1", "Fig S2", ... and table titles as "Table S1:", "Table S2:", ..., matching the in-text citations of the form "Additional file 1: Fig. S1" and "Additional file 1: Table S1". Produced from the rendered manuscript PDF by extracting the Supplementary Materials section (`code/split_pdf.sh`).
 
 - **Additional file 2** (`additional_file_2.xlsx`): _Supplementary tables (machine-readable form)._
-  Multi-sheet Excel workbook containing the same supplementary tables (Table S1-S11) but in fully machine-readable form, so the underlying numeric data can be reused without OCR. Each sheet name encodes the table number (e.g., "Table S1 - HPO ontology mappings"). Generated programmatically from the same R data objects that produce the rendered tables, via an R chunk at the end of the Supplementary Tables source (see `manuscript/index.qmd`, chunk `write_additional_file_2`).
+  Multi-sheet Excel workbook containing the same supplementary tables (Table S1-S11) but in fully machine-readable form, so the underlying numeric data can be reused without OCR. Sheet names match the in-text citations exactly (`Table S1`, `Table S2`, ..., `Table S11`). Generated programmatically from the same R data objects that produce the rendered tables, via an R chunk at the end of the Supplementary Tables source (see `manuscript/index.qmd`, chunk `write_additional_file_2`).
 
 ## References {.unnumbered}
 
@@ -2659,22 +2659,23 @@ if (requireNamespace("openxlsx", quietly = TRUE)) {
   ) |>
     as.data.frame() |>
     dplyr::select(-dplyr::any_of(c("targets_prioritised", "targets_in_status")))
+  # Excel limits sheet names to 31 characters, so keep them short ("Table SX").
   additional_file_2_sheets <- list(
-    "Table S1 - HPO ontology mappings" = as.data.frame(maps_agg),
-    "Table S2 - Enrichment summary" = data.frame(
+    "Table S1" = as.data.frame(maps_agg),
+    "Table S2" = data.frame(
       res_summ$tmerged[, -"ctd"],
       row.names = res_summ$tmerged$ctd,
       check.names = FALSE
     ) |> t() |> as.data.frame(),
-    "Table S3 - Filtering steps" = as.data.frame(tbl_filters),
-    "Table S4 - HPO-CL branch mappings" = as.data.frame(overrep_df),
-    "Table S5 - GenCC encodings" = as.data.frame(gencc_tbl),
-    "Table S6 - On-target cell types" = as.data.frame(ct_dt),
-    "Table S7 - Ontology permutation tests" = as.data.frame(res_permtests),
-    "Table S8 - CTD validation permutation" = as.data.frame(ctd_validation_permtest),
-    "Table S9 - Foetal-biased phenotypes" = as.data.frame(foetal_biased_tbl),
-    "Table S10 - Fetal phenotype examples" = as.data.frame(fetal_examples_tbl),
-    "Table S11 - TTD hypergeometric" = ttd_hypergeo
+    "Table S3" = as.data.frame(tbl_filters),
+    "Table S4" = as.data.frame(overrep_df),
+    "Table S5" = as.data.frame(gencc_tbl),
+    "Table S6" = as.data.frame(ct_dt),
+    "Table S7" = as.data.frame(res_permtests),
+    "Table S8" = as.data.frame(ctd_validation_permtest),
+    "Table S9" = as.data.frame(foetal_biased_tbl),
+    "Table S10" = as.data.frame(fetal_examples_tbl),
+    "Table S11" = ttd_hypergeo
   )
   additional_file_2_path <- here::here("manuscript", "_manuscript", "additional_file_2.xlsx")
   openxlsx::write.xlsx(
