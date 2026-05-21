@@ -2619,8 +2619,6 @@ fetal_examples_tbl|>
 
 \newpage
 
-\begin{landscape}
-
 ::: {#tbl-ttd_hypergeo}
 ```{r tbl-ttd_hypergeo}
 #| label: tbl-ttd_hypergeo
@@ -2638,7 +2636,7 @@ rbind(
     )
   ) |>
   kableExtra::kbl(booktabs = TRUE) |>
-  kableExtra::kable_styling(latex_options = c("HOLD_position"),
+  kableExtra::kable_styling(latex_options = c("landscape", "HOLD_position"),
                             font_size = 9) |>
   kableExtra::group_rows("Gene therapies", 1, 2) |>
   kableExtra::group_rows("All therapies", 3, 4)
@@ -2647,8 +2645,6 @@ rbind(
 **Hypergeometric test results evaluating the enrichment of existing therapy targets documented in the Therapeutic Target Database (TTD) amongst our prioritised targets.** Results are shown separately for gene therapies and all therapies.
 Column keys: universe=gene universe size, p=hypergeometric test p-value, OR=odds ratio, NPV=negative predictive value, PPV=positive predictive value, FDR=false discovery rate, TP=true positives, FP=false positives, FN=false negatives, TN=true negatives.
 :::
-
-\end{landscape}
 
 ```{r write_additional_file_2}
 #| label: write_additional_file_2
