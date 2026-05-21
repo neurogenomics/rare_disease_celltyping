@@ -244,7 +244,8 @@ We present a scalable, reproducible framework for phenome-wide, cell type-specif
 
 **Software and data availability:**
 Interactive web portal: <https://neurogenomics-ukdri.dsi.ic.ac.uk/>.
-Source code: <https://github.com/neurogenomics/rare_disease_celltyping>.
+R packages introduced in this study: `KGExplorer` (<https://github.com/neurogenomics/KGExplorer>), `HPOExplorer` (<https://github.com/neurogenomics/HPOExplorer>), and `MSTExplorer` (<https://github.com/neurogenomics/MSTExplorer>).
+Manuscript analyses and reproducibility code: <https://github.com/neurogenomics/rare_disease_celltyping>.
 
 **Keywords:** rare disease; Human Phenotype Ontology; single-cell transcriptomics; cell type specificity; phenotype-cell type associations; gene therapy; therapeutic target identification
 
