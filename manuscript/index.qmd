@@ -669,6 +669,15 @@ weights_dict <- paste0(shQuote(names(eval(gpt_codes$weights_dict))),"=",
                      eval(gpt_codes$weights_dict), collapse = ", ") 
 ```
 
+```{r gpt_annot_codify}
+gpt_check <- HPOExplorer::gpt_annot_check(show_plot = FALSE)
+gpt_annot <- HPOExplorer::gpt_annot_codify() 
+
+gpt_annot$annot_weighted[,hpo_name:=gsub("^obsolete ","",hpo_name)]
+least_severe_phenotype <- gpt_annot$annot_weighted[hpo_name=="Thin toenail" & severity_score_gpt==0,]
+```
+
+
 Only a small fraction of the the phenotypes in HPO (\<1%) have metadata annotations containing information on their time course, consequences, and severity.
 This is due to the time-consuming nature of manually annotating thousands of phenotypes.
 To generate such annotations at scale, we previously used Generative Pre-trained Transformer 4 (GPT-4), a large language model (LLM) as implemented within OpenAI's Application Programming Interface (API) [@murphyHarnessingGenerativeAI2024].
@@ -1322,14 +1331,6 @@ if(knitr::is_html_output()){
 
 
 ### Prioritising phenotypes based on severity
-
-```{r gpt_annot_codify}
-gpt_check <- HPOExplorer::gpt_annot_check(show_plot = FALSE)
-gpt_annot <- HPOExplorer::gpt_annot_codify() 
-
-gpt_annot$annot_weighted[,hpo_name:=gsub("^obsolete ","",hpo_name)]
-least_severe_phenotype <- gpt_annot$annot_weighted[hpo_name=="Thin toenail" & severity_score_gpt==0,]
-```
 
 Some phenotypes are more severe than others and thus could be prioritised for treatment (e.g. 'Leukonychia' is far less severe than 'Leukodystrophy').
 To systematically rank phenotypes, we used GPT-4 to annotate severity for `r length(unique(gpt_check$annot$hpo_id))`/`r hpo@n_terms` (`r length(unique(gpt_check$annot$hpo_id))/hpo@n_terms*100`%) HPO phenotypes [@murphyHarnessingGenerativeAI2024].
