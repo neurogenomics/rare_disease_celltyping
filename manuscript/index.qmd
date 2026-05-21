@@ -2635,9 +2635,11 @@ rbind(
       ~ format(.x, scientific = TRUE, digits = 3)
     )
   ) |>
-  kableExtra::kbl() |>
-   kableExtra::group_rows("Gene therapies", 1, 2) |>
-   kableExtra::group_rows("All therapies", 3, 4) 
+  kableExtra::kbl(booktabs = TRUE) |>
+  kableExtra::kable_styling(latex_options = c("scale_down", "HOLD_position"),
+                            font_size = 8) |>
+  kableExtra::group_rows("Gene therapies", 1, 2) |>
+  kableExtra::group_rows("All therapies", 3, 4)
 ```
 
 **Hypergeometric test results evaluating the enrichment of existing therapy targets documented in the Therapeutic Target Database (TTD) amongst our prioritised targets.** Results are shown separately for gene therapies and all therapies.
