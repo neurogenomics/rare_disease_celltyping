@@ -1,6 +1,10 @@
 project:
   type: manuscript
   execute-dir: project
+  post-render:
+    # Re-bundle _manuscript/_tex/ into manuscript_tex.zip after every
+    # render so the journal-submission zip never drifts from the PDF.
+    - ../code/zip_tex.sh
 manuscript:
   article: index.qmd
 # notebooks:
