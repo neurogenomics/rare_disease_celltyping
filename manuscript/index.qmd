@@ -2644,14 +2644,16 @@ rbind(
 Column keys: universe=gene universe size, p=hypergeometric test p-value, OR=odds ratio, NPV=negative predictive value, PPV=positive predictive value, FDR=false discovery rate, TP=true positives, FP=false positives, FN=false negatives, TN=true negatives.
 :::
 
-```{r write_additional_file_2, message=FALSE, warning=FALSE}
+```{r write_additional_file_2}
 #| label: write_additional_file_2
 #| echo: false
 #| results: hide
+#| cache: false
 # Programmatically generate Additional file 2: a single XLSX workbook
 # with one sheet per supplementary table, matching the in-text citations
 # (Table S1, Table S2, ...). Each sheet name corresponds to the table's
 # rendered title in the PDF.
+cat("[write_additional_file_2] starting\n")
 if (requireNamespace("openxlsx", quietly = TRUE)) {
   ttd_hypergeo <- rbind(
     cbind(group = "Gene therapies", ttd_check_out$hypergeo),
@@ -2678,15 +2680,16 @@ if (requireNamespace("openxlsx", quietly = TRUE)) {
     "Table S11" = ttd_hypergeo
   )
   additional_file_2_path <- here::here("manuscript", "_manuscript", "additional_file_2.xlsx")
+  cat("[write_additional_file_2] writing to:", additional_file_2_path, "\n")
   openxlsx::write.xlsx(
     additional_file_2_sheets,
     file = additional_file_2_path,
     asTable = FALSE,
     overwrite = TRUE
   )
-  message("Wrote ", additional_file_2_path, " with ", length(additional_file_2_sheets), " sheets.")
+  cat("[write_additional_file_2] wrote", length(additional_file_2_sheets), "sheets to", additional_file_2_path, "\n")
 } else {
-  message("openxlsx not installed; skipping Additional file 2 generation.")
+  cat("[write_additional_file_2] openxlsx not installed; skipping.\n")
 }
 ```
 
