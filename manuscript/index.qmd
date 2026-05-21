@@ -11,28 +11,18 @@ author:
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Kitty B. Murphy
     orcid: 0000-0002-8669-3076
     corresponding: false
     roles:
-      - Investigation 
+      - Investigation
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Hiranyamaya Dash
     orcid: 0009-0005-5514-505X
     corresponding: false
@@ -40,64 +30,41 @@ author:
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Yichun Zhang
     corresponding: false
     roles:
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Robert Gordon-Smith
     orcid: 0000-0001-6698-7387
     corresponding: false
     roles:
-      - Investigation 
+      - Investigation
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Jai Chapman
     corresponding: false
     roles:
-      - Investigation 
+      - Investigation
       - Software
       - Visualization
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
   - name: Momoko Otani
     corresponding: false
     roles:
       - Investigation
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: National Heart and Lung Institute
+      - ref: icl-nhli
   - name: Nathan G. Skene
     orcid: 0000-0002-6807-3180
     corresponding: true
@@ -105,13 +72,28 @@ author:
     roles:
       - Project administration
     affiliations:
-      - name: Imperial College London
-        city: London
-        country: United Kingdom
-        department: Department of Brain Sciences
-      - name: UK Dementia Research Institute
-        city: London
-        country: United Kingdom
+      - ref: icl-brain
+      - ref: ukdri
+affiliations:
+  - id: icl-brain
+    name: Imperial College London
+    department: Department of Brain Sciences
+    address: Burlington Danes Building, Hammersmith Hospital Campus, Du Cane Road
+    city: London
+    postal-code: W12 0NN
+    country: United Kingdom
+  - id: ukdri
+    name: UK Dementia Research Institute
+    department: Imperial College London
+    address: Burlington Danes Building, Hammersmith Hospital Campus, Du Cane Road
+    city: London
+    postal-code: W12 0NN
+    country: United Kingdom
+  - id: icl-nhli
+    name: Imperial College London
+    department: National Heart and Lung Institute
+    city: London
+    country: United Kingdom
 keywords:
   - rare disease
   - phenotype
@@ -207,6 +189,38 @@ ctd_list <- MSTExplorer::load_example_ctd(c("ctd_DescartesHuman.rds",
 validate_associations_mkg_out <- MSTExplorer::validate_associations_mkg(results = results)
 kg_hp <- validate_associations_mkg_out$kg[grepl("^HP:",from)] 
 ```
+
+\newpage
+
+::: {.author-affiliations}
+
+**Authors:**
+Brian M. Schilder^1,2,\*^,
+Kitty B. Murphy^1,2^,
+Hiranyamaya Dash^1,2^,
+Yichun Zhang^1,2^,
+Robert Gordon-Smith^1,2^,
+Jai Chapman^1,2^,
+Momoko Otani^3^,
+Nathan G. Skene^1,2,\*^
+
+**Affiliations:**
+
+^1^ Department of Brain Sciences, Imperial College London, Burlington Danes Building, Hammersmith Hospital Campus, Du Cane Road, London W12 0NN, United Kingdom
+
+^2^ UK Dementia Research Institute at Imperial College London, Burlington Danes Building, Hammersmith Hospital Campus, Du Cane Road, London W12 0NN, United Kingdom
+
+^3^ National Heart and Lung Institute, Imperial College London, London, United Kingdom
+
+**\* Corresponding authors:**
+
+Brian M. Schilder — brian_schilder@alumni.brown.edu
+
+Nathan G. Skene — n.skene@imperial.ac.uk
+
+Postal address (both corresponding authors): UK Dementia Research Institute at Imperial College London, Burlington Danes Building, Hammersmith Hospital Campus, Du Cane Road, London W12 0NN, United Kingdom
+
+:::
 
 \newpage
 
