@@ -1907,23 +1907,21 @@ Not applicable.
 
 All data and code used in this study are publicly available.
 
-Each dataset and software artefact below is also listed in the Reference list as a full citation.
-
 **Datasets:**
 
-- Human Phenotype Ontology, release 2024-02-08 [@hpo_2024_release]: <https://hpo.jax.org>
-- Gene Curation Coalition (GenCC) disease-gene curation database [@gencc_data]: <https://thegencc.org/>
-- Descartes Human single-cell transcriptomic atlas [@descartes_human_data]: <https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c>
-- Human Cell Landscape single-cell transcriptomic atlas [@human_cell_landscape_data]: <https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1>
-- Processed Cell Type Datasets (*ctd_DescartesHuman.rds*, *ctd_HumanCellLandscape.rds*) and gene-by-phenotype association matrix (*hpo_matrix.rds*) and full phenotype-cell type results (*phenomix_results.tsv.gz*) [@ctd_data_archive]: <https://github.com/neurogenomics/MSTExplorer/releases>
-- GPT-4 phenotype severity annotations [@gpt_severity_annotations]: <https://github.com/neurogenomics/rare_disease_celltyping/releases/download/latest/gpt_check_annot.csv.gz>
+- Human Phenotype Ontology [@DiStefano2022-ao; @DiStefano2023-np], release 2024-02-08: <https://hpo.jax.org>
+- Gene Curation Coalition (GenCC) disease-gene curation database [@DiStefano2022-ao]: <https://thegencc.org/>
+- Descartes Human single-cell transcriptomic atlas [@Cao2020-qz]: <https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c>
+- Human Cell Landscape single-cell transcriptomic atlas [@Han2020-iq]: <https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1>
+- Processed Cell Type Datasets (*ctd_DescartesHuman.rds*, *ctd_HumanCellLandscape.rds*) and gene-by-phenotype association matrix (*hpo_matrix.rds*) and full phenotype-cell type results (*phenomix_results.tsv.gz*): <https://github.com/neurogenomics/MSTExplorer/releases>
+- GPT-4 phenotype severity annotations [@murphyHarnessingGenerativeAI2024]: <https://github.com/neurogenomics/rare_disease_celltyping/releases/download/latest/gpt_check_annot.csv.gz>
 - Rare Disease Celltyping Portal (interactive web application): <https://neurogenomics-ukdri.dsi.ic.ac.uk/>
 - Rare Disease Celltyping Portal data archive [@rdc_portal_zenodo]: <https://zenodo.org/records/15147825>
-- Complement system gene list (HGNC group 492) [@hgnc_complement]: <https://www.genenames.org/data/genegroup/#!/group/492>
-- Therapeutic Target Database (TTD) [@ttd_data]: <http://db.idrblab.net/ttd/>
+- Complement system gene list (HGNC group 492): <https://www.genenames.org/data/genegroup/#!/group/492>
+- Therapeutic Target Database (TTD): <http://db.idrblab.net/ttd/>
 - CellxGene browser view (hepatocytes and hepatoblast complement expression): <https://cellxgene.cziscience.com/gene-expression?genes=C5%2CCFI%2CC8B%2CCFB%2CMBL2%2CAPOE&cellTypes=hepatoblast%2Chepatocyte&ver=2>
-- Cell Ontology, release 2023-09-21 [@cell_ontology_release]: <https://obophenotype.github.io/cell-ontology/>
-- Monarch Knowledge Graph [@monarch_kg_data]: <https://monarchinitiative.org/>
+- Cell Ontology [@Diehl2016-gt], release 2023-09-21: <https://obophenotype.github.io/cell-ontology/>
+- Monarch Knowledge Graph [@Putman2024-et]: <https://monarchinitiative.org/>
 
 **Source code (all under open-source licenses):**
 
