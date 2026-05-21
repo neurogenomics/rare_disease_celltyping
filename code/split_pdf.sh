@@ -132,16 +132,28 @@ if [[ "$BACKEND" == "qpdf" ]]; then
   qpdf --empty --pages "$PDF_IN" $SUPP_START_PAGE-$TOTAL_PAGES -- "$PDF_SUPP"
 else
   # poppler backend: pdfseparate writes one PDF per page; pdfunite then merges.
+  # NOTE: pdfunite is strictly positional — files are concatenated in the
+  # order given on the command line. We must build the file list in
+  # numerical page order; alphabetic order (e.g. macOS BSD `ls -v` which
+  # ignores `-v`, or default `ls`) puts page 10 before page 2 and produces
+  # a scrambled output.
   TMPDIR_MAIN=$(mktemp -d)
   TMPDIR_SUPP=$(mktemp -d)
   trap 'rm -rf "$TMPDIR_MAIN" "$TMPDIR_SUPP"' EXIT
   pdfseparate -f 1 -l $MAIN_LAST_PAGE "$PDF_IN" "$TMPDIR_MAIN/p-%d.pdf"
   pdfseparate -f $SUPP_START_PAGE -l $TOTAL_PAGES "$PDF_IN" "$TMPDIR_SUPP/p-%d.pdf"
-  # pdfunite needs files in numeric order; ls -v sorts them naturally.
-  # shellcheck disable=SC2046
-  pdfunite $(ls -v "$TMPDIR_MAIN"/p-*.pdf) "$PDF_MAIN"
-  # shellcheck disable=SC2046
-  pdfunite $(ls -v "$TMPDIR_SUPP"/p-*.pdf) "$PDF_SUPP"
+
+  main_files=()
+  for i in $(seq 1 $MAIN_LAST_PAGE); do
+    main_files+=("$TMPDIR_MAIN/p-$i.pdf")
+  done
+  pdfunite "${main_files[@]}" "$PDF_MAIN"
+
+  supp_files=()
+  for i in $(seq $SUPP_START_PAGE $TOTAL_PAGES); do
+    supp_files+=("$TMPDIR_SUPP/p-$i.pdf")
+  done
+  pdfunite "${supp_files[@]}" "$PDF_SUPP"
 fi
 
 echo
