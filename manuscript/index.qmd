@@ -96,9 +96,12 @@ affiliations:
     country: United Kingdom
 keywords:
   - rare disease
-  - phenotype
-  - single-cell
+  - Human Phenotype Ontology
+  - single-cell transcriptomics
+  - cell type specificity
+  - phenotype-cell type associations
   - gene therapy
+  - therapeutic target identification
 key-points:
   - We used the Human Phenotype Ontology and single-cell RNA-seq references to characterise the phenome.
   - We then demonstrated how these results can be applied to clinical diagnosis, prognosis and therapeutics development.
@@ -226,10 +229,26 @@ Postal address (both corresponding authors): UK Dementia Research Institute at I
 
 ## Abstract
 
+**Background:**
 Rare diseases (RDs) are a highly heterogeneous and underserved group of conditions.
-Most RDs have a strong genetic basis but their causal pathophysiological mechanisms remain poorly understood.
-We therefore systematically characterised the cell type–specific mechanisms for all genetically defined RD phenotypes by integrating the Human Phenotype Ontology with whole-body single-cell transcriptomic atlases from embryonic, foetal, and adult samples.
-This revealed significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) phenotypes across `r res_summ_all[["diseases significant"]]` RDs, substantially expanding knowledge of phenotype–cell type links. We then prioritised phenotypes for clinical impact based on severity (e.g. lethality, motor/mental impairment) and gene therapy compatibility (e.g. cell type specificity, postnatal treatability). All results are reproducible and freely available, including via an interactive web portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>), representing a major advance toward treating patients across a broad spectrum of serious RDs.
+Most RDs have a strong genetic basis but their causal pathophysiological mechanisms remain poorly understood, limiting the development of targeted therapies.
+
+**Methods:**
+We systematically characterised the cell type-specific mechanisms underlying all genetically defined RD phenotypes by integrating the Human Phenotype Ontology (HPO) with whole-body single-cell transcriptomic atlases from embryonic, foetal, and adult samples.
+Associations were validated against orthogonal biomedical knowledge graphs and prioritised by clinical severity and gene-therapy compatibility.
+
+**Results:**
+We identified significant associations between `r res_summ_all[["cell types significant"]]` cell types and `r res_summ_all[["phenotypes significant"]]`/`r res_summ_all[["phenotypes tested"]]` (`r res_summ_all[["phenotypes significant (%)"]]`%) phenotypes across `r res_summ_all[["diseases significant"]]` RDs, substantially expanding knowledge of phenotype-cell type links.
+Prioritisation by severity (e.g. lethality, motor or mental impairment) and gene-therapy compatibility (e.g. cell type specificity, postnatal treatability) identified candidate phenotypes and cell types for therapeutic targeting.
+
+**Conclusions:**
+We present a scalable, reproducible framework for phenome-wide, cell type-specific mechanism prediction in rare diseases, providing a major step toward systematic therapeutic development for patients across a broad spectrum of serious RDs.
+
+**Software and data availability:**
+Interactive web portal: <https://neurogenomics-ukdri.dsi.ic.ac.uk/>.
+Source code: <https://github.com/neurogenomics/rare_disease_celltyping>.
+
+**Keywords:** rare disease; Human Phenotype Ontology; single-cell transcriptomics; cell type specificity; phenotype-cell type associations; gene therapy; therapeutic target identification
 
 ## Introduction {#sec-introduction}
 
