@@ -1927,11 +1927,11 @@ Each dataset and software artefact below is also listed in the Reference list as
 
 **Source code (all under open-source licenses):**
 
-- `KGExplorer` R package [@kgexplorer_pkg]: <https://github.com/neurogenomics/KGExplorer>
-- `HPOExplorer` R package [@hpoexplorer_pkg]: <https://github.com/neurogenomics/HPOExplorer>
-- `MSTExplorer` R package [@mstexplorer_pkg]: <https://github.com/neurogenomics/MSTExplorer>
-- Manuscript analyses repository [@rdc_analyses_repo]: <https://github.com/neurogenomics/rare_disease_celltyping>
-- Rare Disease Celltyping Portal source [@rdc_portal_code]: <https://github.com/neurogenomics/Rare-Disease-Web-Portal>
+- `KGExplorer` R package: <https://github.com/neurogenomics/KGExplorer>
+- `HPOExplorer` R package: <https://github.com/neurogenomics/HPOExplorer>
+- `MSTExplorer` R package: <https://github.com/neurogenomics/MSTExplorer>
+- Manuscript analyses repository: <https://github.com/neurogenomics/rare_disease_celltyping>
+- Rare Disease Celltyping Portal source: <https://github.com/neurogenomics/Rare-Disease-Web-Portal>
 
 ### Competing interests
 
