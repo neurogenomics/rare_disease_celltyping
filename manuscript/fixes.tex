@@ -1,8 +1,20 @@
 \usepackage{annotate-equations}
 
-% Use Helvetica as the main text font; math stays in Computer Modern.
-\usepackage[scaled]{helvet}
-\renewcommand\familydefault{\sfdefault}
+% Use Helvetica (sans-serif) as the main text font; math stays in
+% Computer Modern via the default LaTeX math fonts.
+% Quarto renders this manuscript with LuaLaTeX, so use fontspec's
+% \setmainfont rather than the pdfLaTeX-era \usepackage{helvet}+
+% \renewcommand\familydefault. TeX Gyre Heros is the open-source
+% Helvetica clone that ships with TeX Live (so it's available even
+% if the system has no Helvetica).
+\usepackage{iftex}
+\ifLuaTeX
+  \usepackage{fontspec}
+  \setmainfont{TeX Gyre Heros}
+\else
+  \usepackage[scaled]{helvet}
+  \renewcommand\familydefault{\sfdefault}
+\fi
 
 
 % \usepackage[singlelinecheck=false]{caption}
