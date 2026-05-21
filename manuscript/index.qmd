@@ -193,8 +193,6 @@ validate_associations_mkg_out <- MSTExplorer::validate_associations_mkg(results 
 kg_hp <- validate_associations_mkg_out$kg[grepl("^HP:",from)] 
 ```
 
-\newpage
-
 ::: {.author-affiliations}
 
 **Authors:**
