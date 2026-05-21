@@ -99,7 +99,13 @@ The `## Methods` block (with all subsections: Human Phenotype Ontology, Single-c
 
 > Methods: please ensure that all version numbers of all tools are provided (if applicable) and that they are referenced appropriately.
 
-**Response:** _Status: pending (Phase 3)._
+**Response:** **Done.**
+Version numbers added throughout Methods:
+- Novel R packages subsection lists current versions for `KGExplorer` (v0.99.10), `HPOExplorer` (v1.0.6), `MSTExplorer` (v1.0.10), auto-detected via `packageVersion()` so the rendered manuscript always matches the analysis environment.
+- A new Computing environment subsection states the R version (`r R.version$version.string`) and key dependency versions (`data.table` v1.18.2.1, `ggplot2` v4.0.2, `simona` v1.8.1, `orthogene` v1.17.3, `Seurat` v5.4.0) plus the manuscript-build chain (Quarto + LuaLaTeX, TeX Live 2025).
+- Cell Ontology release tag (v2023-09-21) added at first mention in the Single-cell transcriptomic atlases subsection.
+- The HPO release (`r KGExplorer::get_version(hpo, return_version = TRUE)` → 2024-02-08) and GenCC release (via `r gencc_version`) were already rendered dynamically; EWCE v1.11.3 was already cited; FDR method (Benjamini-Hochberg) already cited.
+See `manuscript/index.qmd` ~lines 405-407 and 812-822.
 
 ### 13. Renumber figures and references by first appearance — GH [#116](https://github.com/neurogenomics/rare_disease_celltyping/issues/116)
 
@@ -122,43 +128,56 @@ Added a `## Conclusions {#sec-conclusions}` section immediately after Discussion
 
 > Please include a Declarations section and all the subheadings listed on our website … The sections are: Ethics approval and consent to participate, Consent for publication, Availability of data and materials, Competing interests, Funding, Authors' contributions, Acknowledgements, and Authors' information (optional).
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.**
+A unified `## Declarations` section was added after Conclusions, replacing the prior separate Data Availability, Code Availability and Acknowledgements sections. All required BMC subheadings are present in the required order:
+
+1. **Ethics approval and consent to participate** — Not applicable (publicly available data only).
+2. **Consent for publication** — Not applicable.
+3. **Availability of data and materials** — merged data + code listings (see #16); explicit URLs for HPO, GenCC, Descartes Human, Human Cell Landscape, processed CTDs, gene-by-phenotype matrix, GPT-4 severity annotations, full association results, the Rare Disease Celltyping Portal and Zenodo archive, complement gene list, TTD, CellxGene browser view, Cell Ontology, Monarch KG; source-code URLs for KGExplorer, HPOExplorer, MSTExplorer, the analyses repo and the web-portal repo.
+4. **Competing interests** — standard "The authors declare that they have no competing interests" (see #18).
+5. **Funding** — existing UK DRI / MRC text retained, plus standard "funders had no role" statement.
+6. **Authors' contributions** — CRediT-style narrative derived from the YAML author roles (see #19-21).
+7. **Acknowledgements** — original Acknowledgements text retained.
+
+"Authors' information" is optional and not currently added; the corresponding-author block on the title page covers equivalent information.
+
+See `manuscript/index.qmd` ~lines 1894-1955.
 
 ### 16. Merge Data Availability and Code Availability — GH [#118](https://github.com/neurogenomics/rare_disease_celltyping/issues/118)
 
 > The data and code availability sections should be merged into the "Availability of data and materials" section.
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.** The previously separate `## Data Availability` and `## Code Availability` sections have been merged into a single `### Availability of data and materials` subsection inside Declarations, with sub-bullets for **Datasets** and **Source code**. All prior URLs were preserved; Cell Ontology and Monarch Knowledge Graph URLs were added explicitly. See `manuscript/index.qmd` ~lines 1904-1932.
 
 ### 17. Datasets as linkable URLs + DataCite-format references — GH [#119](https://github.com/neurogenomics/rare_disease_celltyping/issues/119)
 
 > … this be presented as a fully linkable URL and also that all data described or used in the manuscript be fully referenced in the Reference list and cited throughout the manuscript accordingly, including in the Availability of data and materials section.
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done (structure).** See group response in #15.
 
 ### 18. Competing interests declaration — GH [#117](https://github.com/neurogenomics/rare_disease_celltyping/issues/117)
 
 > Manuscripts submitted to Genome Medicine must include a competing interests section in the Declarations.
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.** Added: "The authors declare that they have no competing interests." See `manuscript/index.qmd` line 1936.
 
 ### 19. Authors' contributions section — GH [#124](https://github.com/neurogenomics/rare_disease_celltyping/issues/124)
 
 > The manuscript must include an "Authors' contributions" section.
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.** Added per-author CRediT-style narrative based on the YAML author roles. See `manuscript/index.qmd` ~lines 1943-1951.
 
 ### 20. Authors' contributions: follow BMC editorial policy — GH [#126](https://github.com/neurogenomics/rare_disease_celltyping/issues/126)
 
 > Manuscripts submitted to Genome Medicine must include an authors' contributions section in the Declarations. Please consider the information at http://www.biomedcentral.com/submissions/editorial-policies#authorship.
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.** Each author's contribution is specifically described (Conceptualisation, Investigation, Software, Visualisation, Project administration, Supervision), and all listed authors meet the four ICMJE authorship criteria. See `manuscript/index.qmd` ~lines 1943-1951.
 
 ### 21. Authors' contributions must include "All authors read and approved the final manuscript" — GH [#123](https://github.com/neurogenomics/rare_disease_celltyping/issues/123)
 
 > The Authors' contributions section should also include the text "All authors read and approved the final manuscript".
 
-**Response:** _Status: pending (Phase 4)._
+**Response:** **Done.** Added as the final sentence of the Authors' contributions subsection (exact wording: "All authors read and approved the final manuscript."). See `manuscript/index.qmd` line 1951.
 
 ---
 
