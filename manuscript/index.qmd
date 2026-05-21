@@ -404,7 +404,7 @@ To independently replicate our findings, we also used the Human Cell Landscape w
 
 Specificity matrices were generated separately for each transcriptomic atlas using the R package `EWCE` (v1.11.3) [@Skene2016-rb].
 Within each atlas, cell types were defined using the authors' original freeform annotations in order to preserve the granularity of cell subtypes as well as incorporate expert-identified rare cell types.
-Cell types were only aligned and aggregated to the level of corresponding Cell Ontology (CL) [@Diehl2016-gt] annotations afterwards when generating summary figures and performing cross-atlas analyses.
+Cell types were only aligned and aggregated to the level of corresponding Cell Ontology (CL; release `r cl_tag`) [@Diehl2016-gt] annotations afterwards when generating summary figures and performing cross-atlas analyses.
 Using the original gene-by-cell count matrices from each single-cell atlas, we computed gene-by-cell type expression specificity matrices as follows.
 Genes with very no expression across any cell types were considered to be uninformative and were therefore removed from the input gene-by-cell matrix $F(g,i,c)$.
 
@@ -812,11 +812,17 @@ Finally, both scores are multiplied together to yield a unified ontological-geno
 ### Novel R packages
 
 To facilitate all analyses described in this study and to make them more easily reproducible by others, we created several open-source R packages.
-[`KGExplorer`](https://github.com/neurogenomics/KGExplorer) imports and analyses large-scale biomedical knowledge graphs and ontologies.
-[`HPOExplorer`](https://github.com/neurogenomics/HPOExplorer) aids in managing and querying the directed acyclic ontology graph within the HPO.
-[`MSTExplorer`](https://github.com/neurogenomics/MSTExplorer) facilitates the efficient analysis of many thousands of phenotype-cell type association tests, and provides a suite of multi-scale therapeutic target prioritisation and visualisation functions.
+[`KGExplorer`](https://github.com/neurogenomics/KGExplorer) (v`r packageVersion("KGExplorer")`) imports and analyses large-scale biomedical knowledge graphs and ontologies.
+[`HPOExplorer`](https://github.com/neurogenomics/HPOExplorer) (v`r packageVersion("HPOExplorer")`) aids in managing and querying the directed acyclic ontology graph within the HPO.
+[`MSTExplorer`](https://github.com/neurogenomics/MSTExplorer) (v`r packageVersion("MSTExplorer")`) facilitates the efficient analysis of many thousands of phenotype-cell type association tests, and provides a suite of multi-scale therapeutic target prioritisation and visualisation functions.
 These R packages also include various functions for distributing the post-processed results from this study in an organised, tabular format.
 Of note, `MSTExplorer::load_example_results` loads all summary statistics from our phenotype-cell type tests performed here.
+
+### Computing environment
+
+All analyses were performed in `r R.version$version.string`.
+Key R package dependencies and their versions were: `data.table` (v`r packageVersion("data.table")`), `ggplot2` (v`r packageVersion("ggplot2")`), `simona` (v`r packageVersion("simona")`) for ontology operations, `orthogene` (v`r packageVersion("orthogene")`) for cross-species gene mapping, and `Seurat` (v`r packageVersion("Seurat")`) for single-cell data handling.
+The manuscript itself was prepared with Quarto and rendered to PDF via LuaLaTeX (TeX Live 2025).
 
 ### Rare Disease Celltyping Portal
 
