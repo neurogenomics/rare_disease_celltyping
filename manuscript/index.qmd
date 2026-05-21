@@ -120,7 +120,6 @@ keywords:
 key-points:
   - We used the Human Phenotype Ontology and single-cell RNA-seq references to characterise the phenome.
   - We then demonstrated how these results can be applied to clinical diagnosis, prognosis and therapeutics development.
-date: last-modified
 citation:
   container-title: medRxiv
 bibliography: references.bib
