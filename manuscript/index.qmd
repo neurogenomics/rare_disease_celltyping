@@ -2647,14 +2647,21 @@ Column keys: universe=gene universe size, p=hypergeometric test p-value, OR=odds
 ```{r write_additional_file_2}
 #| label: write_additional_file_2
 #| echo: false
-#| results: hide
 #| cache: false
 # Programmatically generate Additional file 2: a single XLSX workbook
 # with one sheet per supplementary table, matching the in-text citations
 # (Table S1, Table S2, ...). Each sheet name corresponds to the table's
 # rendered title in the PDF.
-cat("[write_additional_file_2] starting\n")
-if (requireNamespace("openxlsx", quietly = TRUE)) {
+log_marker <- function(msg) {
+  writeLines(paste(format(Sys.time(), "%H:%M:%OS3"), msg),
+             con = "/tmp/xlsx_chunk_marker.txt")
+}
+log_marker("chunk started")
+.write_af2 <- function() {
+  if (!requireNamespace("openxlsx", quietly = TRUE)) {
+    log_marker("ERROR: openxlsx not installed")
+    return(invisible(NULL))
+  }
   ttd_hypergeo <- rbind(
     cbind(group = "Gene therapies", ttd_check_out$hypergeo),
     cbind(group = "All therapies", ttd_check_all_out$hypergeo)
@@ -2662,7 +2669,7 @@ if (requireNamespace("openxlsx", quietly = TRUE)) {
     as.data.frame() |>
     dplyr::select(-dplyr::any_of(c("targets_prioritised", "targets_in_status")))
   # Excel limits sheet names to 31 characters, so keep them short ("Table SX").
-  additional_file_2_sheets <- list(
+  sheets <- list(
     "Table S1" = as.data.frame(maps_agg),
     "Table S2" = data.frame(
       res_summ$tmerged[, -"ctd"],
@@ -2679,18 +2686,15 @@ if (requireNamespace("openxlsx", quietly = TRUE)) {
     "Table S10" = as.data.frame(fetal_examples_tbl),
     "Table S11" = ttd_hypergeo
   )
-  additional_file_2_path <- here::here("manuscript", "_manuscript", "additional_file_2.xlsx")
-  cat("[write_additional_file_2] writing to:", additional_file_2_path, "\n")
-  openxlsx::write.xlsx(
-    additional_file_2_sheets,
-    file = additional_file_2_path,
-    asTable = FALSE,
-    overwrite = TRUE
-  )
-  cat("[write_additional_file_2] wrote", length(additional_file_2_sheets), "sheets to", additional_file_2_path, "\n")
-} else {
-  cat("[write_additional_file_2] openxlsx not installed; skipping.\n")
+  log_marker(paste("assembled", length(sheets), "sheets"))
+  # here::here() resolves to the manuscript/ dir (where .here lives), so we
+  # only need _manuscript/ as a relative subpath.
+  path <- here::here("_manuscript", "additional_file_2.xlsx")
+  openxlsx::write.xlsx(sheets, file = path, asTable = FALSE, overwrite = TRUE)
+  log_marker(paste("OK wrote", path))
 }
+tryCatch(.write_af2(),
+         error = function(e) log_marker(paste("ERROR:", conditionMessage(e))))
 ```
 
 <!-- ::: {#tbl-cl_enrich} -->
