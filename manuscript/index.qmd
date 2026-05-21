@@ -284,8 +284,10 @@ Integrating RD gene annotations with these profiles reveals the specific cell ty
 
 Cell type-specific mechanisms are critical for guiding the development of effective therapeutics, especially virally-mediated gene therapies [@kawabataImprovingCellspecificRecombination2024; @ocarrollAAVTargetingGlial2021].
 Knowledge of the specific causal cell types can enhance efficacy and improve safety by avoiding off-target effects.
-To facilitate these key insights, we developed a high-throughput pipeline to nominate cell type-resolved gene therapy targets across thousands of RD phenotypes, ranked by composite phenotype severity scores [@murphyHarnessingGenerativeAI2024] ([Fig. @fig-study-design]).
+To facilitate these key insights, we developed a high-throughput pipeline to nominate cell type-resolved gene therapy targets across thousands of RD phenotypes, ranked by composite phenotype severity scores [@murphyHarnessingGenerativeAI2024].
 This work expands knowledge of the cell types, organ systems, and life stages underlying RDs, with direct applications to precision therapeutic development.
+
+The remainder of this article describes the pipeline and its outputs at successive levels of resolution: an overview of the study design ([Fig. @fig-study-design]), the full set of phenotype-cell type associations ([Fig. @fig-summary]), the relationship between phenotype ontology level and association power ([Fig. @fig-ontology-lvl]), targeted analyses of recurrent neisserial infections and their cellular drivers ([Fig. @fig-rni], [Fig. @fig-network-rni]), severity-stratified cell type findings ([Fig. @fig-celltype-severity-dot]), congenital-phenotype enrichment for foetal cell types ([Fig. @fig-congenital]), and therapeutic target prioritisation with cross-validation against the Therapeutic Target Database ([Fig. @fig-therapy-validate], [Fig. @fig-therapy-examples]).
 
 ::: {#fig-study-design}
 ![](img/study_design.png){width=90%}
