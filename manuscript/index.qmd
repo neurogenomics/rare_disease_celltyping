@@ -284,7 +284,7 @@ Integrating RD gene annotations with these profiles reveals the specific cell ty
 
 Cell type-specific mechanisms are critical for guiding the development of effective therapeutics, especially virally-mediated gene therapies [@kawabataImprovingCellspecificRecombination2024; @ocarrollAAVTargetingGlial2021].
 Knowledge of the specific causal cell types can enhance efficacy and improve safety by avoiding off-target effects.
-To facilitate these key insights, we developed a high-throughput pipeline to nominate cell type–resolved gene therapy targets across thousands of RD phenotypes, ranked by composite phenotype severity scores [@murphyHarnessingGenerativeAI2024].
+To facilitate these key insights, we developed a high-throughput pipeline to nominate cell type-resolved gene therapy targets across thousands of RD phenotypes, ranked by composite phenotype severity scores [@murphyHarnessingGenerativeAI2024] ([Fig. @fig-study-design]).
 This work expands knowledge of the cell types, organ systems, and life stages underlying RDs, with direct applications to precision therapeutic development.
 
 ::: {#fig-study-design}
