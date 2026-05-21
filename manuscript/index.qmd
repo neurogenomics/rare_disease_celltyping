@@ -1891,41 +1891,68 @@ We present a scalable, cost-effective, and reproducible framework for phenome-wi
 By integrating the Human Phenotype Ontology with whole-body single-cell transcriptomic atlases spanning embryonic, foetal, and adult stages, we systematically nominate causal cell types for thousands of phenotypes and prioritise candidate gene-therapy targets across the rare-disease landscape.
 Coupled with continuing advances in gene therapy and supportive regulatory changes, this approach can help realise the promise of genomic medicine for the global rare-disease community.
 
-## Data Availability
+## Declarations
 
-All data is publicly available through the following resources:
+### Ethics approval and consent to participate
 
--   Human Phenotype Ontology (<https://hpo.jax.org>)
--   GenCC (<https://thegencc.org/>)
--   Descartes Human scRNA-seq atlas (<https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c>)
--   Human Cell Landscape scRNA-seq atlas (<https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1>)
--   Processed Cell Type Datasets (*ctd_DescartesHuman.rds* and *ctd_HumanCellLandscape.rds*; <https://github.com/neurogenomics/MSTExplorer/releases>)
--   Gene x Phenotype association matrix (*hpo_matrix.rds*; <https://github.com/neurogenomics/MSTExplorer/releases>)
--   GPT-4 phenotype severity annotations (<https://github.com/neurogenomics/rare_disease_celltyping/releases/download/latest/gpt_check_annot.csv.gz>)
--   Full phenotype-cell type association test results <https://github.com/neurogenomics/MSTExplorer/releases/download/v0.1.10/phenomix_results.tsv.gz>
--   Rare Disease Celltyping Portal (<https://neurogenomics-ukdri.dsi.ic.ac.uk/>)
--   Rare Disease Celltyping Portal data (<https://zenodo.org/records/15147825>)
--   Complement system gene list (<https://www.genenames.org/data/genegroup/#!/group/492>)
--   Therapeutic Target Database data (<http://db.idrblab.net/ttd/>)
--   CellxGene browser: hepatocytes & hepatoblast complement expression (<https://cellxgene.cziscience.com/gene-expression?genes=C5%2CCFI%2CC8B%2CCFB%2CMBL2%2CAPOE&cellTypes=hepatoblast%2Chepatocyte&ver=2>)
+Not applicable. This study used only publicly available, de-identified data and did not involve the collection of new human or animal subject data.
 
-## Code Availability
+### Consent for publication
 
-All code is made freely available through the following GitHub repositories:
+Not applicable.
 
--   `KGExplorer` (<https://github.com/neurogenomics/KGExplorer>)
--   `HPOExplorer` (<https://github.com/neurogenomics/HPOExplorer>)
--   `MSTExplorer` (<https://github.com/neurogenomics/MSTExplorer>)
--   Code to replicate analyses (<https://github.com/neurogenomics/rare_disease_celltyping>)
--   Rare Disease Celltyping Portal code (<https://github.com/neurogenomics/Rare-Disease-Web-Portal>)
+### Availability of data and materials
 
-## Acknowledgements
+All data and code used in this study are publicly available.
 
-We would like to thank the following individuals for their insightful feedback and assistance with data resources: Sarah J. Marzi, Gerton Lunter, Peter Robinson, Melissa Haendel, Ben Coleman, Nico Matentzoglu, Shawn T. O'Neil, Alan E. Murphy, Sarada Gurung.
+**Datasets:**
+
+- Human Phenotype Ontology (release 2024-02-08): <https://hpo.jax.org>
+- Gene Curation Coalition (GenCC): <https://thegencc.org/>
+- Descartes Human single-cell transcriptomic atlas: <https://cellxgene.cziscience.com/collections/c114c20f-1ef4-49a5-9c2e-d965787fb90c>
+- Human Cell Landscape single-cell transcriptomic atlas: <https://cellxgene.cziscience.com/collections/38833785-fac5-48fd-944a-0f62a4c23ed1>
+- Processed Cell Type Datasets (*ctd_DescartesHuman.rds* and *ctd_HumanCellLandscape.rds*): <https://github.com/neurogenomics/MSTExplorer/releases>
+- Gene-by-phenotype association matrix (*hpo_matrix.rds*): <https://github.com/neurogenomics/MSTExplorer/releases>
+- GPT-4 phenotype severity annotations: <https://github.com/neurogenomics/rare_disease_celltyping/releases/download/latest/gpt_check_annot.csv.gz>
+- Full phenotype-cell type association test results: <https://github.com/neurogenomics/MSTExplorer/releases/download/v0.1.10/phenomix_results.tsv.gz>
+- Rare Disease Celltyping Portal (interactive): <https://neurogenomics-ukdri.dsi.ic.ac.uk/>
+- Rare Disease Celltyping Portal data archive: <https://zenodo.org/records/15147825>
+- Complement system gene list (HGNC): <https://www.genenames.org/data/genegroup/#!/group/492>
+- Therapeutic Target Database: <http://db.idrblab.net/ttd/>
+- CellxGene browser view (hepatocytes and hepatoblast complement expression): <https://cellxgene.cziscience.com/gene-expression?genes=C5%2CCFI%2CC8B%2CCFB%2CMBL2%2CAPOE&cellTypes=hepatoblast%2Chepatocyte&ver=2>
+- Cell Ontology (release 2023-09-21): <https://obophenotype.github.io/cell-ontology/>
+- Monarch Knowledge Graph: <https://monarchinitiative.org/>
+
+**Source code (all under open-source licenses):**
+
+- `KGExplorer` R package: <https://github.com/neurogenomics/KGExplorer>
+- `HPOExplorer` R package: <https://github.com/neurogenomics/HPOExplorer>
+- `MSTExplorer` R package: <https://github.com/neurogenomics/MSTExplorer>
+- Manuscript analyses repository: <https://github.com/neurogenomics/rare_disease_celltyping>
+- Rare Disease Celltyping Portal source: <https://github.com/neurogenomics/Rare-Disease-Web-Portal>
+
+### Competing interests
+
+The authors declare that they have no competing interests.
 
 ### Funding
 
 This work was supported by a UK Dementia Research Institute (UK DRI) Future Leaders Fellowship \[MR/T04327X/1\] and the UK DRI which receives its funding from UK DRI Ltd, funded by the UK Medical Research Council, Alzheimer's Society and Alzheimer's Research UK.
+The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.
+
+### Authors' contributions
+
+B.M.S. and N.G.S. conceived and designed the study.
+B.M.S. led the project, designed and implemented the analytical pipeline, performed the analyses, developed the supporting R packages (`HPOExplorer`, `KGExplorer`, `MSTExplorer`), generated the figures, and drafted the manuscript.
+K.B.M. contributed to investigation, software development, and visualisation, including curation of GPT-4 phenotype severity annotations.
+H.D., Y.Z., R.G.-S., and J.C. contributed to software development for the Rare Disease Celltyping Portal and to visualisation.
+M.O. contributed to data investigation and curation.
+N.G.S. supervised the project, provided expert guidance throughout, and contributed to manuscript revision.
+All authors read and approved the final manuscript.
+
+### Acknowledgements
+
+We would like to thank the following individuals for their insightful feedback and assistance with data resources: Sarah J. Marzi, Gerton Lunter, Peter Robinson, Melissa Haendel, Ben Coleman, Nico Matentzoglu, Shawn T. O'Neil, Alan E. Murphy, Sarada Gurung.
 
 ## References {.unnumbered}
 
