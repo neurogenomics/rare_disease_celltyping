@@ -79,6 +79,44 @@ trap 'rm -rf "$WORK"' EXIT
   head -n "$((SPLIT_LINE - 1))" all.md > main.md
   tail -n "+$SPLIT_LINE"        all.md > supp.md
 
+  # --- 3b) renumber supplementary floats as "S" (Fig. S1, Table S1, ...) ----
+  # Quarto numbers floats continuously across the whole document, and the
+  # PDF's S-numbering comes from LaTeX \renewcommand/\setcounter, which do not
+  # apply to docx. Once the document is split, the supplementary file should
+  # restart at S1. We do this numerically: a float is "supplementary" iff its
+  # number exceeds the count of same-type floats defined in the main section
+  # (detected by their "Figure N:" / "Table N:" captions). The same mapping is
+  # applied to BOTH files so in-text references (e.g. "Additional file 1:
+  # Fig. 10") and captions ("Figure 10:") stay in sync, and it matches the
+  # PDF's S-ordering (float order within the supplement).
+  # Quarto writes float labels with a non-breaking space ("Figure 10"),
+  # so the rewrite must match NBSP as well as ASCII space. A float is
+  # "supplementary" iff its number exceeds the count of same-type floats whose
+  # captions ("Figure N:" / "Table N:") appear in the main section. The same
+  # mapping is applied to captions and to the in-text reference links
+  # ("[Fig. 10](#...)") in BOTH files so everything stays in sync.
+  python3 - main.md supp.md <<'PY'
+import re, sys
+SP = r'[\s ]+'                       # ASCII space or non-breaking space
+main = open(sys.argv[1], encoding='utf-8').read()
+def main_max(text, word):
+    nums = [int(n) for n in re.findall(word + SP + r'(\d+):', text)]
+    return max(nums) if nums else 0
+MF, MT = main_max(main, 'Figure'), main_max(main, 'Table')
+sys.stderr.write("Main section defines %d figures and %d tables; "
+                 "numbering the rest as S1, S2, ...\n" % (MF, MT))
+def remap(base):
+    def repl(m):
+        n = int(m.group(3))
+        return m.group(1) + m.group(2) + (('S%d' % (n - base)) if n > base else str(n))
+    return repl
+for f in sys.argv[1:]:
+    s = open(f, encoding='utf-8').read()
+    s = re.sub(r'(Figure|Fig\.)(' + SP + r')(\d+)', remap(MF), s)
+    s = re.sub(r'(Table)(' + SP + r')(\d+)', remap(MT), s)
+    open(f, 'w', encoding='utf-8').write(s)
+PY
+
   # --- 4) markdown -> docx, reusing index.docx as the style reference -------
   pandoc main.md -f markdown -t docx --reference-doc="$DOCX_IN" -o "$DOCX_MAIN"
   pandoc supp.md -f markdown -t docx --reference-doc="$DOCX_IN" -o "$DOCX_SUPP"
