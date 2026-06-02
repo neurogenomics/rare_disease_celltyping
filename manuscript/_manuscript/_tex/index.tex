@@ -537,7 +537,7 @@ diseases for which that phenotype is a symptom. This resulted in a final
 \hfill\break
 
 \[
- \eqnmarkbox[NavyBlue]{n1}{ L_{ij} } = 
+ \eqnmarkbox[NavyBlue]{n1}{ L_{ij} } =
  \begin{cases}
   \frac{\sum_{k=1}^{\text{f}} 
     \eqnmarkbox[Cerulean]{n3a}{D_i G_j} 
@@ -2969,13 +2969,13 @@ interventions to treat this condition have largely been ineffective.
 While there are various cell types involved in skeletal system
 development, our pipeline nominated chondrocytes as the causal cell type
 underlying the lethal form of this condition
-(Fig.~\ref{fig-therapy-examples-supp}). Assuringly, we found that the
-disease `Achondrogenesis Type 1B' is caused by the genes \emph{SLC26A2}
-and \emph{COL2A1} via chondrocytes. We also found that `Platyspondylic
-lethal skeletal dysplasia, Torrance type' was associated with
-chondrocytes via \emph{SLC26A2} and \emph{COL2A1}. Thus, in cases where
-surgical intervention is insufficient, targeting these genes within
-chondrocytes may prove a viable long-term solution for children
+(Fig.~\ref{fig-therapy-examples-supp-lsd}). Assuringly, we found that
+the disease `Achondrogenesis Type 1B' is caused by the genes
+\emph{SLC26A2} and \emph{COL2A1} via chondrocytes. We also found that
+`Platyspondylic lethal skeletal dysplasia, Torrance type' was associated
+with chondrocytes via \emph{SLC26A2} and \emph{COL2A1}. Thus, in cases
+where surgical intervention is insufficient, targeting these genes
+within chondrocytes may prove a viable long-term solution for children
 suffering from lethal skeletal dysplasia.
 
 Alzheimer's disease (AD) is the most common neurodegenerative condition.
@@ -2984,10 +2984,10 @@ memory loss, cognitive decline, and cerebral proteinopathy.
 Interestingly, we found that different forms of early onset AD (which
 are defined by the presence of a specific disease gene) are each
 associated with different cell types via different phenotypes
-(Fig.~\ref{fig-therapy-examples-supp}). For example, AD 3 and AD 4 are
-primarily associated with cells of the digestive system (`enterocyte',
-`gastric goblet cell') and are implied to be responsible for the
-phenotypes `Senile plaques', `Alzheimer disease', `Parietal
+(Fig.~\ref{fig-therapy-examples-supp-ad}). For example, AD 3 and AD 4
+are primarily associated with cells of the digestive system
+(`enterocyte', `gastric goblet cell') and are implied to be responsible
+for the phenotypes `Senile plaques', `Alzheimer disease', `Parietal
 hypometabolism in FDG PET'. Meanwhile, AD 2 is primarily associated with
 immune cells (`alternatively activated macrophage') and is implied to be
 responsible for the phenotypes `Neurofibrillary tangles', `Long-tract
@@ -3001,7 +3001,7 @@ of additional phenotypes associated with the disease that span multiple
 physiological systems. PD 19a and PD 8 seemed to align most closely with
 the canonical understanding of PD as a disease of the central nervous
 system in that they implicated oligodendrocytes and neurons
-(Fig.~\ref{fig-therapy-examples-supp}). Though the reference datasets
+(Fig.~\ref{fig-therapy-examples-supp-pd}). Though the reference datasets
 being used in this study were not annotated at sufficient resolution to
 distinguish between different subtypes of neurons, in particular
 dopaminergic neurons. PD 19a/8 also suggested that risk variants in
@@ -3292,22 +3292,16 @@ arranged using the Sugiyama algorithm\textsuperscript{47}.}
 
 \centering{
 
-\centering{
-
 \pandocbounded{\includegraphics[keepaspectratio]{img/fig-therapy-examples-supp/respiratory_failure.png}}
 
 }
 
-\subcaption{\label{fig-therapy-examples-supp-rf}Respiratory failure}
-
-}
-
-\caption{\label{fig-therapy-examples-supp}\textbf{Example cell
+\caption{\label{fig-therapy-examples-supp-rf}\textbf{Example cell
 type-specific gene therapy targets for phenotypes associated with
 respiratory failure-related diseases.} Each disease (\emph{blue
 cylinders}) is connected to its phenotype (\emph{purple cylinders})
 based on well-established clinical observations recorded within the
-HPO\textsuperscript{11}.Phenotypes are connected to cell types
+HPO\textsuperscript{11}. Phenotypes are connected to cell types
 (\emph{red circles}) via association testing between weighted gene sets
 (FDR\textless0.05). Each cell type is connected to the prioritised gene
 targets (\emph{yellow boxes}) based on the driver gene analysis. The
